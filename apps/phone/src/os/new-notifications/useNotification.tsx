@@ -1,7 +1,8 @@
 import { useSnackbar } from 'notistack';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useApps } from '../apps/hooks/useApps';
 import uuid from 'react-uuid';
+import { controlCenterState } from '@os/control-center/state';
 
 import {
   notifications,
@@ -23,6 +24,7 @@ interface NotificationProps {
 export const useNotification = (): NotificationProps => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { getApp } = useApps();
+  const doNotDisturb = useRecoilValue(controlCenterState.doNotDisturb);
 
   const enqueueNotification = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -71,24 +73,29 @@ export const useNotification = (): NotificationProps => {
           },
         ]);
 
-        enqueueSnackbar(content, {
-          variant: 'npwdNotification',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center',
-          },
-          persist: keepOpen,
-          key: uniqID,
-          onExited: () => {
-            removeActive(uniqID);
-          },
-          onClick,
-          secondaryTitle,
-          path,
-          app,
-          autoHideDuration: 3000 || duration,
-          disableWindowBlurListener: true,
-        });
+        // Do Not Disturb (Control Center) still delivers the notification to
+        // the notification list, it just skips the popup banner -- same
+        // behavior as a real phone.
+        if (!doNotDisturb) {
+          enqueueSnackbar(content, {
+            variant: 'npwdNotification',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'center',
+            },
+            persist: keepOpen,
+            key: uniqID,
+            onExited: () => {
+              removeActive(uniqID);
+            },
+            onClick,
+            secondaryTitle,
+            path,
+            app,
+            autoHideDuration: 3000 || duration,
+            disableWindowBlurListener: true,
+          });
+        }
       },
   );
 

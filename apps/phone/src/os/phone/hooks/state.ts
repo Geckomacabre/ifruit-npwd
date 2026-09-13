@@ -30,4 +30,8 @@ export const phoneState = {
     key: 'phoneExtApps',
     default: [],
   }),
+  lockState: atom<boolean>({
+    key: 'phoneLockState',
+    default: true,
+  }),
 };

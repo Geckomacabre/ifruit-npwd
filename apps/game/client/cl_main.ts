@@ -43,10 +43,12 @@ setTimeout(() => {
   );
 }, 1000);
 
+// Uses the player's real machine clock rather than the in-game GTA world
+// clock, so the phone reads the same time as the player's actual desktop.
 const getCurrentGameTime = () => {
-  let hour: string | number = GetClockHours();
-
-  let minute: string | number = GetClockMinutes();
+  const now = new Date();
+  let hour: string | number = now.getHours();
+  let minute: string | number = now.getMinutes();
 
   // Format time if need be
   if (hour < 10) hour = `0${hour}`;

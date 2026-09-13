@@ -45,7 +45,7 @@ const NotificationBase = forwardRef<HTMLDivElement, NotificationBaseProps>((prop
             onClick={handleNotisClick}
             ref={ref}
             style={{minWidth: '370px'}}
-            className="bg-neutral-50 dark:bg-neutral-900 py-3.5 px-4 flex rounded-md shadow-md border-2 border-neutral-200 dark:border-neutral-800"
+            className="bg-neutral-50 dark:bg-neutral-900 py-3.5 px-4 flex rounded-[22px] shadow-lg"
         >
             <div className="flex items-center text-neutral-900 dark:text-neutral-50 w-full mb-2">
                 <div

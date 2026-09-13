@@ -1,35 +1,26 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { usePhone } from '@os/phone/hooks/usePhone';
-import { ChevronLeft, Circle, LayoutGrid } from 'lucide-react';
 
+// iFruit-style home indicator: no persistent button row (each app carries
+// its own back affordance in its header). Just a slim pill at the very
+// bottom of the screen -- tap it to jump straight home, same gesture a real
+// gesture-nav phone uses a swipe-up for.
 export const Navigation: React.FC = () => {
   const history = useHistory();
   const { isExact } = useRouteMatch('/');
-  const { closePhone } = usePhone();
 
-  const handleGoBackInHistory = () => {
-    history.goBack();
-  };
-
-  const handleGoToMenu = () => {
+  const handleGoHome = () => {
     if (isExact) return;
     history.push('/');
   };
 
   return (
-    <div className="bg-neutral-100 dark:bg-neutral-900 w-full h-14 px-12">
-      <div className="flex justify-between items-center h-full">
-        <button onClick={handleGoToMenu}>
-          <LayoutGrid className="text-neutral-400 hover:dark:text-neutral-100 h-6 w-6 hover:text-neutral-900 " />
-        </button>
-        <button onClick={closePhone}>
-          <Circle className="text-neutral-400 hover:dark:text-neutral-100 h-6 w-6 hover:text-neutral-900 " />
-        </button>
-        <button onClick={handleGoBackInHistory}>
-          <ChevronLeft className="text-neutral-400 hover:dark:text-neutral-100 hover:text-neutral-900 h-6 w-6" />
-        </button>
-      </div>
+    <div className="NavigationIndicator w-full h-8 flex items-end justify-center pb-2">
+      <button
+        onClick={handleGoHome}
+        aria-label="Go home"
+        className="h-1.5 w-32 rounded-full bg-white/80 hover:bg-white transition-colors"
+      />
     </div>
   );
 };

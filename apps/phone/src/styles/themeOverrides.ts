@@ -1,7 +1,24 @@
 // Some remnants of the migration to Material UI v5
+
+// iFruit-style typography/shape: a rounded system-font stack and softer,
+// larger corner radii than MUI's Material defaults, closer to how the
+// stock in-game phones read.
 import { ThemeOptions } from '@mui/material';
 
 const themeOverrides: ThemeOptions = {
+  typography: {
+    fontFamily: [
+      'system-ui',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
+  },
+  shape: {
+    borderRadius: 16,
+  },
   components: {
     MuiListItem: {
       styleOverrides: {
@@ -13,7 +30,10 @@ const themeOverrides: ThemeOptions = {
       },
     },
     MuiPaper: {
-      styleOverrides: { root: { backgroundImage: 'unset' } },
+      styleOverrides: { root: { backgroundImage: 'unset', borderRadius: 16 } },
+    },
+    MuiButton: {
+      styleOverrides: { root: { borderRadius: 12, textTransform: 'none' } },
     },
   },
 };

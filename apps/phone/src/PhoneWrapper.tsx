@@ -4,6 +4,7 @@ import { usePhoneVisibility } from '@os/phone/hooks/usePhoneVisibility';
 import { Slide } from '@mui/material';
 import { useWallpaper } from './apps/settings/hooks/useWallpaper';
 import { useLocation } from 'react-router-dom';
+import { PhoneSideButtons } from '@os/phone/components/PhoneSideButtons';
 
 interface PhoneWrapperProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ const PhoneWrapper: React.FC<PhoneWrapperProps> = ({ children }) => {
               backgroundImage: `url(media/frames/${settings.frame.value})`,
             }}
           />
+          <PhoneSideButtons />
           <div
             id="phone"
             className="PhoneScreen bg-neutral-100 dark:bg-neutral-900"

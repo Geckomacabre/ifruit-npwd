@@ -17,7 +17,7 @@ const StyledSnackbar = styled(SnackbarContent)(({ theme }) => ({
   flexDirection: 'column',
   display: 'flex',
   background: theme.palette.background.paper,
-  borderRadius: '12px !important',
+  borderRadius: '22px !important',
   boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
 }));
 

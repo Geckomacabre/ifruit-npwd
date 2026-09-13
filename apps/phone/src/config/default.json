@@ -29,6 +29,10 @@
   ],
   "frames": [
     {
+      "label": "iFruit",
+      "value": "ifruit.png"
+    },
+    {
       "label": "Default",
       "value": "default.png"
     },
@@ -222,8 +226,8 @@
     },
     "customWallpaper": "",
     "frame": {
-      "label": "Default",
-      "value": "default.png"
+      "label": "iFruit",
+      "value": "ifruit.png"
     },
     "theme": {
       "label": "Dark",

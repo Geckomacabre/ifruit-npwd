@@ -50,6 +50,7 @@ export interface AppIconProps {
   backgroundColor: string;
   color: string;
   notification: INotificationIcon;
+  hideLabel?: boolean;
 }
 
 export const AppIcon: React.FC<AppIconProps> = ({
@@ -60,6 +61,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
   color,
   icon,
   notification,
+  hideLabel,
 }) => {
   const [t] = useTranslation();
   const classes = useStyles({
@@ -68,7 +70,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
   });
 
   return (
-    <button className={classes.root}>
+    <button className={`${classes.root} inline-flex flex-col items-center gap-1 ${hideLabel ? '!mt-0' : ''}`}>
       <Badge
         color="error"
         badgeContent={notification?.badge}
@@ -80,6 +82,11 @@ export const AppIcon: React.FC<AppIconProps> = ({
           <div className={classes.avatar}>{icon || t(nameLocale)}</div>
         )}
       </Badge>
+      {!hideLabel && (
+        <span className="text-white text-[11px] leading-tight font-medium drop-shadow max-w-[64px] truncate">
+          {t(nameLocale)}
+        </span>
+      )}
     </button>
   );
 };

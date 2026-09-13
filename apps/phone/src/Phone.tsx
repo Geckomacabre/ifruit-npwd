@@ -3,8 +3,12 @@ import './Phone.css';
 import { Route } from 'react-router-dom';
 import { CallModal } from '@os/call/components/CallModal';
 import { HomeApp } from './apps/home/components/Home';
-import { NotificationBar } from '@os/new-notifications/components/NotificationBar';
 import { Navigation } from '@os/navigation-bar/components/Navigation';
+import { StatusBar } from '@os/status-bar/components/StatusBar';
+import { LockScreen } from '@os/lockscreen/components/LockScreen';
+import { useLockScreen } from '@os/phone/hooks/useLockScreen';
+import { ControlCenter } from '@os/control-center/components/ControlCenter';
+import { PullDownHandle } from '@os/control-center/components/PullDownHandle';
 import { useSimcardService } from '@os/simcard/hooks/useSimcardService';
 import { usePhoneService } from '@os/phone/hooks/usePhoneService';
 import { useApps } from '@os/apps/hooks/useApps';
@@ -82,13 +86,15 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
   const externalApps = useExternalApps();
 
   const { modal: callModal } = useCallModal();
+  const { locked } = useLockScreen();
 
   return (
     <div>
       <TopLevelErrorComponent>
         <WindowSnackbar />
         <PhoneWrapper>
-          <NotificationBar />
+          <StatusBar />
+          <PullDownHandle />
           <div className="PhoneAppContainer" id="notificationAppContainer" ref={notiRefCB}>
             <>
               <Route exact path="/" component={HomeApp} />
@@ -107,6 +113,8 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
             <PhoneSnackbar />
           </div>
           <Navigation />
+          <ControlCenter />
+          {locked && <LockScreen />}
         </PhoneWrapper>
       </TopLevelErrorComponent>
     </div>
