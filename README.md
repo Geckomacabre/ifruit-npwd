@@ -1,7 +1,15 @@
 <div align="center">
     <img href="https://projecterror.dev" width="150" src="https://user-images.githubusercontent.com/55056068/147729117-5ab762d8-44be-48f0-bc33-a6664061b6cf.png" alt="Material-UI logo" />
 </div>
-<h1 align="center">NPWD</h1>
+
+<div align="center">
+  <h1>iFruit NPWD</h1>
+  <h3>The iFruit phone you've always wanted but couldn't afford.</h3>
+  <p>
+    A full visual & UX rework of the excellent <a href="https://github.com/project-error/npwd">NPWD</a><br>
+    that finally makes your FiveM phone look and feel like a real iFruit — while staying firmly inside GTA lore.
+  </p>
+</div>
 
 <div align="center">
 
@@ -13,42 +21,69 @@
 
 </div>
 
-## Monorepo structure
+---
 
-### Apps
+### What is this?
 
-- `phone`: The React code for NPWD.
-- `game`: Game releated scripts and code that runs on the client/server-side in FiveM.
+Tired of phones that cost more than a high-end apartment in Vinewood just to look halfway decent?
 
-### Packages
+This is a free, fully open-source fork of NPWD that turns the phone into the iFruit device Rockstar never quite delivered:
 
-- `npwd-hooks`: Hooks used throughout external apps. Mainly to communicate with `npwd` through custom window events.
-- `npwd-types`: Auto-generated types from NPWD that can be used in external apps.
-- `database`: Database configuration and classes for each app
-- `logger`: Logging lib with `winston`
-- `config`: NPWD related config functions
+- Liquid Glass UI (actual refraction, not just a blur filter)
+- iOS 18-style home screen icons & dock
+- Proper Control Center
+- Lock screen with tinted clock, widgets & Notification Center
+- SF Pro typography
+- Animated weather sky driven by the server's real weather + time
+- Native App Store, Settings, and other rebuilt apps
 
-## Standalone Information & Installation
+All built on top of the already excellent NPWD foundation — no paid "premium" phone required.
 
-We have designed _NPWD_ to be generally framework agnostic, meaning that it can easily be
-integrated with both popular open source frameworks like ESX & QBCore or any arbitary
-custom framework.
+**100% free. Public source code. Fork it, skin it, improve it, do whatever you want.**
 
-For further details on this system, please refer to our installation [documentation](https://projecterror.dev/docs/npwd/start/installation).
+---
 
-You will also need [screenshot-basic](https://github.com/project-error/screenshot-basic).
+### Built on the shoulders of giants
 
-## Technical Stack and Development
+Massive respect to the original [NPWD](https://github.com/project-error/npwd) team.
+This is a visual/UX layer on top of their solid work, not a replacement.
 
-_NPWD_ uses React + TypeScript to form the NUI front end and uses TypeScript (V8 runtime) for game
-scripts. You can find more technical information regarding the development of this project on our docs
-page [here](https://projecterror.dev/docs/npwd/dev/dev_bootstrap).
+(And yes, you can still use all the regular NPWD features without paying extra for the privilege of a nicer looking home screen.)
 
-## Feature Request & Issue Reporting
-
-Please open an issue/enhancement on our [Github Repo](https://github.com/project-error/npwd/issues/new/choose). This is the best way for us to track what needs to be resolved or improved upon.
+---
 
 ## Features
+
+**Everything NPWD already does well:**
+- Extremely optimised (idle ~0.01 ms)
+- Twitter / Birdy
+- Matchmaker
+- Marketplace
+- Messages (including groups)
+- Calling
+- Camera + Gallery
+- Contacts
+- Notes
+- Calculator
+- Themes, frames, icon sets
+- Streamer mode
+- Multi-language support
+- Discord logging
+- Framework-agnostic (ESX, QBCore, custom, etc.)
+
+**Plus the iFruit treatment (recent work):**
+- Full iFruit-styled shell
+- Liquid Glass design language throughout
+- Real Control Center
+- Lock screen with widgets + Notification Center
+- SF Pro typeface
+- iOS 18 icon artwork + Liquid Glass home screen tiles
+- Animated weather that actually reacts to the server
+- Rebuilt apps with the new design system
+
+More features are actively being added.
+
+### Feature gallery (inherited from NPWD)
 
 - [Optimized](https://i.imgur.com/mN5ib42.png)
   - 0.01 ms on idle and 0.05 while in use.
@@ -115,8 +150,62 @@ Please open an issue/enhancement on our [Github Repo](https://github.com/project
   - Follow our [documentation](https://projecterror.dev/docs/npwd/start/installation#setting-up-discord-log-integration) for intial setup.
   - Never used a webhook before? Follow Discord's [documentation](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) for creating a webhook.
 
+---
+
+### Installation
+
+Same process as regular NPWD — just use this repo instead of the original.
+
+1. Follow the official NPWD installation docs:
+   https://projecterror.dev/docs/npwd/start/installation
+2. Make sure you have [screenshot-basic](https://github.com/project-error/screenshot-basic).
+3. Drop this resource in and configure `config.json` as usual.
+
+Because this is still NPWD under the hood, existing bridges, frameworks, and external apps continue to work.
+
+## Technical Stack and Development
+
+_NPWD_ uses React + TypeScript to form the NUI front end and uses TypeScript (V8 runtime) for game
+scripts. You can find more technical information regarding the development of this project on our docs
+page [here](https://projecterror.dev/docs/npwd/dev/dev_bootstrap).
+
+---
+
+### Development & Contributing
+
+Monorepo structure is identical to upstream NPWD:
+
+#### Apps
+
+- `phone`: The React code for NPWD.
+- `game`: Game releated scripts and code that runs on the client/server-side in FiveM.
+
+#### Packages
+
+- `npwd-hooks`: Hooks used throughout external apps. Mainly to communicate with `npwd` through custom window events.
+- `npwd-types`: Auto-generated types from NPWD that can be used in external apps.
+- `database`: Database configuration and classes for each app
+- `logger`: Logging lib with `winston`
+- `config`: NPWD related config functions
+
+PRs that push the iFruit vision further are welcome.
+
+## Feature Request & Issue Reporting
+
+Please open an issue/enhancement on our [Github Repo](https://github.com/project-error/npwd/issues/new/choose). This is the best way for us to track what needs to be resolved or improved upon.
+
+---
+
+### License
+
+Same license as original NPWD (see `LICENSE`).
+
 ## Final words
 
 A special thanks to all the people who have helped out with the translations! You have all been amazing.
 
 Thanks to [Ultrahacx](https://github.com/ultrahacx) for all the artwork and animations seen in the trailer and this post.
+
+---
+
+*In Los Santos you can buy a yacht, a private jet, and a small army… but somehow the only way to get a phone that doesn't look like it came from 2012 is to open-source it yourself.*
