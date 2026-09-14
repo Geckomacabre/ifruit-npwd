@@ -25,6 +25,10 @@ import './twitter/twitter.controller';
 import './match/match.controller';
 import './darkchat/darkchat.controller';
 import './audio/audio.controller';
+import './wallet/wallet.controller';
+import './mail/mail.controller';
+import './voicememos/voicememos.controller';
+import './pages/pages.controller';
 
 // setup exports
 import './bridge/sv_exports';

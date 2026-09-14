@@ -3,6 +3,10 @@
   "defaultLanguage": "en",
   "wallpapers": [
     {
+      "label": "Ocean",
+      "value": "ocean.jpg"
+    },
+    {
       "label": "Minimal",
       "value": "minimal.jpg"
     },
@@ -213,16 +217,17 @@
       "value": "en"
     },
     "callVolume": 50,
+    "glassFrost": 55,
     "iconSet": {
-      "label": "Material",
+      "label": "iOS",
       "value": {
-        "custom": false,
-        "name": "material"
+        "custom": true,
+        "name": "ios"
       }
     },
     "wallpaper": {
-      "label": "Minimal",
-      "value": "minimal.jpg"
+      "label": "Ocean",
+      "value": "ocean.jpg"
     },
     "customWallpaper": "",
     "frame": {
@@ -263,6 +268,13 @@
     "browserHomePage": "https://docs.projecterror.dev"
   },
   "iconSet": [
+    {
+      "label": "iOS",
+      "value": {
+        "custom": true,
+        "name": "ios"
+      }
+    },
     {
       "label": "NPWD Icons",
       "value": {

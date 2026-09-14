@@ -16,5 +16,10 @@ import './functions';
 import './cl_exports';
 import './settings/client-settings';
 import './cl_notifications';
+import './cl_wallet';
+import './cl_mail';
+import './cl_weather';
+import './cl_voicememos';
+import './cl_pages';
 
 export const ClUtils = new ClientUtils();

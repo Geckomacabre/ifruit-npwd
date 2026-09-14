@@ -15,6 +15,9 @@ export const LockScreen: React.FC = () => {
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   const startYRef = useRef(0);
+  // Mirrors dragY so endDrag sees the latest distance: a quick flick fires
+  // mouseup before React re-renders, and the dragY in that closure is still 0.
+  const dragYRef = useRef(0);
 
   const date = useMemo(
     () =>
@@ -34,14 +37,16 @@ export const LockScreen: React.FC = () => {
   const moveDrag = (clientY: number) => {
     if (!dragging) return;
     const delta = startYRef.current - clientY;
-    setDragY(Math.max(0, Math.min(delta, 220)));
+    dragYRef.current = Math.max(0, Math.min(delta, 220));
+    setDragY(dragYRef.current);
   };
 
   const endDrag = () => {
     setDragging(false);
-    if (dragY > 90) {
+    if (dragYRef.current > 90) {
       unlock();
     } else {
+      dragYRef.current = 0;
       setDragY(0);
     }
   };

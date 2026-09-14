@@ -40,6 +40,7 @@ const settingsSchema: Schema = {
   type: 'object',
   properties: {
     callVolume: { type: 'number', required: true },
+    glassFrost: { type: 'number' },
     iconSet: { $ref: '/SettingOptionIconSet', required: true },
     language: { $ref: '/SettingOption', required: true },
     wallpaper: { $ref: '/SettingOption', required: true },

@@ -1,0 +1,1 @@
+export const VOICE_MEMOS_APP_PRIMARY_COLOR = '#ef4444';

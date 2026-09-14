@@ -83,7 +83,7 @@ export const ControlCenter: React.FC = () => {
     <>
       <div className="absolute inset-0 z-[70] bg-black/40" onClick={() => setIsOpen(false)} />
       <div
-        className="absolute left-0 right-0 top-0 z-[71] pt-12 px-4 pb-6 rounded-b-[32px] bg-neutral-800/80 backdrop-blur-2xl shadow-2xl overflow-y-auto max-h-full"
+        className="liquid-glass liquid-glass-dark absolute left-0 right-0 top-0 z-[71] pt-12 px-4 pb-6 rounded-b-[32px] border-t-0 overflow-y-auto max-h-full"
         style={{
           transform: `translateY(${dragY}px)`,
           transition: dragging ? 'none' : 'transform 200ms',

@@ -71,7 +71,7 @@ export const CallNotificationBase = forwardRef<HTMLDivElement, CallNotificationB
             <SnackbarContent
                 ref={ref}
                 style={{minWidth: '370px'}}
-                className="bg-neutral-50 dark:bg-neutral-900 py-3.5 px-4 w-auto flex items-center justify-between rounded-[22px] shadow-lg"
+                className="liquid-glass py-3.5 px-4 w-auto flex items-center justify-between rounded-[22px]"
             >
                 <div className="flex items-center text-neutral-900 dark:text-neutral-50 space-x-2">
                     <div className="flex justify-center items-center">

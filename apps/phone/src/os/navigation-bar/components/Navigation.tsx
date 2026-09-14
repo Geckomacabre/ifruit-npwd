@@ -14,12 +14,15 @@ export const Navigation: React.FC = () => {
     history.push('/');
   };
 
+  // Floats over the app instead of taking a row of its own, so apps run to the
+  // bottom edge of the screen with only the pill on top. Difference blending
+  // keeps the pill readable over both light and dark apps.
   return (
-    <div className="NavigationIndicator w-full h-8 flex items-end justify-center pb-2">
+    <div className="NavigationIndicator pointer-events-none absolute bottom-0 left-0 right-0 z-[55] flex h-6 items-end justify-center pb-2">
       <button
         onClick={handleGoHome}
         aria-label="Go home"
-        className="h-1.5 w-32 rounded-full bg-white/80 hover:bg-white transition-colors"
+        className="pointer-events-auto h-1.5 w-32 rounded-full bg-white mix-blend-difference"
       />
     </div>
   );

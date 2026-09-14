@@ -31,6 +31,8 @@ export interface IPhoneSettings {
   anonymousMode: boolean;
   ringtone: SettingOption;
   callVolume: number;
+  /** Liquid Glass, 0 glossy .. 100 frosted. Optional so older saved settings stay valid. */
+  glassFrost?: number;
   notiSound: SettingOption;
   TWITTER_notiFilter: SettingOption<SETTING_MENTIONS | SETTINGS_ALL_TWEETS>;
   TWITTER_notiSound: SettingOption;

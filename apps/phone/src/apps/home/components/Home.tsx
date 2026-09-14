@@ -35,14 +35,14 @@ export const HomeApp: React.FC = () => {
   });
 
   return (
-    <AppWrapper {...dragNotifications}>
+    <AppWrapper fullBleed {...dragNotifications}>
       <Box component="div" mt={7} px={3} className="flex-1 overflow-y-auto pb-28">
         {gridApps.length > 0 && <GridMenu xs={3} items={gridApps} />}
       </Box>
 
       {dockApps.length > 0 && (
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="flex items-center justify-around rounded-3xl bg-white/20 backdrop-blur-xl py-2 px-2">
+          <div className="liquid-glass flex items-center justify-around rounded-[30px] py-2 px-2">
             {dockApps.map((app) => (
               <Link to={app.path} key={app.id}>
                 <AppIcon {...app} hideLabel />

@@ -6,17 +6,20 @@ import { useContextMenu, MapSettingItem, SettingOption } from '@ui/hooks/useCont
 import { usePhoneConfig } from '../../../config/hooks/usePhoneConfig';
 import { useMyPhoneNumber } from '@os/simcard/hooks/useMyPhoneNumber';
 import {
+  SettingGlassSlider,
   SettingItem,
   SettingItemIconAction,
   SettingItemSlider,
   SettingSwitch,
   SoundItem,
 } from './SettingItem';
+import { applyGlassTokens, DEFAULT_GLASS_FROST, glassLabel } from '@os/glass/glassTokens';
 import { useTranslation } from 'react-i18next';
 
 import { FileCopy } from '@mui/icons-material';
 import {
   BookA,
+  Droplets,
   EyeOff,
   FileMusic,
   LayoutGrid,
@@ -260,6 +263,14 @@ export const SettingsApp: React.FC = () => {
               onClick={openMenu}
               Icon={Palette}
               theme={theme}
+            />
+            <SettingGlassSlider
+              label="Liquid Glass"
+              icon={<Droplets size={20} />}
+              value={settings.glassFrost ?? DEFAULT_GLASS_FROST}
+              describe={glassLabel}
+              onPreview={applyGlassTokens}
+              onCommit={(val) => handleSettingChange('glassFrost', val)}
             />
             <SettingItem
               label={t('SETTINGS.OPTIONS.WALLPAPER')}

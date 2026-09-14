@@ -55,6 +55,30 @@ import MarketplaceIcon from '../icons/material/app/MARKETPLACE';
 import NotesIcon from '../icons/material/app/NOTES';
 import Camera from '../icons/material/app/CAMERA';
 import ExampleIcon from '../icons/material/app/EXAMPLE';
+import WalletIcon from '../icons/material/app/WALLET';
+import { WalletApp } from '@apps/wallet/WalletApp';
+import { WALLET_APP_PRIMARY_COLOR } from '@apps/wallet/wallet.theme';
+import EmailIcon from '../icons/material/app/EMAIL';
+import { MailApp } from '@apps/mail/MailApp';
+import { MAIL_APP_PRIMARY_COLOR } from '@apps/mail/mail.theme';
+import ClockIcon from '../icons/material/app/CLOCK';
+import { ClockApp } from '@apps/clock/ClockApp';
+import { CLOCK_APP_PRIMARY_COLOR } from '@apps/clock/clock.theme';
+import WeatherIcon from '../icons/material/app/WEATHER';
+import { WeatherApp } from '@apps/weather/WeatherApp';
+import { WEATHER_APP_PRIMARY_COLOR } from '@apps/weather/weather.theme';
+import GarageIcon from '../icons/material/app/GARAGE';
+import { GarageApp } from '@apps/garage/GarageApp';
+import { GARAGE_APP_PRIMARY_COLOR } from '@apps/garage/garage.theme';
+import ServicesIcon from '../icons/material/app/SERVICES';
+import { ServicesApp } from '@apps/services/ServicesApp';
+import { SERVICES_APP_PRIMARY_COLOR } from '@apps/services/services.theme';
+import VoiceMemosIcon from '../icons/material/app/VOICEMEMOS';
+import { VoiceMemosApp } from '@apps/voicememos/VoiceMemosApp';
+import { VOICE_MEMOS_APP_PRIMARY_COLOR } from '@apps/voicememos/voicememos.theme';
+import PagesIcon from '../icons/material/app/PAGES';
+import { PagesApp } from '@apps/pages/PagesApp';
+import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 
 export interface IAppConfig {
   id: string;
@@ -206,6 +230,80 @@ export const APPS: IAppConfig[] = [
     color: common.white,
     path: '/camera',
     Route: () => <AppRoute id="CAMERA" path="/camera" component={CameraApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'WALLET',
+    nameLocale: 'APPS_WALLET',
+    icon: <WalletIcon />,
+    backgroundColor: WALLET_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/wallet',
+    Route: () => <AppRoute id="WALLET" path="/wallet" component={WalletApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'EMAIL',
+    nameLocale: 'APPS_EMAIL',
+    icon: <EmailIcon />,
+    backgroundColor: MAIL_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/mail',
+    Route: () => <AppRoute id="EMAIL" path="/mail" component={MailApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'CLOCK',
+    nameLocale: 'APPS_CLOCK',
+    icon: <ClockIcon />,
+    backgroundColor: CLOCK_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/clock',
+    Route: () => <AppRoute id="CLOCK" path="/clock" component={ClockApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'WEATHER',
+    nameLocale: 'APPS_WEATHER',
+    icon: <WeatherIcon />,
+    backgroundColor: WEATHER_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/weather',
+    Route: () => <AppRoute id="WEATHER" path="/weather" component={WeatherApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'GARAGE',
+    nameLocale: 'APPS_GARAGE',
+    icon: <GarageIcon />,
+    backgroundColor: GARAGE_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/garage',
+    Route: () => <AppRoute id="GARAGE" path="/garage" component={GarageApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'SERVICES',
+    nameLocale: 'APPS_SERVICES',
+    icon: <ServicesIcon />,
+    backgroundColor: SERVICES_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/services',
+    Route: () => <AppRoute id="SERVICES" path="/services" component={ServicesApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'VOICEMEMOS',
+    nameLocale: 'APPS_VOICEMEMOS',
+    icon: <VoiceMemosIcon />,
+    backgroundColor: VOICE_MEMOS_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/voicememos',
+    Route: () => (
+      <AppRoute id="VOICEMEMOS" path="/voicememos" component={VoiceMemosApp} emitOnOpen={false} />
+    ),
+  },
+  {
+    id: 'PAGES',
+    nameLocale: 'APPS_PAGES',
+    icon: <PagesIcon />,
+    backgroundColor: PAGES_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/pages',
+    Route: () => <AppRoute id="PAGES" path="/pages" component={PagesApp} emitOnOpen={false} />,
   },
 ];
 

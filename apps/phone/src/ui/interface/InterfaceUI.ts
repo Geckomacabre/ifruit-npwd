@@ -8,9 +8,11 @@ export interface AppContentTypes {
   onClickBackdrop?: (...args: any[]) => void;
 }
 
-export interface AppWrapperTypes {
+export interface AppWrapperTypes extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   id?: string;
   style?: CSSProperties;
   handleClickAway?: (...args: any[]) => void;
+  /** Skip the status-bar spacing and background; the app draws under the status bar itself. */
+  fullBleed?: boolean;
 }

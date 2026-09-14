@@ -12,14 +12,13 @@ interface SystemNotificationBaseProps extends CustomContentProps {
   controls: boolean;
 }
 
-const StyledSnackbar = styled(SnackbarContent)(({ theme }) => ({
+// Background and shadow come from the liquid-glass class it is rendered with.
+const StyledSnackbar = styled(SnackbarContent)({
   padding: '14px 16px',
   flexDirection: 'column',
   display: 'flex',
-  background: theme.palette.background.paper,
   borderRadius: '22px !important',
-  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-}));
+});
 
 const StyledMessage = styled('div')({
   color: 'white',
@@ -54,7 +53,12 @@ export const SystemNotificationBase = forwardRef<HTMLDivElement, SystemNotificat
     };
 
     return (
-      <StyledSnackbar onClick={handleCloseNoti} style={{ minWidth: '370px' }} ref={ref}>
+      <StyledSnackbar
+        onClick={handleCloseNoti}
+        className="liquid-glass liquid-glass-dark"
+        style={{ minWidth: '370px' }}
+        ref={ref}
+      >
         <Box display="flex" alignItems="center" color="white" width="100%" mb={0.7}>
           <Box
             p="5px"

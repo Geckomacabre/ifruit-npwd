@@ -40,6 +40,8 @@ import { useDarkchatService } from './apps/darkchat/hooks/useDarkchatService';
 import { useNotificationListener } from '@os/new-notifications/useNotificationListener';
 import { useSystemNotificationListener } from '@os/new-notifications/components/system/useSystemNotificationListener';
 import { useNotificationBarListener } from '@os/new-notifications/useNotificationBarListener';
+import { useClockService } from './apps/clock/hooks/useClockService';
+import { applyGlassTokens, DEFAULT_GLASS_FROST } from '@os/glass/glassTokens';
 
 interface PhoneProps {
   notiRefCB: Dispatch<SetStateAction<HTMLElement>>;
@@ -65,6 +67,10 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
     }
   }, [settings.theme.value]);
 
+  useEffect(() => {
+    applyGlassTokens(settings.glassFrost ?? DEFAULT_GLASS_FROST);
+  }, [settings.glassFrost]);
+
   useConfig();
   useKeyboardService();
   usePhoneService();
@@ -82,6 +88,7 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
   useDialService();
   useDarkchatService();
   useInvalidSettingsHandler();
+  useClockService();
 
   const externalApps = useExternalApps();
 

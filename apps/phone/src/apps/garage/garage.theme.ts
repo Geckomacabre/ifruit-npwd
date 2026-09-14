@@ -1,0 +1,1 @@
+export const GARAGE_APP_PRIMARY_COLOR = '#f97316';

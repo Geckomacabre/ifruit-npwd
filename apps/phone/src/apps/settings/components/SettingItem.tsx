@@ -114,6 +114,53 @@ export const SettingItemSlider: React.FC<SettingSliderProps> = ({
   />
 );
 
+interface SettingGlassSliderProps {
+  label: string;
+  icon: JSX.Element;
+  value: number;
+  describe: (value: number) => string;
+  /** Fires while dragging, so the glass visibly changes before letting go. */
+  onPreview: (value: number) => void;
+  onCommit: (value: number) => void;
+}
+
+export const SettingGlassSlider: React.FC<SettingGlassSliderProps> = ({
+  label,
+  icon,
+  value,
+  describe,
+  onPreview,
+  onCommit,
+}) => {
+  const [live, setLive] = React.useState(value);
+
+  React.useEffect(() => setLive(value), [value]);
+
+  return (
+    <NPWDListItem
+      startElement={icon}
+      primaryText={label}
+      secondaryText={describe(live)}
+      endElement={
+        <div className="flex items-center gap-2 text-[10px] text-neutral-500">
+          <span>Glossy</span>
+          <SliderRoot
+            defaultValue={[value]}
+            min={0}
+            max={100}
+            onValueChange={(val) => {
+              setLive(val[0]);
+              onPreview(val[0]);
+            }}
+            onValueCommit={(val) => onCommit(val[0])}
+          />
+          <span>Frosted</span>
+        </div>
+      }
+    />
+  );
+};
+
 interface SettingSwitchProps {
   label: string;
   value: boolean;

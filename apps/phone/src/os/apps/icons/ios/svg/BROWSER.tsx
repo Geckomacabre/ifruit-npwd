@@ -1,0 +1,4 @@
+import { Compass } from 'lucide-react';
+import { iosNotificationGlyph } from '../iosIcon';
+
+export default iosNotificationGlyph(Compass);

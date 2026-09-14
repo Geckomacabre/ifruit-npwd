@@ -238,3 +238,70 @@ COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=31
 ;
+
+CREATE TABLE IF NOT EXISTS `npwd_wallet_transactions`
+(
+    `id`         int(11)      NOT NULL AUTO_INCREMENT,
+    `identifier` varchar(48)  NOT NULL COLLATE 'utf8mb4_general_ci',
+    `amount`     int(11)      NOT NULL,
+    `company`    varchar(50)  NOT NULL,
+    `logo`       varchar(255)          DEFAULT NULL,
+    `createdAt`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX `identifier` (`identifier`)
+);
+
+CREATE TABLE IF NOT EXISTS `npwd_mail_accounts`
+(
+    `identifier` varchar(48)  NOT NULL COLLATE 'utf8mb4_general_ci',
+    `address`    varchar(100) NOT NULL,
+    PRIMARY KEY (identifier),
+    UNIQUE INDEX `address` (`address`)
+);
+
+CREATE TABLE IF NOT EXISTS `npwd_mail_messages`
+(
+    `id`                   int(11)      NOT NULL AUTO_INCREMENT,
+    `recipient_identifier` varchar(48)  NOT NULL COLLATE 'utf8mb4_general_ci',
+    `recipient_address`    varchar(100) NOT NULL DEFAULT '',
+    `sender_identifier`    varchar(48)           DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+    `sender_name`          varchar(100) NOT NULL,
+    `sender_address`       varchar(100)          DEFAULT NULL,
+    `subject`              varchar(100) NOT NULL,
+    `content`              text         NOT NULL,
+    `actions`              longtext              DEFAULT NULL,
+    `is_read`              tinyint      NOT NULL DEFAULT 0,
+    `recipient_deleted`    tinyint      NOT NULL DEFAULT 0,
+    `sender_deleted`       tinyint      NOT NULL DEFAULT 0,
+    `createdAt`            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX `recipient_identifier` (`recipient_identifier`),
+    INDEX `sender_identifier` (`sender_identifier`)
+);
+
+CREATE TABLE IF NOT EXISTS `npwd_voice_memos`
+(
+    `id`         int(11)      NOT NULL AUTO_INCREMENT,
+    `identifier` varchar(48)  NOT NULL COLLATE 'utf8mb4_general_ci',
+    `name`       varchar(50)  NOT NULL,
+    `url`        varchar(500) NOT NULL,
+    `duration`   int(11)      NOT NULL DEFAULT 0,
+    `createdAt`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX `identifier` (`identifier`)
+);
+
+CREATE TABLE IF NOT EXISTS `npwd_pages_posts`
+(
+    `id`           int(11)       NOT NULL AUTO_INCREMENT,
+    `identifier`   varchar(48)   NOT NULL COLLATE 'utf8mb4_general_ci',
+    `author_name`  varchar(100)  NOT NULL,
+    `phone_number` varchar(20)   NOT NULL,
+    `title`        varchar(50)   NOT NULL,
+    `description`  varchar(1000) NOT NULL,
+    `image`        varchar(500)           DEFAULT NULL,
+    `price`        int(11)                DEFAULT NULL,
+    `createdAt`    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX `identifier` (`identifier`)
+);

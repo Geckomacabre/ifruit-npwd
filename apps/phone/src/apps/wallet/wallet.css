@@ -1,0 +1,607 @@
+/* BuckMe -- Cash App parody wallet. Everything is scoped under .buckme-app so
+   the purple accent and the Art Deco type never leak into other apps. */
+
+@font-face {
+  font-family: 'BuckMe Art Deco';
+  font-weight: 400;
+  src: url('./assets/GTAArtDecoRegular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'BuckMe Art Deco';
+  font-weight: 500;
+  src: url('./assets/GTAArtDecoMedium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'BuckMe Signature';
+  src: url('./assets/CedarvilleCursive-Regular.ttf') format('truetype');
+}
+
+.buckme-app {
+  --buck-accent: #a77af5;
+  --buck-bg: #131016;
+  --buck-surface: #1f1a26;
+  --buck-surface-2: #2a2433;
+  --buck-text: #f5f1fa;
+  --buck-muted: #9d94aa;
+  --buck-incoming: #4ade80;
+
+  background: var(--buck-bg);
+  color: var(--buck-text);
+  font-family: 'BuckMe Art Deco', sans-serif;
+  overflow: hidden;
+}
+
+.buckme-app button,
+.buckme-app input {
+  font-family: inherit;
+}
+
+.buckme-screen {
+  flex: 1;
+  overflow-y: auto;
+  padding: 52px 20px 100px;
+}
+
+/* ---- headers ---- */
+
+.buckme-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.buckme-brand img {
+  height: 56px;
+  width: auto;
+  filter: drop-shadow(0 0 10px #a77af580);
+}
+
+.buckme-brand span {
+  color: var(--buck-muted);
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.buckme-header {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  margin-bottom: 16px;
+}
+
+.buckme-header h3 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+}
+
+/* ---- card ---- */
+
+@keyframes buckme-card-hue {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(35deg); }
+  100% { filter: hue-rotate(0deg); }
+}
+
+/* The hue drift sits on the outer, non-rotating element: a filter inside the
+   preserve-3d hierarchy flattens it and both faces show at once. */
+.buckme-card {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.59;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 1200px;
+  animation: buckme-card-hue 12s ease-in-out infinite;
+}
+
+.buckme-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.buckme-card.is-flipped .buckme-card-inner {
+  transform: rotateY(180deg);
+}
+
+.buckme-card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  backface-visibility: hidden;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  text-align: left;
+}
+
+.buckme-card-front {
+  background-image: url('./assets/card.png');
+}
+
+.buckme-card-back {
+  background-image: url('./assets/card-back.png');
+  transform: rotateY(180deg);
+}
+
+/* Text inside a 3D-flipping layer rasterizes blurry; its own compositing
+   layer (a sub-pixel translateZ) keeps it sharp. Positions are measured off
+   the 405x254 card art. */
+.buckme-card-number,
+.buckme-card-name,
+.buckme-card-cvv {
+  position: absolute;
+  transform: translateZ(0.01px);
+  -webkit-font-smoothing: antialiased;
+}
+
+.buckme-card-number {
+  left: 6.9%;
+  top: 67.3%;
+  font-size: 17px;
+  letter-spacing: 1px;
+}
+
+.buckme-card-name {
+  left: 3.95%;
+  top: 20.5%;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.buckme-card-strip {
+  position: absolute;
+  left: 3.95%;
+  top: 32.3%;
+  width: 88%;
+  height: 13.4%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.buckme-card-signature {
+  padding-left: 8%;
+  font-family: 'BuckMe Signature', cursive;
+  font-size: 17px;
+  color: #2b2430;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: rotate(-3deg) translateZ(0.01px);
+  transform-origin: left center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.buckme-card-cvv {
+  left: 10.9%;
+  top: 48%;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ---- balance + buttons ---- */
+
+.buckme-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.buckme-balance-label {
+  color: var(--buck-muted);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.buckme-balance-amount {
+  font-size: 40px;
+}
+
+.buckme-button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--buck-accent);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: filter 0.15s ease-in-out;
+}
+
+.buckme-button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.buckme-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.buckme-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--buck-accent);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.buckme-link:disabled {
+  opacity: 0.5;
+}
+
+.buckme-spaced {
+  display: block;
+  margin: 20px auto 0;
+}
+
+/* ---- transactions ---- */
+
+.buckme-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 28px 0 10px;
+  color: var(--buck-muted);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.buckme-section-title button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--buck-accent);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.buckme-tx-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--buck-surface);
+}
+
+.buckme-tx {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.buckme-tx + .buckme-tx {
+  border-top: 1px solid #ffffff10;
+}
+
+button.buckme-tx {
+  cursor: pointer;
+}
+
+button.buckme-tx:hover {
+  background: var(--buck-surface-2);
+}
+
+.buckme-tx-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--buck-surface-2);
+  color: var(--buck-accent);
+  font-size: 16px;
+}
+
+.buckme-tx-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.buckme-tx-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.buckme-tx-title {
+  overflow: hidden;
+  font-size: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.buckme-tx-time {
+  color: var(--buck-muted);
+  font-size: 12px;
+}
+
+.buckme-tx-amount {
+  font-size: 15px;
+}
+
+.buckme-tx-amount.is-incoming {
+  color: var(--buck-incoming);
+}
+
+.buckme-empty {
+  padding: 20px;
+  color: var(--buck-muted);
+  text-align: center;
+}
+
+/* ---- pay ---- */
+
+.buckme-toggle {
+  display: flex;
+  gap: 4px;
+  width: 80%;
+  margin: 0 auto 20px;
+  padding: 4px;
+  border-radius: 20px;
+  background: var(--buck-surface-2);
+}
+
+.buckme-toggle button {
+  flex: 1;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--buck-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.buckme-toggle button.is-active {
+  background: var(--buck-accent);
+  color: #fff;
+}
+
+.buckme-app .buckme-input {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--buck-surface);
+  color: var(--buck-text);
+  font-size: 16px;
+}
+
+.buckme-app .buckme-input:focus {
+  box-shadow: 0 0 0 2px var(--buck-accent);
+}
+
+.buckme-contacts {
+  margin-top: 12px;
+}
+
+.buckme-amount {
+  margin-top: 16px;
+  font-size: 52px;
+  text-align: center;
+}
+
+.buckme-amount-to,
+.buckme-amount-balance {
+  color: var(--buck-muted);
+  text-align: center;
+}
+
+.buckme-amount-balance {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.buckme-numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.buckme-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: var(--buck-text);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.buckme-key:hover {
+  background: var(--buck-surface);
+}
+
+.buckme-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8717122;
+  color: #fca5a5;
+  font-size: 13px;
+  text-align: center;
+}
+
+.buckme-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 80px;
+  color: var(--buck-accent);
+  text-align: center;
+}
+
+.buckme-done h3 {
+  margin: 12px 0 0;
+  color: var(--buck-text);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.buckme-done p {
+  margin: 0;
+  color: var(--buck-muted);
+}
+
+.buckme-popup-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: #000000a0;
+}
+
+.buckme-popup {
+  width: 100%;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--buck-surface);
+  text-align: center;
+}
+
+.buckme-popup h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.buckme-popup p {
+  margin: 0 0 16px;
+  color: var(--buck-muted);
+  font-size: 14px;
+}
+
+/* ---- help (BuckBot) ---- */
+
+.buckme-help-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buckme-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.buckme-bubble.is-bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+  background: var(--buck-surface-2);
+}
+
+.buckme-bubble.is-user {
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+  background: var(--buck-accent);
+  color: #fff;
+}
+
+.buckme-bubble.is-typing {
+  letter-spacing: 2px;
+}
+
+.buckme-quickreplies {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.buckme-quickreply {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--buck-surface-2);
+  color: var(--buck-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: filter 0.15s ease-in-out;
+}
+
+.buckme-quickreply:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.buckme-quickreply:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- tab bar ---- */
+
+.buckme-tabbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  padding: 10px 0 22px;
+  border-top: 1px solid #ffffff14;
+  background: var(--buck-surface);
+}
+
+.buckme-tab {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: none;
+  color: var(--buck-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out;
+}
+
+.buckme-tab.is-active {
+  color: var(--buck-accent);
+}

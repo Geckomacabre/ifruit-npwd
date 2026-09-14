@@ -28,7 +28,7 @@ export const NotificationCard: React.FC<{ id: string }> = ({ id }) => {
   return (
     <button
       onClick={handleClick}
-      className="flex items-center gap-3 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors px-4 py-3 text-left"
+      className="liquid-glass liquid-glass-dark flex items-center gap-3 rounded-2xl hover:brightness-110 transition px-4 py-3 text-left"
     >
       <div
         className="flex items-center justify-center rounded-full h-9 w-9 shrink-0"
