@@ -8,6 +8,10 @@ natively here, using lb-phone only as a behaviour/content reference.
 Status as of 2026-09-13. `server.cfg` still starts `lb-phone`; NPWD has not been switched on in game
 yet, so everything below is verified by builds and the browser dev preview, **not in-game**.
 
+> **Nothing here has run in game.** Every app was built against mock data in the browser preview.
+> The single highest-value next step is the go-live in "Remaining work", because it is the first
+> time any of this meets a real server.
+
 ---
 
 ## Running it
@@ -19,16 +23,20 @@ pnpm --filter @npwd/nui dev   # browser preview at http://localhost:3050 (mock d
 ```
 
 In the browser preview every `fetchNui` returns the mock data passed as its third argument, so
-all apps are clickable without a server.
+all apps are clickable without a server. The preview starts on the lock screen — drag upward
+anywhere to unlock.
 
 ### Server requirements
 
 - `set npwd:framework "qbx"` (already in server.cfg)
 - Resources started **before** npwd: `ox_lib`, `qbx_core`, `oxmysql`, `qbx_vehicles`, `qbx_garages`,
-  `qbx_vehiclekeys`, `Renewed-Banking`, `screenshot-basic`, `pma-voice`
+  `qbx_vehiclekeys`, `Renewed-Banking`, `screenshot-basic`, `pma-voice`, `ox_target`
+  (`ox_target` is new — the Snarf/rydeme client uses it)
 - `set NPWD_AUDIO_TOKEN "<fivemanage token>"` — currently **empty** in server.cfg, so voice notes
   and Voice Memos uploads fail with "No upload token found!" until it is set.
 - New tables are created automatically on start; they are also appended to `import.sql`.
+- **`um_gigs` must be stopped** once npwd is live. Its Lua now lives in `lua/gigs` and still
+  registers the same `um_gigs:*` net events, so running both would double every handler.
 
 ---
 
@@ -66,7 +74,8 @@ all apps are clickable without a server.
 | **Services** (`SERVICES`) | **Lua** `lua/services` | Companies (police/ambulance/mechanic/taxi, open = on-duty count), customer↔company threads with shared locations and notifications, duty toggle, boss tools (Renewed-Banking deposit/withdraw, staff ranks, fire, hire by server ID within 10m). |
 | **Voice Memos** (`VOICEMEMOS`) | TS `apps/game/server/voicememos` | Apple-style list/player, record via existing `useRecorder` + `npwd:audio:uploadAudio`; saves only https links on `config.imageSafety.safeImageUrls`. |
 | **Pages** (`PAGES`) | TS `apps/game/server/pages` | Yellow-pages ads: search, detail sheet with Call/Message, compose (title, price, image link, description), delete own, 1 post/minute. |
-| **App Store** (`APPSTORE`) | UI only, client-side setting | Catalog/management screen for the "removable" apps (Marketplace, IRC/DarkChat, Life Invader/Twitter, Hookr/Match, Pages) — search, tap a row for a detail sheet (icon, description, provider, size), Get/Open/Remove. Free installs, no economy hook. Backed by `settings.installedApps: string[]` (optional — undefined means "everyone already has every removable app", so existing saves don't lose apps). Fixed the naming/icon collision this file used to warn about: **Marketplace** is back to "Marketplace" with a `Store` glyph tile; the real iOS-pack `appstore.png` artwork now belongs to this app. |
+| **Snarf** (`SNARF`) / **rydeme** (`RYDEME`) | **Lua** `lua/gigs` | Ported from the `um_gigs` resource, whose Lua backend moved here largely untouched. `rydeme`'s identifier in the Lua is still `goober`. Shared UI in `apps/phone/src/apps/gigs`: `GigShell` (duty switch, incoming fare with a client-side countdown, active job, rating history) with Snarf as a board and rydeme dispatch-only plus a rider panel. **Not ported yet:** the Leaflet destination picker (the rider panel uses the player's map waypoint instead) and the live driving HUD (speed/limit/map), both of which exist in the old `um_gigs/ui`. Two polls: `getState` every 4s (server), `getLive` every 1s (client, drives the countdown). |
+| **App Store** (`APPSTORE`) | UI only, client-side setting | Catalog/management screen for the "removable" apps (Marketplace, IRC/DarkChat, Life Invader/Twitter, Hookr/Match, Pages) — search, tap a row for a detail sheet (icon, description, provider, size), Get/Open/Remove. Free installs, no economy hook. Backed by `settings.removedApps: string[]` — **opt-out, deliberately**: an earlier opt-in `installedApps` list meant any app added in a later update never appeared for a player who had already used the store. Mark a new app `removable: true` in `apps.tsx` to list it here. Fixed the naming/icon collision this file used to warn about: **Marketplace** is back to "Marketplace" with a `Store` glyph tile; the real iOS-pack `appstore.png` artwork now belongs to this app. |
 
 ---
 
@@ -97,19 +106,58 @@ all apps are clickable without a server.
   the preview goes blank; touch `apps.tsx` (or restart dev) after the file exists.
 - `AppWrapper`'s `paddingTop` must stay after the `padding` shorthand or it resets to 0.
 - Mock data in `fetchNui(..., mock)` only applies outside the game.
+- **A spread of drag handlers carries its own `style`.** `{...dragProps}` placed after a `style`
+  prop replaces it outright — this silently killed the Control Center's padding for a while. Spread
+  first, then `style={{ ...dragProps.style, ... }}`.
+- **Match the reference by measuring it**, not by eye. Read proportions off the screenshot as a
+  percentage of screen width and build to them; several rounds were lost adjusting sizes by feel
+  when the real error was the block's inset (12% of width, not 4%).
+- **Liquid Glass is refraction, not blur.** `os/glass/LiquidGlassFilters.tsx` drives
+  `feDisplacementMap` through `backdrop-filter: url(#...)`, which this CEF-class browser supports.
+  Blur past ~20px on a 400px screen erases what is behind the glass and it goes back to looking
+  like frosted plastic.
 
 ---
+
+## Adding an app
+
+The repeated task, so the whole checklist in one place:
+
+1. `typings/<app>.ts` — an events enum and the DTOs.
+2. Backend — **TS** (`apps/game/server/<app>/`, `apps/game/client/cl_<app>.ts`, imported in
+   `server.ts` / `client.ts`) or **Lua** (`lua/<app>/`, listed in `fxmanifest.lua`). Lua when the
+   feature leans on qbx helpers or oxmysql. Either way the NUI callback is `npwd:<app>:<action>`.
+3. UI in `apps/phone/src/apps/<app>/`, with browser mock data passed as `fetchNui`'s third argument.
+4. Icons: `icons/{ios,material,npwd_icons}/{app,svg}/<ID>.tsx`. For a game-specific app that means a
+   glyph in `icons/ios/glyphs.tsx` plus a 3-line `liquidIcon(...)` tile; for one with real artwork,
+   `appIcon('<file>')`.
+5. Locale key `APPS_<ID>` in `locale/en.json`, then register in `os/apps/config/apps.tsx`
+   (add `removable: true` + `storeDescription`/`storeSizeKb` to list it in the App Store).
 
 ## Remaining work
 
 1. **Music** — lb-phone's Music was escrowed and had no songs configured. `xsound` is installed
    (`[Scripts]/xsound`), so a Music app could play URLs with 3D positional audio. Needs a design decision.
 2. **Home** (housing; server has `qbx_properties`), **Crypto**, **InstaPic**, **Trendy**.
-   (App Store is done — see the Apps table above.)
-3. **Rewrite custom lb-phone apps natively**: `um_gigs` (Snarf / rydeme), `geocaching_phone`,
-   `noted_fitbit`, `noted_crimeapp`, `lonelymans`, `sk_streetkings`. Also re-point `jim_bridge`
-   (`GetEquippedPhoneNumber`/`SendMail`) and `ox_inventory`'s `UsePhoneItem` hook to NPWD.
-4. ~~Redo all app icons except BuckMe~~ — done; see the iOS icon set row above. Apps built from here on just need a gradient + glyph pair. Still open if wanted: iOS-style icon *appearance variants* (default / dark / clear / tinted), per Apple's HIG "Appearances" guidance of keeping an icon's core shape identical across variants.
-5. **Go live in game**: swap `ensure lb-phone` for `ensure npwd` in server.cfg, set
+3. **Finish Snarf / rydeme**: the Leaflet destination picker and the live driving HUD from
+   `[UM]/um_gigs/ui` are not ported (see the Apps table). Once npwd is live, **stop `um_gigs`** —
+   its net events are still named `um_gigs:*` here, so both running at once doubles every handler.
+4. **Rewrite the remaining custom lb-phone apps natively**: `geocaching_phone`, `noted_fitbit`,
+   `noted_crimeapp`, `lonelymans`, `sk_streetkings` (all under `[Scripts]/`). Also re-point
+   `jim_bridge` (`GetEquippedPhoneNumber`/`SendMail`) and `ox_inventory`'s `UsePhoneItem` hook to NPWD.
+5. Optional: iOS icon *appearance variants* (default / dark / clear / tinted), per Apple's HIG
+   "Appearances" — keep an icon's core shape identical across variants.
+6. **Go live in game**: swap `ensure lb-phone` for `ensure npwd` in server.cfg, stop `um_gigs`, set
    `NPWD_AUDIO_TOKEN`, then test money flows (BuckMe, valet, Services banking), Mail compat events,
-   Garage summon/lock, and Services notifications with real players.
+   Garage summon/lock, Services notifications, and a full Snarf delivery + rydeme ride with real players.
+
+## Known-imperfect, deliberately
+
+- **Control Center** is close to the reference but not pixel-exact (see its row above).
+- **Battery** in the lock screen widget row and Control Center is hardcoded 100% — there is no
+  battery model. The weather beside it is real.
+- Cosmetic-only Control Center toggles (no game hook): rotation lock, flashlight, low power,
+  nearby share, hotspot, bluetooth, screen mirroring.
+- `tsc` reports ~200 pre-existing errors in this fork, nearly all `t(...)` returning
+  `TFunctionResult` where a `ReactNode` is wanted. The build uses esbuild/Vite and does not
+  typecheck, so these are inherited noise — but it does mean `tsc` can't be used as a clean gate.
