@@ -43,8 +43,11 @@ export const HomeApp: React.FC = () => {
       {dockApps.length > 0 && (
         <div className="absolute bottom-4 left-4 right-4">
           <div className="liquid-glass flex items-center justify-around rounded-[30px] py-2 px-2">
+            {/* `flex` on the link, not just the icon: an inline-level child
+                sits on the text baseline, and the descender space under it
+                was pushing every dock icon ~7px above centre. */}
             {dockApps.map((app) => (
-              <Link to={app.path} key={app.id}>
+              <Link to={app.path} key={app.id} className="flex">
                 <AppIcon {...app} hideLabel />
               </Link>
             ))}
