@@ -5,7 +5,7 @@ import {
   Calculator,
   Camera,
   Cast,
-  ChevronRight,
+  ChevronsUpDown,
   Contrast,
   Flashlight,
   Lock,
@@ -49,6 +49,7 @@ import { CircleToggle } from './CircleToggle';
 import { GlassSlider } from './GlassSlider';
 import { WifiGlyph } from '@os/status-bar/components/StatusBarIcons';
 import { useSettings } from '../../../apps/settings/hooks/useSettings';
+import '../controlCenter.css';
 
 // Two panels behind one gesture, matching how a real gesture-nav phone splits
 // them: dragging down the left of the status bar gives Notification Center,
@@ -173,10 +174,7 @@ export const ControlCenter: React.FC = () => {
 
   return (
     <>
-      <div
-        className="absolute inset-0 z-[70] bg-black/40 backdrop-blur-xl"
-        onClick={() => setIsOpen(false)}
-      />
+      <div className="cc-backdrop absolute inset-0 z-[70]" onClick={() => setIsOpen(false)} />
       <div
         className="absolute inset-0 z-[71] flex flex-col px-4 pb-5 pt-11 text-white"
         {...dragProps}
@@ -211,12 +209,12 @@ export const ControlCenter: React.FC = () => {
 
         <div className="grid grid-cols-4 gap-2.5" style={{ gridAutoRows: '82px' }}>
           {/* Connectivity module */}
-          <div className="liquid-glass col-span-2 row-span-2 grid grid-cols-2 place-items-center rounded-[26px] p-2">
+          <div className="cc-module col-span-2 row-span-2 grid grid-cols-2 place-items-center rounded-[26px] p-2">
             <CircleToggle
-              icon={<Plane size={22} />}
+              icon={<Plane size={24} />}
               label="Airplane Mode"
               active={airplaneMode}
-              tone="orange"
+              tone="red"
               onClick={() => setAirplaneMode((v) => !v)}
             />
             <CircleToggle
@@ -243,16 +241,18 @@ export const ControlCenter: React.FC = () => {
           </div>
 
           {/* Now Playing */}
-          <div className="liquid-glass col-span-2 row-span-2 flex flex-col justify-between rounded-[26px] p-3">
+          <div className="cc-module col-span-2 row-span-2 flex flex-col justify-between rounded-[26px] p-3">
             <div className="flex items-start justify-between">
-              <div className="h-11 w-11 rounded-lg bg-white/20" />
-              <Cast size={16} className="text-white/70" />
+              <div className="h-12 w-12 rounded-[10px] bg-white/25" />
+              <span className="cc-circle-off flex h-7 w-7 items-center justify-center rounded-full">
+                <Cast size={14} />
+              </span>
             </div>
-            <div className="text-[13px] font-semibold">Not Playing</div>
-            <div className="flex items-center justify-between px-1 text-[#0a84ff]">
-              <SkipBack size={20} fill="currentColor" />
-              <Play size={20} fill="currentColor" />
-              <SkipForward size={20} fill="currentColor" />
+            <div className="text-[15px] font-semibold">Not Playing</div>
+            <div className="flex items-center justify-between px-2 text-[#0a84ff]">
+              <SkipBack size={22} fill="currentColor" />
+              <Play size={24} fill="currentColor" strokeWidth={0} />
+              <SkipForward size={22} fill="currentColor" />
             </div>
           </div>
 
@@ -285,7 +285,7 @@ export const ControlCenter: React.FC = () => {
               value={brightness}
               onChange={setBrightness}
               label="Brightness"
-              icon={<SunMedium size={22} />}
+              icon={<SunMedium size={24} className="text-[#ffb020]" />}
             />
           </div>
           <div className="row-span-2">
@@ -295,33 +295,31 @@ export const ControlCenter: React.FC = () => {
               value={settings.callVolume}
               onCommit={(v) => setSettings((prev) => ({ ...prev, callVolume: v }))}
               label="Volume"
-              icon={<Volume2 size={22} />}
+              icon={<Volume2 size={24} className="text-[#0a84ff]" />}
             />
           </div>
 
           <button
             type="button"
             onClick={() => setDoNotDisturb((v) => !v)}
-            className="liquid-glass col-span-2 flex items-center gap-2 rounded-[26px] px-2.5 text-left"
+            className="cc-module col-span-2 flex items-center gap-2.5 rounded-[26px] px-3 text-left"
           >
             <span
-              className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full ${
-                doNotDisturb ? 'bg-[#5e5ce6] text-white' : 'bg-white/20 text-white'
+              className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full ${
+                doNotDisturb ? 'bg-white text-[#5e5ce6]' : 'cc-circle-off text-white'
               }`}
             >
-              <Moon size={18} fill={doNotDisturb ? 'currentColor' : 'none'} />
+              <Moon size={20} fill="currentColor" strokeWidth={0} />
             </span>
-            <span className="flex-1 whitespace-nowrap text-[13px] font-semibold">
-              Do Not Disturb
-            </span>
-            <ChevronRight size={15} className="shrink-0 text-white/50" />
+            <span className="flex-1 text-[15px] font-semibold leading-[1.15]">Do Not Disturb</span>
+            <ChevronsUpDown size={15} className="shrink-0 text-white/60" />
           </button>
         </div>
 
         {/* Extra controls, on their own darker shelf like the second page of
             controls on a real phone. */}
-        <div className="mt-3 rounded-[28px] bg-black/35 p-3">
-          <div className="grid grid-cols-4 gap-y-3 place-items-center">
+        <div className="cc-shelf mt-3 rounded-[30px] p-3">
+          <div className="grid grid-cols-4 place-items-center gap-y-3">
             <CircleToggle
               icon={<BatteryLow size={20} />}
               label="Low Power Mode"

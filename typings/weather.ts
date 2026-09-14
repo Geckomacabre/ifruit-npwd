@@ -22,6 +22,9 @@ export interface WeatherData {
   weatherType: string;
   condition: WeatherCondition;
   isNight: boolean;
+  /** In-game clock, so the sky can track the server's day/night cycle. */
+  hour: number;
+  minute: number;
   temperature: number;
   feelsLike: number;
   high: number;

@@ -87,17 +87,15 @@ export const GlassSlider: React.FC<GlassSliderProps> = ({
         e.stopPropagation();
         start(e.touches[0].clientY);
       }}
-      className="liquid-glass relative h-full w-full overflow-hidden rounded-[26px]"
+      className="cc-slider relative h-full w-full overflow-hidden rounded-[26px]"
     >
       <div
-        className="absolute inset-x-0 bottom-0 bg-white"
+        className="cc-slider-fill absolute inset-x-0 bottom-0"
         style={{ height: `${shown}%`, transition: dragging ? 'none' : 'height 120ms' }}
       />
-      {/* White + difference blending inverts against whatever is behind it, so
-          the glyph reads dark on the white fill and light on the empty track. */}
-      <div className="absolute inset-x-0 bottom-3 flex justify-center text-white mix-blend-difference">
-        {icon}
-      </div>
+      {/* Glyph keeps its own color and sits in the filled zone, like iOS -- the
+          fill is white, so a saturated icon stays legible either way. */}
+      <div className="absolute inset-x-0 bottom-3 flex justify-center">{icon}</div>
     </div>
   );
 };

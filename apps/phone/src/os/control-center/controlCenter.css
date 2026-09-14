@@ -1,0 +1,69 @@
+/* Control Center surfaces. Deliberately NOT .liquid-glass: that class flips to
+   a dark tint under the phone's dark theme, but Control Center is a light
+   frosted layer over the wallpaper in every theme -- it takes its color from
+   the wallpaper behind it, not from the app theme. */
+
+/* Saturation stays near neutral on purpose: pushing it up tints every surface
+   with whatever the wallpaper is (a blue wallpaper turned the whole panel
+   blue), where iOS keeps Control Center a neutral gray frost. */
+.cc-backdrop {
+  background: rgba(116, 120, 128, 0.34);
+  -webkit-backdrop-filter: blur(34px) saturate(105%);
+  backdrop-filter: blur(34px) saturate(105%);
+}
+
+/* Module tile: airplane/wifi cluster, Now Playing, the Do Not Disturb pill. */
+.cc-module {
+  background: rgba(235, 236, 240, 0.22);
+  -webkit-backdrop-filter: blur(22px) saturate(110%);
+  backdrop-filter: blur(22px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 8px 26px rgba(0, 0, 0, 0.16);
+}
+
+/* The extra-controls shelf reads darker than the modules above it. */
+.cc-shelf {
+  background: rgba(20, 22, 28, 0.45);
+  -webkit-backdrop-filter: blur(22px) saturate(105%);
+  backdrop-filter: blur(22px) saturate(105%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Off-state for any round control. Slightly domed rather than flat fill. */
+.cc-circle-off {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.17) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* Off-state for a control standing on the wallpaper on its own, which needs
+   its own blur since there is no module behind it. */
+.cc-circle-glass {
+  background: rgba(235, 236, 240, 0.24);
+  -webkit-backdrop-filter: blur(22px) saturate(110%);
+  backdrop-filter: blur(22px) saturate(110%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 6px 18px rgba(0, 0, 0, 0.14);
+}
+
+/* Lit states get a top-light gradient so they read as domed glass buttons
+   rather than flat color chips. */
+.cc-circle-on {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.cc-slider {
+  background: rgba(235, 236, 240, 0.20);
+  -webkit-backdrop-filter: blur(22px) saturate(110%);
+  backdrop-filter: blur(22px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.cc-slider-fill {
+  background: linear-gradient(180deg, #ffffff 0%, #f2f2f5 100%);
+}

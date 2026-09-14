@@ -127,6 +127,8 @@ const buildWeather = (): WeatherData => {
 
   return {
     city: currentCity(),
+    hour,
+    minute: GetClockMinutes(),
     weatherType,
     condition,
     isNight: isNightHour(hour),
