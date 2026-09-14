@@ -6,7 +6,9 @@ export const mockState = (app: GigApp): GigState => ({
   app,
   rating: 4.6,
   hasJob: false,
-  onDuty: true,
+  // rydeme opens off duty, so the preview shows the passenger half -- a driver
+  // and a passenger are mutually exclusive and rydeme is mostly the latter.
+  onDuty: app === 'snarf',
   dispatchOnly: app === 'goober',
   warnThreshold: 4,
   riderMode: app === 'goober',

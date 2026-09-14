@@ -1670,6 +1670,18 @@ RegisterNUICallback('npwd:gigs:getMyWaypoint', function(_, cb)
     cb(resolveDestPoint(pos.x, pos.y, 'Your waypoint'))
 end)
 
+--- Static, client-side config the rider UI needs to draw itself: whether the
+--- AI tier exists at all and what it is called. Asked once when the app opens
+--- rather than folded into getLive, which runs every second and should only
+--- carry things that actually change.
+RegisterNUICallback('npwd:gigs:getRiderConfig', function(_, cb)
+    cb({
+        ok = true,
+        npcEnabled = Config.RiderMode.npc.enabled == true,
+        npcBrand = Config.RiderMode.npc.brand,
+    })
+end)
+
 RegisterNUICallback('npwd:gigs:quoteRide', function(data, cb)
     local res = lib.callback.await('um_gigs:server:quoteRide', false, {
         custom = data and data.custom,

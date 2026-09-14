@@ -21,11 +21,9 @@ export const IncomingFare: React.FC<IncomingFareProps> = ({
   onAccept,
   onDecline,
 }) => (
-  <div className="mb-3 rounded-2xl border-2 border-current/20 bg-white p-4 shadow-sm dark:bg-neutral-800">
+  <div className="border-current/20 mb-3 rounded-2xl border-2 bg-white p-4 shadow-sm dark:bg-neutral-800">
     <div className="flex items-baseline justify-between">
-      <span className="font-semibold">
-        {offer.playerRide ? 'Ride request' : offer.kindLabel}
-      </span>
+      <span className="font-semibold">{offer.playerRide ? 'Ride request' : offer.kindLabel}</span>
       <span className="text-lg font-bold">${offer.pay}</span>
     </div>
 

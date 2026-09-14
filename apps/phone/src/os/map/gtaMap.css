@@ -1,0 +1,57 @@
+.gta-map {
+  position: relative;
+  overflow: hidden;
+  background: #0b1b2b; /* ocean, so the frame never flashes white */
+  touch-action: none; /* the layer handles panning itself */
+}
+
+.gta-map-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  cursor: grab;
+  user-select: none;
+}
+
+.gta-map-layer:active {
+  cursor: grabbing;
+}
+
+.gta-map-pin {
+  position: absolute;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  line-height: 0;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 45%));
+}
+
+.gta-map-zoom {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gta-map-zoom button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 55%);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.gta-map-error {
+  display: grid;
+  height: 100%;
+  padding: 0 16px;
+  place-items: center;
+  color: rgb(255 255 255 / 65%);
+  font-size: 12px;
+  text-align: center;
+}

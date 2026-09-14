@@ -8,6 +8,7 @@ import { GigApp } from '@typings/gigs';
 import { useGigs } from '../useGigs';
 import { IncomingFare } from './IncomingFare';
 import { ActiveJob } from './ActiveJob';
+import { DriveHud } from './DriveHud';
 import { OfferList } from './OfferList';
 import { GigHistory } from './GigHistory';
 
@@ -57,7 +58,8 @@ export const GigShell: React.FC<GigShellProps> = ({
 
   return (
     <AppWrapper id={`${app}-app`}>
-      <div className="flex flex-1 flex-col overflow-hidden text-neutral-900 dark:text-neutral-100">
+      {/* relative: the rider's map picker covers the app from in here. */}
+      <div className="relative flex flex-1 flex-col overflow-hidden text-neutral-900 dark:text-neutral-100">
         <header className="flex items-end justify-between px-4 pb-2 pt-2">
           <h1 className="text-3xl font-bold">{title}</h1>
           <span className="flex items-center gap-1 text-sm font-semibold text-neutral-500">
@@ -124,6 +126,16 @@ export const GigShell: React.FC<GigShellProps> = ({
                   busy={busy}
                   onAccept={() => onAccept(state.incoming!.id)}
                   onDecline={() => gigs.decline()}
+                />
+              )}
+
+              {state.job && state.pos && state.target && (
+                <DriveHud
+                  pos={state.pos}
+                  target={state.target}
+                  speedMph={state.speedMph}
+                  speedLimit={state.speedLimit}
+                  overLimit={state.overLimit}
                 />
               )}
 
