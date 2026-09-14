@@ -1,50 +1,58 @@
-/* Control Center surfaces. Deliberately NOT .liquid-glass: that class flips to
-   a dark tint under the phone's dark theme, but Control Center is a light
-   frosted layer over the wallpaper in every theme -- it takes its color from
-   the wallpaper behind it, not from the app theme. */
+/* Control Center surfaces.
+ *
+ * Deliberately NOT .liquid-glass: that class flips to a dark tint under the
+ * phone's dark theme, but Control Center is a light layer over the wallpaper
+ * in every theme.
+ *
+ * The thing that makes this read as glass rather than frosted plastic is how
+ * MUCH gets through. On a 400px-wide screen a 30px+ blur destroys every trace
+ * of what is behind it and the panel turns into a flat gray sheet; the real
+ * one keeps the home screen's icons legible as soft colored blobs, and those
+ * colors carry through the modules themselves. So: modest blur, low tint, and
+ * saturation held near neutral (pushing it tints every surface with whatever
+ * the wallpaper happens to be).
+ */
 
-/* Saturation stays near neutral on purpose: pushing it up tints every surface
-   with whatever the wallpaper is (a blue wallpaper turned the whole panel
-   blue), where iOS keeps Control Center a neutral gray frost. */
 .cc-backdrop {
-  background: rgba(116, 120, 128, 0.34);
-  -webkit-backdrop-filter: blur(34px) saturate(105%);
-  backdrop-filter: blur(34px) saturate(105%);
+  background: rgba(42, 46, 54, 0.3);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  backdrop-filter: blur(14px) saturate(115%);
 }
 
-/* Module tile: airplane/wifi cluster, Now Playing, the Do Not Disturb pill. */
+/* Module tile: connectivity cluster, Now Playing, the Do Not Disturb pill. */
 .cc-module {
-  background: rgba(235, 236, 240, 0.22);
-  -webkit-backdrop-filter: blur(22px) saturate(110%);
-  backdrop-filter: blur(22px) saturate(110%);
+  background: rgba(235, 240, 250, 0.09);
+  -webkit-backdrop-filter: url(#lg-panel) saturate(130%);
+  backdrop-filter: url(#lg-panel) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 8px 26px rgba(0, 0, 0, 0.16);
 }
 
 /* The extra-controls shelf reads darker than the modules above it. */
 .cc-shelf {
-  background: rgba(20, 22, 28, 0.45);
-  -webkit-backdrop-filter: blur(22px) saturate(105%);
-  backdrop-filter: blur(22px) saturate(105%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 20, 26, 0.44);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* Off-state for any round control. Slightly domed rather than flat fill. */
+/* Off-state for a round control: a neutral gray disc you can still see the
+   wallpaper's color through, not a white chip. */
 .cc-circle-off {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.17) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  background: rgba(126, 132, 144, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 /* Off-state for a control standing on the wallpaper on its own, which needs
    its own blur since there is no module behind it. */
 .cc-circle-glass {
-  background: rgba(235, 236, 240, 0.24);
-  -webkit-backdrop-filter: blur(22px) saturate(110%);
-  backdrop-filter: blur(22px) saturate(110%);
+  background: rgba(126, 132, 144, 0.34);
+  -webkit-backdrop-filter: url(#lg-control) saturate(130%);
+  backdrop-filter: url(#lg-control) saturate(130%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
     0 6px 18px rgba(0, 0, 0, 0.14);
 }
 
@@ -57,13 +65,13 @@
 }
 
 .cc-slider {
-  background: rgba(235, 236, 240, 0.20);
-  -webkit-backdrop-filter: blur(22px) saturate(110%);
-  backdrop-filter: blur(22px) saturate(110%);
+  background: rgba(126, 132, 144, 0.26);
+  -webkit-backdrop-filter: url(#lg-track) saturate(130%);
+  backdrop-filter: url(#lg-track) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .cc-slider-fill {
-  background: linear-gradient(180deg, #ffffff 0%, #f2f2f5 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f7 100%);
 }

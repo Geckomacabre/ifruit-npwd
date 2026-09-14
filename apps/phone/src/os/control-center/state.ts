@@ -43,6 +43,10 @@ export const controlCenterState = {
     key: 'controlCenterRotationLock',
     default: false,
   }),
+  screenMirroring: atom<boolean>({
+    key: 'controlCenterScreenMirroring',
+    default: false,
+  }),
   lowPowerMode: atom<boolean>({
     key: 'controlCenterLowPowerMode',
     default: false,
@@ -68,6 +72,7 @@ export const useBluetoothEnabled = () => useRecoilState(controlCenterState.bluet
 export const useNearbyEnabled = () => useRecoilState(controlCenterState.nearbyEnabled);
 export const useHotspotEnabled = () => useRecoilState(controlCenterState.hotspotEnabled);
 export const useRotationLock = () => useRecoilState(controlCenterState.rotationLock);
+export const useScreenMirroring = () => useRecoilState(controlCenterState.screenMirroring);
 export const useLowPowerMode = () => useRecoilState(controlCenterState.lowPowerMode);
 export const useFlashlight = () => useRecoilState(controlCenterState.flashlight);
 export const useBrightness = () => useRecoilState(controlCenterState.brightness);

@@ -43,6 +43,7 @@ import { useSystemNotificationListener } from '@os/new-notifications/components/
 import { useNotificationBarListener } from '@os/new-notifications/useNotificationBarListener';
 import { useClockService } from './apps/clock/hooks/useClockService';
 import { applyGlassTokens, DEFAULT_GLASS_FROST } from '@os/glass/glassTokens';
+import { LiquidGlassFilters } from '@os/glass/LiquidGlassFilters';
 
 interface PhoneProps {
   notiRefCB: Dispatch<SetStateAction<HTMLElement>>;
@@ -101,6 +102,7 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
       <TopLevelErrorComponent>
         <WindowSnackbar />
         <PhoneWrapper>
+          <LiquidGlassFilters />
           <StatusBar />
           <PullDownHandle />
           <div className="PhoneAppContainer" id="notificationAppContainer" ref={notiRefCB}>

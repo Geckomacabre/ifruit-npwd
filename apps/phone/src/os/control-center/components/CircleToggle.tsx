@@ -27,9 +27,9 @@ interface CircleToggleProps {
 }
 
 const SIZE_CLASS = {
-  sm: 'h-[34px] w-[34px]',
-  md: 'h-[56px] w-[56px]',
-  lg: 'h-[62px] w-[62px]',
+  sm: 'h-[32px] w-[32px]',
+  md: 'h-[66px] w-[66px]',
+  lg: 'h-[68px] w-[68px]',
 };
 
 export const CircleToggle: React.FC<CircleToggleProps> = ({

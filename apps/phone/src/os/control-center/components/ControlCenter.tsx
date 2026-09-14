@@ -14,6 +14,7 @@ import {
   Plane,
   Play,
   Power,
+  MonitorSmartphone,
   Radio,
   Settings as SettingsGlyph,
   Share2,
@@ -37,6 +38,7 @@ import {
   useNearbyEnabled,
   useHotspotEnabled,
   useRotationLock,
+  useScreenMirroring,
   useLowPowerMode,
   useFlashlight,
   useBrightness,
@@ -76,6 +78,7 @@ export const ControlCenter: React.FC = () => {
   const [nearby, setNearby] = useNearbyEnabled();
   const [hotspot, setHotspot] = useHotspotEnabled();
   const [rotationLock, setRotationLock] = useRotationLock();
+  const [screenMirroring, setScreenMirroring] = useScreenMirroring();
   const [lowPower, setLowPower] = useLowPowerMode();
   const [flashlight, setFlashlight] = useFlashlight();
   const [brightness, setBrightness] = useBrightness();
@@ -204,86 +207,118 @@ export const ControlCenter: React.FC = () => {
         {...dragProps}
       >
         <div className="mb-2 flex items-center justify-between">
-          <CircleToggle
-            icon={<SettingsGlyph size={19} />}
-            label="Settings"
-            size="sm"
+          <button
+            type="button"
+            aria-label="Settings"
             onClick={() => go('/settings')}
-          />
-          <CircleToggle
-            icon={<Power size={19} />}
-            label="Lock"
-            size="sm"
+            className="cc-circle-glass flex h-[42px] w-[42px] items-center justify-center rounded-full text-white"
+          >
+            <SettingsGlyph size={22} />
+          </button>
+          <button
+            type="button"
+            aria-label="Lock"
             onClick={() => {
               setIsOpen(false);
               setLocked(true);
             }}
-          />
+            className="cc-circle-glass flex h-[42px] w-[42px] items-center justify-center rounded-full text-white"
+          >
+            <Power size={22} />
+          </button>
         </div>
 
-        <div className="mb-3 flex items-center justify-between px-1 text-[13px] font-semibold text-white/70">
+        <div className="mb-3 flex items-center justify-between px-1 text-[16px] font-semibold text-white/85">
           <span className="flex items-center gap-1.5">
             {airplaneMode ? 'Airplane Mode' : cellular ? 'iFruit · LTE' : 'No Service'}
           </span>
           <span className="flex items-center gap-1.5">
-            {doNotDisturb && <Moon size={12} fill="currentColor" />}
+            {doNotDisturb && <Moon size={14} fill="currentColor" strokeWidth={0} />}
             {lowPower ? 'Low Power' : '100%'}
           </span>
         </div>
 
-        <div className="grid grid-cols-4 gap-2.5" style={{ gridAutoRows: '82px' }}>
-          {/* Connectivity module */}
-          <div className="cc-module col-span-2 row-span-2 grid grid-cols-2 place-items-center rounded-[26px] p-2">
+        <div className="grid grid-cols-4 gap-2.5" style={{ gridAutoRows: '88px' }}>
+          {/* Connectivity module: three large controls plus a cluster of the
+              secondary radios, the way iOS lays out the expanded version. */}
+          <div className="cc-module col-span-2 row-span-2 grid grid-cols-2 place-items-center rounded-[30px] p-1.5">
             <CircleToggle
-              icon={<Plane size={24} />}
+              icon={<Plane size={27} />}
               label="Airplane Mode"
               active={airplaneMode}
               tone="red"
               onClick={() => setAirplaneMode((v) => !v)}
             />
             <CircleToggle
-              icon={<Signal size={20} />}
-              label="Cellular Data"
-              active={cellular && !airplaneMode}
-              tone="green"
-              onClick={() => setCellular((v) => !v)}
+              icon={<Share2 size={25} />}
+              label="Nearby Share"
+              active={nearby}
+              tone="blue"
+              onClick={() => setNearby((v) => !v)}
             />
             <CircleToggle
-              icon={<WifiGlyph className="h-[17px] w-[23px]" />}
+              icon={<WifiGlyph className="h-[21px] w-[28px]" />}
               label="Wi-Fi"
               active={wifiEnabled && !airplaneMode}
               tone="blue"
               onClick={() => setWifiEnabled((v) => !v)}
             />
-            <CircleToggle
-              icon={<Bluetooth size={20} />}
-              label="Bluetooth"
-              active={bluetooth && !airplaneMode}
-              tone="blue"
-              onClick={() => setBluetooth((v) => !v)}
-            />
+            <div className="grid grid-cols-2 gap-1.5">
+              <CircleToggle
+                icon={<Signal size={15} />}
+                label="Cellular Data"
+                size="sm"
+                active={cellular && !airplaneMode}
+                tone="green"
+                onClick={() => setCellular((v) => !v)}
+              />
+              <CircleToggle
+                icon={<Bluetooth size={15} />}
+                label="Bluetooth"
+                size="sm"
+                active={bluetooth && !airplaneMode}
+                tone="blue"
+                onClick={() => setBluetooth((v) => !v)}
+              />
+              <CircleToggle
+                icon={<Radio size={15} />}
+                label="Personal Hotspot"
+                size="sm"
+                active={hotspot}
+                tone="green"
+                onClick={() => setHotspot((v) => !v)}
+              />
+              <CircleToggle
+                icon={<MonitorSmartphone size={15} />}
+                label="Screen Mirroring"
+                size="sm"
+                active={screenMirroring}
+                tone="blue"
+                onClick={() => setScreenMirroring((v) => !v)}
+              />
+            </div>
           </div>
 
           {/* Now Playing */}
           <div className="cc-module col-span-2 row-span-2 flex flex-col justify-between rounded-[26px] p-3">
             <div className="flex items-start justify-between">
-              <div className="h-12 w-12 rounded-[10px] bg-white/25" />
-              <span className="cc-circle-off flex h-7 w-7 items-center justify-center rounded-full">
-                <Cast size={14} />
+              <div className="h-14 w-14 rounded-xl bg-white/25" />
+              <span className="cc-circle-off flex h-8 w-8 items-center justify-center rounded-full">
+                <Cast size={16} />
               </span>
             </div>
-            <div className="text-[15px] font-semibold">Not Playing</div>
+            <div className="text-[19px] font-semibold">Not Playing</div>
             <div className="flex items-center justify-between px-2 text-[#0a84ff]">
-              <SkipBack size={22} fill="currentColor" />
-              <Play size={24} fill="currentColor" strokeWidth={0} />
-              <SkipForward size={22} fill="currentColor" />
+              <SkipBack size={26} fill="currentColor" />
+              <Play size={28} fill="currentColor" strokeWidth={0} />
+              <SkipForward size={26} fill="currentColor" />
             </div>
           </div>
 
           {/* Rotation lock + flashlight, then Do Not Disturb underneath */}
           <div className="flex items-center justify-center">
             <CircleToggle
-              icon={<Lock size={22} />}
+              icon={<Lock size={25} />}
               label="Rotation Lock"
               size="lg"
               variant="glass"
@@ -294,7 +329,7 @@ export const ControlCenter: React.FC = () => {
           </div>
           <div className="flex items-center justify-center">
             <CircleToggle
-              icon={<Flashlight size={22} />}
+              icon={<Flashlight size={25} />}
               label="Flashlight"
               size="lg"
               variant="glass"
@@ -309,7 +344,7 @@ export const ControlCenter: React.FC = () => {
               value={brightness}
               onChange={setBrightness}
               label="Brightness"
-              icon={<SunMedium size={24} className="text-[#ffb020]" />}
+              icon={<SunMedium size={28} className="text-[#ffb020]" />}
             />
           </div>
           <div className="row-span-2">
@@ -319,7 +354,7 @@ export const ControlCenter: React.FC = () => {
               value={settings.callVolume}
               onCommit={(v) => setSettings((prev) => ({ ...prev, callVolume: v }))}
               label="Volume"
-              icon={<Volume2 size={24} className="text-[#0a84ff]" />}
+              icon={<Volume2 size={28} className="text-[#0a84ff]" />}
             />
           </div>
 
@@ -329,58 +364,58 @@ export const ControlCenter: React.FC = () => {
             className="cc-module col-span-2 flex items-center gap-2.5 rounded-[26px] px-3 text-left"
           >
             <span
-              className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full ${
+              className={`flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full ${
                 doNotDisturb ? 'bg-white text-[#5e5ce6]' : 'cc-circle-off text-white'
               }`}
             >
-              <Moon size={20} fill="currentColor" strokeWidth={0} />
+              <Moon size={25} fill="currentColor" strokeWidth={0} />
             </span>
-            <span className="flex-1 text-[15px] font-semibold leading-[1.15]">Do Not Disturb</span>
-            <ChevronsUpDown size={15} className="shrink-0 text-white/60" />
+            <span className="flex-1 text-[18px] font-semibold leading-[1.12]">Do Not Disturb</span>
+            <ChevronsUpDown size={17} className="shrink-0 text-white/60" />
           </button>
         </div>
 
         {/* Extra controls, on their own darker shelf like the second page of
             controls on a real phone. */}
-        <div className="cc-shelf mt-3 rounded-[30px] p-3">
-          <div className="grid grid-cols-4 place-items-center gap-y-3">
+        <div className="cc-shelf mt-3 rounded-[32px] p-3.5">
+          <div className="grid grid-cols-4 place-items-center gap-y-3.5">
             <CircleToggle
-              icon={<BatteryLow size={20} />}
+              icon={<BatteryLow size={24} />}
               label="Low Power Mode"
               active={lowPower}
               tone="yellow"
               onClick={() => setLowPower((v) => !v)}
             />
             <CircleToggle
-              icon={<Contrast size={20} />}
+              icon={<Contrast size={24} />}
               label="Appearance"
               active={!isDark}
               tone="white"
               onClick={toggleTheme}
             />
             <CircleToggle
-              icon={<Share2 size={19} />}
+              icon={<Share2 size={23} />}
               label="Nearby Share"
               active={nearby}
               tone="blue"
               onClick={() => setNearby((v) => !v)}
             />
             <CircleToggle
-              icon={<Radio size={19} />}
+              icon={<Radio size={23} />}
               label="Personal Hotspot"
               active={hotspot}
               tone="green"
               onClick={() => setHotspot((v) => !v)}
             />
-            <CircleToggle icon={<Timer size={20} />} label="Timer" onClick={() => go('/clock/timer')} />
-            <CircleToggle icon={<Camera size={20} />} label="Camera" onClick={() => go('/camera')} />
+            <CircleToggle icon={<Timer size={24} />} label="Timer" onClick={() => go('/clock/timer')} />
+            <CircleToggle icon={<Camera size={24} />} label="Camera" onClick={() => go('/camera')} />
             <CircleToggle
-              icon={<Calculator size={20} />}
+              icon={<Calculator size={24} />}
               label="Calculator"
               onClick={() => go('/calculator')}
             />
             <CircleToggle
-              icon={<Mic size={20} />}
+              icon={<Mic size={24} />}
               label="Voice Memos"
               onClick={() => go('/voicememos')}
             />

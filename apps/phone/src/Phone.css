@@ -164,12 +164,16 @@
   --glass-edge: 0.335;
 }
 
+/* url(#lg-panel) is the refraction pass (see LiquidGlassFilters.tsx) -- it
+   bends the content behind the surface before the frost blur is applied over
+   it, which is the difference between glass and frosted plastic. The blur
+   still comes from the Settings frost slider. */
 .liquid-glass {
   position: relative;
   isolation: isolate;
   background: var(--glass-tint-light);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: url(#lg-panel) blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: url(#lg-panel) blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid rgba(255, 255, 255, var(--glass-edge));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, var(--glass-highlight)),
