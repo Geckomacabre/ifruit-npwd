@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { BookGlyph } from '../glyphs';
 
-export default iosGlyphTile(BookOpen, '#fbbf24', '#d97706');
+export default liquidIcon('PAGES', ['#ffc85a', '#f09000'], BookGlyph);

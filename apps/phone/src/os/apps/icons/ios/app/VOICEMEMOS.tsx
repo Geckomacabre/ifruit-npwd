@@ -1,4 +1,4 @@
-import { Mic } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { WaveformGlyph } from '../glyphs';
 
-export default iosGlyphTile(Mic, '#3f3f46', '#09090b');
+export default liquidIcon('VOICEMEMOS', ['#565b64', '#15171c'], WaveformGlyph, { glyphColor: '#ff4a3d' });

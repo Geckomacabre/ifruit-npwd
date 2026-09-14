@@ -1,4 +1,4 @@
-import { Megaphone } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { MegaphoneGlyph } from '../glyphs';
 
-export default iosGlyphTile(Megaphone, '#38bdf8', '#0369a1');
+export default liquidIcon('TWITTER', ['#63c8ff', '#0b8ae0'], MegaphoneGlyph);

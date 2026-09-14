@@ -1,4 +1,4 @@
-import { Car } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { CarGlyph } from '../glyphs';
 
-export default iosGlyphTile(Car, '#fb923c', '#ea580c');
+export default liquidIcon('GARAGE', ['#ffa457', '#f26a12'], CarGlyph);

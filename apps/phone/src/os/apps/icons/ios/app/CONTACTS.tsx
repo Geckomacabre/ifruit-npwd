@@ -1,4 +1,4 @@
-import { UserRound } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { ContactsGlyph } from '../glyphs';
 
-export default iosGlyphTile(UserRound, '#a3a3a3', '#6b6b6b');
+export default liquidIcon('CONTACTS', ['#b9c0cc', '#6d7683'], ContactsGlyph);

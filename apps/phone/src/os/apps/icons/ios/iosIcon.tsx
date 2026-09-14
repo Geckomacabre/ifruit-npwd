@@ -4,21 +4,8 @@ import { LucideIcon } from 'lucide-react';
 
 const TILE_RADIUS = '22%';
 
-// Home-screen icon from the iOS 18 set (media/icons/ios18, MIT, SysAdminDoc/iOSIconPack).
-export const iosImageIcon = (file: string) => {
-  const IosImageIcon = (props: SvgIconProps) => (
-    <img
-      src={`media/icons/ios18/${file}.png`}
-      alt=""
-      draggable={false}
-      className={props.className}
-      style={{ borderRadius: TILE_RADIUS, objectFit: 'cover' }}
-    />
-  );
-  return IosImageIcon;
-};
-
-// For apps the pack has no artwork for: a glyph on an iOS-style gradient tile.
+// Glyph on a gradient tile. The iOS icon set itself now builds its home-screen
+// tiles in liquidGlass.tsx; this is what the other icon sets still use.
 export const iosGlyphTile = (Glyph: LucideIcon, from: string, to: string) => {
   const IosGlyphTile = (props: SvgIconProps) => (
     <div

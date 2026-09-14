@@ -1,3 +1,4 @@
-import { iosImageIcon } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { NotesGlyph } from '../glyphs';
 
-export default iosImageIcon('notes');
+export default liquidIcon('NOTES', ['#ffe173', '#f2b007'], NotesGlyph);

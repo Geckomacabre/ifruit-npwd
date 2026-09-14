@@ -1,4 +1,4 @@
-import { Box } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { CubeGlyph } from '../glyphs';
 
-export default iosGlyphTile(Box, '#60a5fa', '#2563eb');
+export default liquidIcon('EXAMPLE', ['#8a97ff', '#4a58d8'], CubeGlyph);

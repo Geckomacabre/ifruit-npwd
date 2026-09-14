@@ -1,4 +1,4 @@
-import { MessagesSquare } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { TerminalGlyph } from '../glyphs';
 
-export default iosGlyphTile(MessagesSquare, '#3f3f46', '#09090b');
+export default liquidIcon('DARKCHAT', ['#5d636e', '#23262c'], TerminalGlyph, { glyphColor: '#3ddc84' });

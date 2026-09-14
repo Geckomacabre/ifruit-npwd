@@ -1,3 +1,4 @@
-import { iosImageIcon } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { CalculatorGlyph } from '../glyphs';
 
-export default iosImageIcon('calculator');
+export default liquidIcon('CALCULATOR', ['#868b94', '#2f333a'], CalculatorGlyph);

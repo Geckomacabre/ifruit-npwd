@@ -1,4 +1,4 @@
-import { Briefcase } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { BriefcaseGlyph } from '../glyphs';
 
-export default iosGlyphTile(Briefcase, '#38bdf8', '#0284c7');
+export default liquidIcon('SERVICES', ['#55d6c9', '#0f9c8f'], BriefcaseGlyph);

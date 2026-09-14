@@ -1,4 +1,4 @@
-import { Flame } from 'lucide-react';
-import { iosGlyphTile } from '../iosIcon';
+import { liquidIcon } from '../liquidGlass';
+import { FlameGlyph } from '../glyphs';
 
-export default iosGlyphTile(Flame, '#ff6b6b', '#e11d48');
+export default liquidIcon('MATCH', ['#ff7794', '#ea1a4c'], FlameGlyph);
