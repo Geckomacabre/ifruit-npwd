@@ -51,6 +51,25 @@ interface GlassFilterProps {
   dispersion?: number;
 }
 
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
+
+// One shape's scale/dispersion/blur across the 0 (glossy) - 1 (frosted) frost
+// range. Glossy glass bends light sharply and splits it cleanly at the edge;
+// frosted glass diffuses both away as part of the same physical process that
+// thickens the blur -- so all three move together off the Settings slider,
+// not just blur.
+interface FrostRange {
+  scale: [number, number];
+  dispersion: [number, number];
+  blur: [number, number];
+}
+
+const at = (range: FrostRange, t: number) => ({
+  scale: lerp(range.scale[0], range.scale[1], t),
+  dispersion: lerp(range.dispersion[0], range.dispersion[1], t),
+  blur: lerp(range.blur[0], range.blur[1], t),
+});
+
 const GlassFilter: React.FC<GlassFilterProps> = ({ id, inset, scale, blur, dispersion = 0 }) => (
   <filter id={id} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
     <feImage href={bevelMap(inset)} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
@@ -76,19 +95,37 @@ const GlassFilter: React.FC<GlassFilterProps> = ({ id, inset, scale, blur, dispe
   </filter>
 );
 
+// Big panels: a wide, soft bevel.
+const PANEL: FrostRange = { scale: [32, 20], dispersion: [4, 1], blur: [1, 4] };
+// Round controls and pills: the bevel has to reach further in proportionally,
+// and bend harder, because they are small.
+const CONTROL: FrostRange = { scale: [20, 12], dispersion: [3, 0.5], blur: [0.5, 2] };
+// The sliders' empty track: strongest bend, so the wallpaper visibly warps
+// through the glass even when the rest of the phone has frosted over.
+const TRACK: FrostRange = { scale: [28, 16], dispersion: [3.5, 0.8], blur: [0.3, 1.5] };
+
+interface LiquidGlassFiltersProps {
+  /** 0 (glossy) - 100 (frosted), from the Settings > Liquid Glass slider. */
+  frost?: number;
+}
+
 // Mounted once, near the root of the phone. The filters are referenced by id
-// from controlCenter.css, so they have to exist in the same document.
-export const LiquidGlassFilters: React.FC = () => (
-  <svg width="0" height="0" aria-hidden style={{ position: 'absolute', pointerEvents: 'none' }}>
-    <defs>
-      {/* Big panels: a wide, soft bevel. */}
-      <GlassFilter id="lg-panel" inset={0.22} scale={26} blur={2} dispersion={3} />
-      {/* Round controls and pills: the bevel has to reach further in
-          proportionally, and bend harder, because they are small. */}
-      <GlassFilter id="lg-control" inset={0.34} scale={16} blur={1} dispersion={2} />
-      {/* The sliders' empty track: strongest bend, no blur, so the wallpaper
-          visibly warps through the glass. */}
-      <GlassFilter id="lg-track" inset={0.3} scale={22} blur={0.6} dispersion={2.5} />
-    </defs>
-  </svg>
-);
+// from controlCenter.css, so they have to exist in the same document. Kept
+// reactive to `frost` so the bend and chromatic split -- not just blur/tint --
+// respond to the slider, the same physical change happening at every scale.
+export const LiquidGlassFilters: React.FC<LiquidGlassFiltersProps> = ({ frost = 0 }) => {
+  const t = Math.max(0, Math.min(100, frost)) / 100;
+  const panel = at(PANEL, t);
+  const control = at(CONTROL, t);
+  const track = at(TRACK, t);
+
+  return (
+    <svg width="0" height="0" aria-hidden style={{ position: 'absolute', pointerEvents: 'none' }}>
+      <defs>
+        <GlassFilter id="lg-panel" inset={0.22} {...panel} />
+        <GlassFilter id="lg-control" inset={0.34} {...control} />
+        <GlassFilter id="lg-track" inset={0.3} {...track} />
+      </defs>
+    </svg>
+  );
+};

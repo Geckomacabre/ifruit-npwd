@@ -162,6 +162,10 @@
   --glass-highlight: 0.459;
   --glass-sheen: 0.204;
   --glass-edge: 0.335;
+  /* A liquid surface overshoots slightly before settling rather than easing
+     straight to rest -- used for anything that "snaps" on release: sliders,
+     pressed controls, drag handles. */
+  --glass-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* url(#lg-panel) is the refraction pass (see LiquidGlassFilters.tsx) -- it

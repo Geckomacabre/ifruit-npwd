@@ -91,7 +91,7 @@ export const GlassSlider: React.FC<GlassSliderProps> = ({
     >
       <div
         className="cc-slider-fill absolute inset-x-0 bottom-0"
-        style={{ height: `${shown}%`, transition: dragging ? 'none' : 'height 120ms' }}
+        style={{ height: `${shown}%`, transition: dragging ? 'none' : 'height 320ms var(--glass-spring)' }}
       />
       {/* Glyph keeps its own color and sits in the filled zone, like iOS -- the
           fill is white, so a saturated icon stays legible either way. */}

@@ -1,53 +1,47 @@
 import React, { useContext } from 'react';
-import { Box, Button, Grid } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
 import { DialInputCtx } from '../context/InputContext';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  gridItem: {
-    fontSize: theme.typography.h5.fontSize,
-    padding: theme.spacing(2),
-  },
-}));
+// Real iOS keypad: 12 circular keys (1-9, *, 0, #), each with its letter
+// group in small caps underneath -- 0 gets a small "+" instead of letters,
+// * and # get nothing. The old grid had a 13th "-" key and mapped * to
+// clear-all / # to backspace, neither of which exist on a real dial pad --
+// every key here just appends its own character.
+const KEYS: { digit: string; sub?: string }[] = [
+  { digit: '1' },
+  { digit: '2', sub: 'ABC' },
+  { digit: '3', sub: 'DEF' },
+  { digit: '4', sub: 'GHI' },
+  { digit: '5', sub: 'JKL' },
+  { digit: '6', sub: 'MNO' },
+  { digit: '7', sub: 'PQRS' },
+  { digit: '8', sub: 'TUV' },
+  { digit: '9', sub: 'WXYZ' },
+  { digit: '*' },
+  { digit: '0', sub: '+' },
+  { digit: '#' },
+];
 
-interface ButtonItemProps {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  label: string | number;
-}
-
-const ButtonItem: React.FC<ButtonItemProps> = ({ label, onClick }) => {
-  const classes = useStyles();
-  return (
-    <Grid key={label} item xs={4}>
-      <Button fullWidth size="large" className={classes.gridItem} onClick={onClick}>
-        {label}
-      </Button>
-    </Grid>
-  );
-};
-
-export const DialGrid = () => {
-  const { add, removeOne, clear } = useContext(DialInputCtx);
+export const DialGrid: React.FC = () => {
+  const { add } = useContext(DialInputCtx);
 
   return (
-    <Box height="100%">
-      <Grid container justifyContent="space-around">
-        <ButtonItem label={1} onClick={() => add(1)} />
-        <ButtonItem label={2} onClick={() => add(2)} />
-        <ButtonItem label={3} onClick={() => add(3)} />
-        <ButtonItem label={4} onClick={() => add(4)} />
-        <ButtonItem label={5} onClick={() => add(5)} />
-        <ButtonItem label={6} onClick={() => add(6)} />
-        <ButtonItem label={7} onClick={() => add(7)} />
-        <ButtonItem label={8} onClick={() => add(8)} />
-        <ButtonItem label={9} onClick={() => add(9)} />
-        <ButtonItem label="*" onClick={clear} />
-        <ButtonItem label={0} onClick={() => add(0)} />
-        <ButtonItem label="#" onClick={removeOne} />
-        <ButtonItem label="-" onClick={() => add('-')} />
-      </Grid>
-    </Box>
+    // w-full is load-bearing: a bare grid inside a flex column sizes to its
+    // own content, not the available width, so the three columns clustered
+    // together in a narrow strip instead of spreading across the screen the
+    // way a real dial pad does.
+    <div className="grid w-full grid-cols-3 justify-items-center gap-y-5 px-8">
+      {KEYS.map(({ digit, sub }) => (
+        <button
+          key={digit}
+          type="button"
+          onClick={() => add(digit)}
+          className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-neutral-800 text-white active:bg-neutral-700"
+        >
+          <span className="text-[32px] leading-none">{digit}</span>
+          {sub && <span className="mt-1 text-[11px] tracking-[2px] text-neutral-300">{sub}</span>}
+        </button>
+      ))}
+    </div>
   );
 };
 

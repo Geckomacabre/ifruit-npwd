@@ -1,57 +1,45 @@
-import React, { useState } from 'react';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import PhoneIcon from '@mui/icons-material/Phone';
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from '@mui/icons-material/History';
-import { useTranslation } from 'react-i18next';
-import { Contact, History, Phone } from 'lucide-react';
+import { History, Phone, Contact } from 'lucide-react';
+import { cn } from '@utils/css';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-  icon: {
-    color: theme.palette.primary.main,
-  },
-}));
+// Matches the floating pill tab bar established by Clock/Alarms
+// (liquid-glass-bar) rather than the plain full-width MUI BottomNavigation
+// this used to be -- real iOS labels these Recents/Keypad/Contacts, not
+// History/Dial/Contacts.
+const TABS = [
+  { path: '/phone', label: 'Recents', Icon: History, exact: true },
+  { path: '/phone/dial', label: 'Keypad', Icon: Phone, exact: false },
+  { path: '/phone/contacts', label: 'Contacts', Icon: Contact, exact: false },
+];
 
 const DialerNavBar: React.FC = () => {
-  const classes = useStyles();
   const { pathname } = useLocation();
-  const [page, setPage] = useState(pathname);
-  const [t] = useTranslation();
-
-  const handleChange = (_e, newPage) => {
-    setPage(newPage);
-  };
 
   return (
-    <BottomNavigation value={page} onChange={handleChange} showLabels className={classes.root}>
-      <BottomNavigationAction
-        value="/phone"
-        component={NavLink}
-        icon={<History />}
-        to="/phone"
-      />
-      <BottomNavigationAction
-        value="/phone/dial"
-        color="secondary"
-        component={NavLink}
-        icon={<Phone />}
-        to="/phone/dial"
-      />
-      <BottomNavigationAction
-        value="/phone/contacts"
-        color="secondary"
-        component={NavLink}
-        icon={<Contact />}
-        to="/phone/contacts"
-      />
-    </BottomNavigation>
+    <nav className="liquid-glass liquid-glass-dark liquid-glass-bar flex pb-6 pt-2">
+      {TABS.map(({ path, label, Icon, exact }) => {
+        const active = exact ? pathname === path : pathname.startsWith(path);
+        return (
+          <NavLink
+            key={path}
+            to={path}
+            className={cn(
+              'flex flex-1 flex-col items-center gap-1 text-[11px]',
+              active ? 'text-blue-500' : 'text-neutral-500',
+            )}
+          >
+            {/* Real iOS puts a dark capsule behind only the selected tab's
+                icon -- the label alone changing color (Clock's treatment)
+                isn't how the Phone app itself does it. */}
+            <span className={cn('rounded-full px-3 py-1', active && 'bg-white/10')}>
+              <Icon size={22} />
+            </span>
+            {label}
+          </NavLink>
+        );
+      })}
+    </nav>
   );
 };
 

@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { CoinGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('CRYPTO', ['#f7c948', '#e08a00'], CoinGlyph);
+export default appIcon('stocks');

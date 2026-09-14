@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { TerminalGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('DARKCHAT', ['#5d636e', '#23262c'], TerminalGlyph, { glyphColor: '#3ddc84' });
+export default appIcon('terminal');

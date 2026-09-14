@@ -4,11 +4,54 @@ import { LucideIcon } from 'lucide-react';
 
 const TILE_RADIUS = '22%';
 
-// Home-screen artwork from media/icons/appicons. The PNGs already carry their
-// own squircle and transparent corners, so this only adds the floor shadow the
-// tile would otherwise be missing. Apps with no artwork fall back to a
-// generated Liquid Glass tile (liquidGlass.tsx).
-export const appIcon = (file: string) => {
+// Home-screen artwork from media/icons/appicons. These PNGs already carry
+// their own squircle, margin and shadow falloff, so this only adds the floor
+// shadow the tile would otherwise be missing.
+//
+// A few older assets (camera, heart) predate that pack and were exported
+// filling their canvas edge-to-edge with no margin at all, so they render
+// visibly larger than everything else at the same tile size. `matchMask`
+// clips them against squircle-mask.png -- the real pack's own alpha shape,
+// lifted directly from one of its PNGs -- via an SVG mask (the same
+// technique liquidGlass.tsx uses), not CSS mask-image on a plain <img>,
+// which several Chromium builds render unreliably on replaced elements.
+export const appIcon = (file: string, options: { matchMask?: boolean } = {}) => {
+  const { matchMask = false } = options;
+
+  if (matchMask) {
+    const AppMaskedIcon = (props: SvgIconProps) => (
+      <svg
+        viewBox="0 0 100 100"
+        className={props.className}
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.34))', overflow: 'visible' }}
+      >
+        <defs>
+          <mask id={`ai-mask-${file}`} x="0" y="0" width="100" height="100" maskUnits="userSpaceOnUse">
+            <image
+              href="media/icons/squircle-mask.png"
+              x="0"
+              y="0"
+              width="100"
+              height="100"
+              preserveAspectRatio="none"
+            />
+          </mask>
+        </defs>
+        <image
+          href={`media/icons/appicons/${file}.png`}
+          x="0"
+          y="0"
+          width="100"
+          height="100"
+          preserveAspectRatio="none"
+          mask={`url(#ai-mask-${file})`}
+        />
+      </svg>
+    );
+    return AppMaskedIcon;
+  }
+
   const AppImageIcon = (props: SvgIconProps) => (
     <img
       src={`media/icons/appicons/${file}.png`}

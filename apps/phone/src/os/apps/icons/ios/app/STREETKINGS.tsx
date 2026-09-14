@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { CheckerFlagGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('STREETKINGS', ['#f5f5f7', '#8e8e93'], CheckerFlagGlyph);
+export default appIcon('gamecenter');

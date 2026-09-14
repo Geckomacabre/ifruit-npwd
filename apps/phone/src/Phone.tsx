@@ -102,7 +102,7 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
       <TopLevelErrorComponent>
         <WindowSnackbar />
         <PhoneWrapper>
-          <LiquidGlassFilters />
+          <LiquidGlassFilters frost={settings.glassFrost ?? DEFAULT_GLASS_FROST} />
           <StatusBar />
           <PullDownHandle />
           <div className="PhoneAppContainer" id="notificationAppContainer" ref={notiRefCB}>

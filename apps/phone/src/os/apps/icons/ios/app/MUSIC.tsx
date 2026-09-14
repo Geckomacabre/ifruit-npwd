@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { MusicNoteGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('MUSIC', ['#fb7185', '#e11d48'], MusicNoteGlyph);
+export default appIcon('music');

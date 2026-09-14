@@ -18,17 +18,17 @@ export const SearchContacts: React.FC = () => {
         setFilterVal(debouncedVal);
     }, [debouncedVal, setFilterVal]);
 
+    // No box of its own -- ContactList supplies the floating pill this sits
+    // inside, matching the Control Center/dock glass convention.
     return (
-        <div className="w-full py-2">
-            <div className="flex items-center justify-start bg-neutral-200 dark:bg-neutral-800 rounded-md px-2 space-x-2 border dark:border-neutral-700">
-                <Search className="h-5 w-5 dark:text-neutral-400"/>
-                <NPWDInput
-                    className="group-focus:ring-2"
-                    onChange={(e) => setInputVal(e.target.value)}
-                    placeholder={t('CONTACTS.PLACEHOLDER_SEARCH_CONTACTS')}
-                    value={inputVal}
-                />
-            </div>
+        <div className="flex flex-1 items-center gap-2">
+            <Search className="h-4 w-4 shrink-0 text-neutral-400"/>
+            <NPWDInput
+                className="flex-1 bg-transparent"
+                onChange={(e) => setInputVal(e.target.value)}
+                placeholder={t('CONTACTS.PLACEHOLDER_SEARCH_CONTACTS')}
+                value={inputVal}
+            />
         </div>
     );
 };

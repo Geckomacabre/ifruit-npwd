@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { LockHeartGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('LONELY', ['#7dd3fc', '#0369a1'], LockHeartGlyph);
+export default appIcon('passwords');

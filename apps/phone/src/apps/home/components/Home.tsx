@@ -8,6 +8,7 @@ import { useDragOpen } from '@os/control-center/useDragOpen';
 import { useControlCenterOpen, useControlCenterMode } from '@os/control-center/state';
 import { cn } from '@utils/css';
 import { usePageSwipe } from '../usePageSwipe';
+import { appKeyFromPath, useIconOrigins, usePendingLaunchApp } from '@os/apps/launchOrigin';
 
 // iFruit-style dock: a handful of pinned apps in a frosted bar at the
 // bottom of the home screen, same spot every time regardless of which page
@@ -51,6 +52,31 @@ export const HomeApp: React.FC = () => {
   // does anything; a normal tap reaches the icon's own onClick untouched.
   const [, setControlCenterOpen] = useControlCenterOpen();
   const [, setControlCenterMode] = useControlCenterMode();
+  const [, setIconOrigins] = useIconOrigins();
+  const [, setPendingLaunchApp] = usePendingLaunchApp();
+
+  // Records the tapped icon's box, relative to the phone screen, keyed by
+  // the app's path (see os/apps/launchOrigin.ts) so the app that's about to
+  // mount can zoom in from exactly where it was tapped instead of just
+  // appearing, and can zoom back into the same spot when it closes -- the
+  // record is kept (not cleared) so it's still there whenever that happens.
+  const captureLaunchOrigin = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const screen = e.currentTarget.closest('.PhoneScreen');
+    if (!screen) return;
+    const screenRect = screen.getBoundingClientRect();
+    const iconRect = e.currentTarget.getBoundingClientRect();
+    const key = appKeyFromPath(path);
+    setIconOrigins((prev) => ({
+      ...prev,
+      [key]: {
+        x: iconRect.left - screenRect.left,
+        y: iconRect.top - screenRect.top,
+        width: iconRect.width,
+        height: iconRect.height,
+      },
+    }));
+    setPendingLaunchApp(key);
+  };
   const dragNotifications = useDragOpen(60, () => {
     setControlCenterMode('notifications');
     setControlCenterOpen(true);
@@ -80,7 +106,12 @@ export const HomeApp: React.FC = () => {
             style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}
           >
             {pageApps.map((app) => (
-              <Link to={app.path} key={app.id} className="flex justify-center">
+              <Link
+                to={app.path}
+                key={app.id}
+                className="flex justify-center"
+                onClick={captureLaunchOrigin(app.path)}
+              >
                 <AppIcon {...app} />
               </Link>
             ))}
@@ -112,7 +143,12 @@ export const HomeApp: React.FC = () => {
                 sits on the text baseline, and the descender space under it
                 was pushing every dock icon ~7px above centre. */}
             {dockApps.map((app) => (
-              <Link to={app.path} key={app.id} className="flex">
+              <Link
+                to={app.path}
+                key={app.id}
+                className="flex"
+                onClick={captureLaunchOrigin(app.path)}
+              >
                 <AppIcon {...app} hideLabel />
               </Link>
             ))}

@@ -36,6 +36,19 @@ const SQUIRCLE = squirclePath();
 /** Glyphs are authored in the same 0-100 box and scaled into the safe area. */
 const GLYPH_SCALE = 0.56;
 
+// Rather than keep re-deriving the real icon pack's margin/shadow geometry by
+// measurement (86.9% alpha bbox, then 80.5% once the shadow's soft falloff
+// turned out to be included in that), clip directly against the real shape:
+// squircle-mask.png is the alpha channel lifted straight from one of the
+// pack's own PNGs. Every icon in that pack shares an identical alpha
+// signature (same export template), so this is ground truth, not an
+// approximation -- whatever the real margin and corner curvature are, this
+// matches them exactly, for the content AND the rim stroke below.
+const MASK_URL = 'media/icons/squircle-mask.png';
+// The mask's solid core measures 80.5% of its frame; only the decorative rim
+// stroke (drawn as vector, not masked) needs told that explicitly.
+const TILE_FIT = 0.805;
+
 interface LiquidIconOptions {
   /** Defaults to white; override for tiles whose base is light or needs an accent. */
   glyphColor?: string;
@@ -60,9 +73,9 @@ export const liquidIcon = (
       style={{ filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.34))', overflow: 'visible' }}
     >
       <defs>
-        <clipPath id={`lg-clip-${id}`}>
-          <path d={SQUIRCLE} />
-        </clipPath>
+        <mask id={`lg-mask-${id}`} x="0" y="0" width="100" height="100" maskUnits="userSpaceOnUse">
+          <image href={MASK_URL} x="0" y="0" width="100" height="100" preserveAspectRatio="none" />
+        </mask>
 
         <linearGradient id={`lg-base-${id}`} x1="0" y1="0" x2="0.25" y2="1">
           <stop offset="0" stopColor={from} />
@@ -96,7 +109,7 @@ export const liquidIcon = (
         </linearGradient>
       </defs>
 
-      <g clipPath={`url(#lg-clip-${id})`}>
+      <g mask={`url(#lg-mask-${id})`}>
         <rect width="100" height="100" fill={`url(#lg-base-${id})`} />
         <rect width="100" height="100" fill={`url(#lg-floor-${id})`} />
         <rect width="100" height="100" fill={`url(#lg-bloom-${id})`} />
@@ -113,7 +126,16 @@ export const liquidIcon = (
         </g>
       </g>
 
-      <path d={SQUIRCLE} fill="none" stroke={`url(#lg-rim-${id})`} strokeWidth="1.5" />
+      {/* Decorative Fresnel rim only -- the actual clip comes from the real
+          mask above, so this vector squircle only needs to roughly trace its
+          edge, scaled to the same measured 80.5% core. */}
+      <path
+        d={SQUIRCLE}
+        fill="none"
+        stroke={`url(#lg-rim-${id})`}
+        strokeWidth="1.5"
+        transform={`translate(50 50) scale(${TILE_FIT}) translate(-50 -50)`}
+      />
     </svg>
   );
 

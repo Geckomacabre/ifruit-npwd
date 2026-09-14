@@ -47,7 +47,7 @@ export const CircleToggle: React.FC<CircleToggleProps> = ({
     aria-pressed={active}
     onClick={onClick}
     className={cn(
-      'flex items-center justify-center rounded-full transition-colors',
+      'flex items-center justify-center rounded-full transition-colors cc-circle-press',
       SIZE_CLASS[size],
       active
         ? cn('cc-circle-on', ACTIVE_TONE[tone])

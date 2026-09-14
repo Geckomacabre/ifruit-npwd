@@ -143,7 +143,7 @@ export const ControlCenter: React.FC = () => {
     onTouchStart: (e: React.TouchEvent) => startDrag(e.touches[0].clientY),
     style: {
       transform: `translateY(${dragY}px)`,
-      transition: dragging ? 'none' : 'transform 200ms',
+      transition: dragging ? 'none' : 'transform 300ms var(--glass-spring)',
     },
   };
 
@@ -260,11 +260,11 @@ export const ControlCenter: React.FC = () => {
               onClick={() => setAirplaneMode((v) => !v)}
             />
             <CircleToggle
-              icon={<Share2 size={22} />}
-              label="Nearby Share"
-              active={nearby}
-              tone="blue"
-              onClick={() => setNearby((v) => !v)}
+              icon={<Signal size={22} />}
+              label="Cellular Data"
+              active={cellular && !airplaneMode}
+              tone="green"
+              onClick={() => setCellular((v) => !v)}
             />
             <CircleToggle
               icon={<WifiGlyph className="h-[19px] w-[26px]" />}
@@ -273,23 +273,10 @@ export const ControlCenter: React.FC = () => {
               tone="blue"
               onClick={() => setWifiEnabled((v) => !v)}
             />
-            <div className="grid grid-cols-2 gap-1.5">
-              <CircleToggle
-                icon={<Signal size={13} />}
-                label="Cellular Data"
-                size="sm"
-                active={cellular && !airplaneMode}
-                tone="green"
-                onClick={() => setCellular((v) => !v)}
-              />
-              <CircleToggle
-                icon={<Bluetooth size={13} />}
-                label="Bluetooth"
-                size="sm"
-                active={bluetooth && !airplaneMode}
-                tone="blue"
-                onClick={() => setBluetooth((v) => !v)}
-              />
+            {/* Real iOS pairs two small toggles beside the big Wi-Fi circle
+                rather than a 2x2 grid of four -- Personal Hotspot on top,
+                Bluetooth below. */}
+            <div className="flex flex-col gap-1.5">
               <CircleToggle
                 icon={<Radio size={13} />}
                 label="Personal Hotspot"
@@ -299,12 +286,12 @@ export const ControlCenter: React.FC = () => {
                 onClick={() => setHotspot((v) => !v)}
               />
               <CircleToggle
-                icon={<MonitorSmartphone size={13} />}
-                label="Screen Mirroring"
+                icon={<Bluetooth size={13} />}
+                label="Bluetooth"
                 size="sm"
-                active={screenMirroring}
+                active={bluetooth && !airplaneMode}
                 tone="blue"
-                onClick={() => setScreenMirroring((v) => !v)}
+                onClick={() => setBluetooth((v) => !v)}
               />
             </div>
           </div>
@@ -355,18 +342,20 @@ export const ControlCenter: React.FC = () => {
             <button
               type="button"
               onClick={() => setDoNotDisturb((v) => !v)}
-              className="cc-module flex items-center gap-2 rounded-[31px] px-2 text-left"
+              className={`flex items-center gap-2 rounded-[31px] px-2 text-left ${
+                doNotDisturb ? 'bg-gradient-to-b from-[#7d7bff] to-[#5e5ce6]' : 'cc-module'
+              }`}
               style={{ height: 62 }}
             >
               <span
                 className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full ${
-                  doNotDisturb ? 'bg-white text-[#5e5ce6]' : 'cc-circle-off text-white'
+                  doNotDisturb ? 'bg-white/25 text-white' : 'cc-circle-off text-white'
                 }`}
               >
                 <Moon size={22} fill="currentColor" strokeWidth={0} />
               </span>
               <span className="flex-1 text-[15px] font-semibold leading-[1.1]">Do Not Disturb</span>
-              <ChevronsUpDown size={15} className="shrink-0 text-white/60" />
+              <ChevronsUpDown size={15} className={`shrink-0 ${doNotDisturb ? 'text-white/80' : 'text-white/60'}`} />
             </button>
           </div>
 
@@ -418,11 +407,11 @@ export const ControlCenter: React.FC = () => {
               onClick={() => setNearby((v) => !v)}
             />
             <CircleToggle
-              icon={<Radio size={23} />}
-              label="Personal Hotspot"
-              active={hotspot}
-              tone="green"
-              onClick={() => setHotspot((v) => !v)}
+              icon={<MonitorSmartphone size={23} />}
+              label="Screen Mirroring"
+              active={screenMirroring}
+              tone="blue"
+              onClick={() => setScreenMirroring((v) => !v)}
             />
             <CircleToggle icon={<Timer size={24} />} label="Timer" onClick={() => go('/clock/timer')} />
             <CircleToggle icon={<Camera size={24} />} label="Camera" onClick={() => go('/camera')} />

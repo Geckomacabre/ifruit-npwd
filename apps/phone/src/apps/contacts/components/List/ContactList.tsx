@@ -1,231 +1,174 @@
-import React from 'react';
-import { SearchContacts } from './SearchContacts';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import React, { useMemo, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { useFilteredContacts } from '../../hooks/state';
-import { Contact, ContactEvents } from "@typings/contact";
-import { useCall } from '@os/call/hooks/useCall';
-import useMessages from '@apps/messages/hooks/useMessages';
-import LogDebugEvent from '@os/debug/LogDebugEvents';
-import { useContactActions } from '@apps/contacts/hooks/useContactActions';
+import { Contact } from '@typings/contact';
 import { useMyPhoneNumber } from '@os/simcard/hooks/useMyPhoneNumber';
-import { Phone, MessageSquare, Plus, Clipboard, UsersRound } from 'lucide-react';
-import { List, ListItem, NPWDButton } from '@npwd/keyos';
+import { Plus, Search, Mic, Clipboard, UsersRound } from 'lucide-react';
 import { initials } from '@utils/misc';
-import { useQueryParams } from '@common/hooks/useQueryParams';
-import { Tooltip } from '@ui/components/Tooltip';
-import { useTwitterProfileValue } from "@apps/twitter/hooks/state";
-import { useTranslation } from "react-i18next";
-import { setClipboard } from "@os/phone/hooks";
+import { useTwitterProfileValue } from '@apps/twitter/hooks/state';
+import { useTranslation } from 'react-i18next';
+import { setClipboard } from '@os/phone/hooks';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
-import fetchNui from "@utils/fetchNui";
+import { ContactEvents } from '@typings/contact';
+import fetchNui from '@utils/fetchNui';
+import { Tooltip } from '@ui/components/Tooltip';
+import { SearchContacts } from './SearchContacts';
 
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+
+// Real iOS Contacts: tapping a row opens its detail card (call/message live
+// there, at /contacts/:id -- see ContactInfo.tsx), not inline buttons in the
+// list. Sections get a plain sticky letter label over a hairline, not a
+// boxed pill. A floating bottom bar carries search + add, and an A-Z rail
+// down the right edge jumps straight to a section.
 export const ContactList: React.FC = () => {
   const filteredContacts = useFilteredContacts();
-  const history = useHistory();
+  const myNumber = useMyPhoneNumber();
+  const { avatar_url } = useTwitterProfileValue();
+  const listRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // FIXME: This should be reduced before being passed to the component
-  const groupedContacts = filteredContacts.reduce((r, e) => {
-    const group = e.display.charAt(0).toUpperCase();
-    if (!r[group]) r[group] = { group, contacts: [e] };
-    else r[group].contacts.push(e);
+  const groupedContacts = useMemo(() => {
+    const groups: Record<string, Contact[]> = {};
+    for (const contact of filteredContacts) {
+      const letter = /[A-Z]/i.test(contact.display.charAt(0))
+        ? contact.display.charAt(0).toUpperCase()
+        : '#';
+      (groups[letter] ??= []).push(contact);
+    }
+    return groups;
+  }, [filteredContacts]);
 
-    return r;
-  }, []);
+  const letters = Object.keys(groupedContacts).sort();
 
-  const myNumber = useMyPhoneNumber()
-  const {avatar_url} = useTwitterProfileValue()
+  const scrollToLetter = (letter: string) => {
+    const section = sectionRefs.current[letter];
+    if (section && listRef.current) {
+      listRef.current.scrollTo({ top: section.offsetTop, behavior: 'auto' });
+    }
+  };
 
   return (
-    <div className="relative">
-      <div className="sticky top-0 z-50">
-        <div className="flex items-center space-x-2 bg-neutral-100 px-4 dark:bg-neutral-900">
-          <SearchContacts />
-          <NPWDButton
-            size="icon"
-            className="rounded-full p-2 text-neutral-900"
-            variant="ghost"
-            onClick={() => history.push('/contacts/-1')}
-          >
-            <Plus className="h-6 w-6" />
-          </NPWDButton>
-        </div>
+    <div className="relative flex flex-1 flex-col overflow-hidden">
+      <h1 className="px-4 pb-2 pt-1 text-3xl font-bold">Contacts</h1>
+
+      <div ref={listRef} className="flex-1 overflow-y-auto pb-24 pr-6">
+        <SelfContact number={myNumber} avatar={avatar_url} />
+
+        {letters.map((letter) => (
+          <div key={letter} ref={(el) => (sectionRefs.current[letter] = el)}>
+            <div className="sticky top-0 z-10 border-b border-neutral-200 bg-neutral-100/95 px-4 py-1 text-sm font-medium text-neutral-500 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95">
+              {letter}
+            </div>
+            {groupedContacts[letter].map((contact) => (
+              <ContactRow key={contact.id} {...contact} />
+            ))}
+          </div>
+        ))}
       </div>
 
-      <div className="mt-4 overflow-y-auto px-4">
-        <nav className="space-y-2 overflow-y-auto" aria-label="Directory">
-          <div key="self" className="relative">
-            <List>
-                <SelfContact key="self" number={myNumber} avatar={avatar_url} />
-            </List>
-          </div>
+      {/* Real iOS shows this A-Z rail unconditionally, even with a short
+          contact list. */}
+      <div className="absolute bottom-24 right-0.5 top-14 flex flex-col items-center justify-center">
+        {ALPHABET.map((letter) => (
+          <button
+            key={letter}
+            type="button"
+            onClick={() => scrollToLetter(letter)}
+            disabled={!groupedContacts[letter]}
+            className={
+              groupedContacts[letter]
+                ? 'text-[10px] font-semibold leading-[13px] text-blue-500'
+                : 'text-[10px] font-semibold leading-[13px] text-neutral-600'
+            }
+          >
+            {letter}
+          </button>
+        ))}
+      </div>
 
-          {Object.keys(groupedContacts)
-            .sort()
-            .map((letter) => (
-              <div key={letter} className="relative">
-                <div className="sticky top-0 z-10 rounded-xl border-b border-t border-gray-200 bg-neutral-50 px-6 py-1 text-sm font-medium text-gray-500 dark:border-none dark:bg-neutral-800">
-                  <h3>{letter}</h3>
-                </div>
-                <List>
-                  {groupedContacts[letter].contacts.map((contact: Contact) => (
-                    <ContactItem key={contact.id} {...contact} />
-                  ))}
-                </List>
-              </div>
-            ))}
-        </nav>
+      {/* Floating bottom bar, same convention as Control Center/dock glass. */}
+      <div className="absolute inset-x-4 bottom-4 flex items-center gap-2">
+        <div className="flex flex-1 items-center gap-2 rounded-full bg-neutral-200 px-3 py-2 dark:bg-neutral-800">
+          <SearchContacts />
+          <Mic size={18} className="shrink-0 text-neutral-400" />
+        </div>
+        <Link
+          to="/contacts/-1"
+          aria-label="New contact"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800"
+        >
+          <Plus size={22} />
+        </Link>
       </div>
     </div>
   );
 };
 
-interface ContactItemProps extends Contact {
-  onClick?: () => void;
-}
+const AVATAR_FALLBACK_CLASS = 'bg-neutral-400 text-white dark:bg-neutral-600';
 
-const SelfContact = ({number, avatar}: {number: string, avatar:string}) => {
+const Avatar: React.FC<{ avatar?: string; label: string }> = ({ avatar, label }) =>
+  avatar ? (
+    <img src={avatar} className="h-11 w-11 shrink-0 rounded-full object-cover" alt="" />
+  ) : (
+    <div
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base font-medium ${AVATAR_FALLBACK_CLASS}`}
+    >
+      {label}
+    </div>
+  );
+
+const SelfContact: React.FC<{ number: string; avatar: string }> = ({ number, avatar }) => {
   const [t] = useTranslation();
-  const {addAlert} = useSnackbar()
+  const { addAlert } = useSnackbar();
+
   const copyNumber = () => {
     setClipboard(number);
     addAlert({
-      message: t('GENERIC.WRITE_TO_CLIPBOARD_MESSAGE', {
-        content: 'Number',
-      }),
+      message: t('GENERIC.WRITE_TO_CLIPBOARD_MESSAGE', { content: 'Number' }),
       type: 'success',
     });
-  }
+  };
 
-  const shareLocal = () => {
-    fetchNui(ContactEvents.LOCAL_SHARE)
-  }
+  const shareLocal = () => fetchNui(ContactEvents.LOCAL_SHARE);
 
   return (
-    <ListItem>
+    <div className="flex items-center gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
+      <Avatar avatar={avatar} label="Me" />
       <div className="min-w-0 flex-1">
-        <div
-          className="flex items-center justify-between focus:outline-none"
-        >
-          <div className="flex items-center space-x-2">
-            {avatar && avatar.length > 0 ? (
-              <img src={avatar} className="inline-block h-10 w-10 rounded-full" alt={'avatar'} />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full">
-                <span className="text-gray-600 dark:text-gray-300">Me</span>
-              </div>
-            )}
-            <div>
-              <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
-                {t('CONTACTS.MY_NUMBER')}
-              </p>
-              <p className="text-sm text-neutral-400">{number}</p>
-            </div>
-          </div>
-          <div className="space-x-3">
-            <Tooltip title={t('GENERIC.WRITE_TO_CLIPBOARD_TOOLTIP', {content: 'Number'}) as string}>
-              <button
-                onClick={copyNumber}
-                className="rounded-full bg-neutral-100 p-3 text-neutral-300 hover:bg-neutral-200 dark:bg-neutral-900 dark:hover:bg-neutral-700"
-              >
-                <Clipboard size={20} />
-              </button>
-            </Tooltip>
-            <Tooltip title={t('CONTACTS.NEARBY_SHARE')} >
-              <button
-                onClick={shareLocal}
-                className="rounded-full bg-neutral-100 p-3 text-neutral-300 hover:bg-neutral-200 dark:bg-neutral-900 dark:hover:bg-neutral-700"
-              >
-                <UsersRound size={20} />
-              </button>
-            </Tooltip>
-          </div>
-        </div>
+        <p className="truncate text-[17px] font-medium">{t('CONTACTS.MY_NUMBER')}</p>
+        <p className="text-sm text-neutral-400">{number}</p>
       </div>
-    </ListItem>
+      <Tooltip title={t('GENERIC.WRITE_TO_CLIPBOARD_TOOLTIP', { content: 'Number' }) as string}>
+        <button onClick={copyNumber} className="rounded-full p-2 text-neutral-400">
+          <Clipboard size={20} />
+        </button>
+      </Tooltip>
+      <Tooltip title={t('CONTACTS.NEARBY_SHARE') as string}>
+        <button onClick={shareLocal} className="rounded-full p-2 text-neutral-400">
+          <UsersRound size={20} />
+        </button>
+      </Tooltip>
+    </div>
   );
-}
+};
 
-const ContactItem = ({ number, avatar, id, display }: ContactItemProps) => {
-  const query = useQueryParams<{ referal: string }>();
-  const { referal } = query;
-
-  const { initializeCall } = useCall();
-  const { goToConversation } = useMessages();
-  const { findExistingConversation } = useContactActions();
-  const myPhoneNumber = useMyPhoneNumber();
+const ContactRow: React.FC<Contact> = ({ number, avatar, id, display }) => {
   const history = useHistory();
+  const query = new URLSearchParams(history.location.search);
+  const referal = query.get('referal');
 
-  const startCall = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    LogDebugEvent({
-      action: 'Emitting `Start Call` to Scripts',
-      level: 2,
-      data: true,
-    });
-    initializeCall(number.toString());
-  };
-
-  const handleMessage = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const phoneNumber = number.toString();
-    LogDebugEvent({
-      action: 'Routing to Message',
-      level: 1,
-      data: { phoneNumber },
-    });
-    const conversation = findExistingConversation(myPhoneNumber, phoneNumber);
-    if (conversation) {
-      return goToConversation(conversation);
-    }
-
-    history.push(`/messages/new?phoneNumber=${phoneNumber}`);
-  };
+  const to = referal
+    ? `${referal}?contact=${encodeURIComponent(JSON.stringify({ number, id, display }))}`
+    : `/contacts/${id}`;
 
   return (
-    <ListItem>
-      <div className="min-w-0 flex-1">
-        <Link
-          to={
-            referal
-              ? `${referal}?contact=${encodeURIComponent(JSON.stringify({ number, id, display }))}`
-              : `/contacts/${id}`
-          }
-          className="flex items-center justify-between focus:outline-none"
-        >
-          <div className="flex items-center space-x-2">
-            {avatar && avatar.length > 0 ? (
-              <img src={avatar} className="inline-block h-10 w-10 rounded-full" alt={'avatar'} />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full">
-                <span className="text-gray-600 dark:text-gray-300">{initials(display)}</span>
-              </div>
-            )}
-            <div>
-              <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
-                {display}
-              </p>
-              <p className="text-sm text-neutral-400">{number}</p>
-            </div>
-          </div>
-          <div className="space-x-3">
-            <button
-              onClick={startCall}
-              className="rounded-full bg-green-100 p-3 text-green-500 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-neutral-700"
-            >
-              <Phone size={20} />
-            </button>
-            <button
-              onClick={handleMessage}
-              className="rounded-full bg-blue-100 p-3 text-blue-400 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-neutral-700"
-            >
-              <MessageSquare size={20} />
-            </button>
-          </div>
-        </Link>
-      </div>
-    </ListItem>
+    <Link
+      to={to}
+      className="flex items-center gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800"
+    >
+      <Avatar avatar={avatar} label={initials(display)} />
+      <p className="truncate text-[17px]">{display}</p>
+    </Link>
   );
 };

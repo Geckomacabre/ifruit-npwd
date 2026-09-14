@@ -75,3 +75,13 @@
 .cc-slider-fill {
   background: linear-gradient(180deg, #ffffff 0%, #f4f4f7 100%);
 }
+
+/* Round controls give a little under a press and spring back, the way a
+   liquid surface would rather than a rigid button. */
+.cc-circle-press {
+  transition: transform 260ms var(--glass-spring);
+}
+.cc-circle-press:active {
+  transform: scale(0.9);
+  transition-duration: 80ms;
+}

@@ -1,3 +1,3 @@
 import { appIcon } from '../iosIcon';
 
-export default appIcon('heart');
+export default appIcon('heart', { matchMask: true });
