@@ -3,6 +3,7 @@
    solid fill is the main thing that makes a copy of this screen look wrong. */
 
 .lock-clock {
+  font-family: 'SF Pro Rounded', var(--sf-display);
   font-size: 118px;
   font-weight: 600;
   line-height: 0.94;

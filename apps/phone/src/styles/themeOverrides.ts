@@ -8,11 +8,11 @@ import { ThemeOptions } from '@mui/material';
 const themeOverrides: ThemeOptions = {
   typography: {
     fontFamily: [
-      'system-ui',
+      '"SF Pro Text"',
+      '-apple-system',
+      'BlinkMacSystemFont',
       '"Segoe UI"',
       'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
       'sans-serif',
     ].join(','),
   },
