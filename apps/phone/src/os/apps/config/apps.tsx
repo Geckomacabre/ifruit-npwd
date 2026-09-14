@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import CrimeIcon from '../icons/material/app/CRIME';
+import { CrimeApp } from '@apps/crime/CrimeApp';
 import FitbitIcon from '../icons/material/app/FITBIT';
 import { FitbitApp } from '@apps/fitbit/FitbitApp';
 import GeoCacheIcon from '../icons/material/app/GEOCACHE';
@@ -452,6 +454,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Nutrition and hydration alerts',
     storeSizeKb: 18000,
     Route: () => <AppRoute id="FITBIT" path="/fitbit" component={FitbitApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'CRIME',
+    nameLocale: 'APPS_CRIME',
+    icon: <CrimeIcon />,
+    backgroundColor: '#be123c',
+    color: common.white,
+    path: '/crime',
+    removable: true,
+    storeDescription: 'Community safety reports',
+    storeSizeKb: 98500,
+    Route: () => <AppRoute id="CRIME" path="/crime" component={CrimeApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

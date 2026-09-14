@@ -9,6 +9,7 @@ shared_scripts({
 	"@qbx_core/modules/lib.lua",
 	"lua/services/config.lua",
 	"lua/gigs/config.lua",
+	"lua/crimeapp/config.lua",
 })
 
 client_scripts({
@@ -21,6 +22,8 @@ client_scripts({
 	"lua/music/client.lua",
 	"lua/geocache/client.lua",
 	"lua/fitbit/client.lua",
+	"lua/crimeapp/client_functions.lua",
+	"lua/crimeapp/client.lua",
 })
 
 server_script({
@@ -34,6 +37,12 @@ server_script({
 	"lua/home/server.lua",
 	"lua/music/server.lua",
 	"lua/fitbit/server.lua",
+	"lua/crimeapp/server_framework.lua",
+	"lua/crimeapp/server_logs.lua",
+	"lua/crimeapp/server_accounts.lua",
+	"lua/crimeapp/server_heat.lua",
+	"lua/crimeapp/server_main.lua",
+	"lua/crimeapp/server_showcase.lua",
 })
 
 lua54("yes")

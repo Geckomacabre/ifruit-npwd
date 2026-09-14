@@ -294,3 +294,11 @@ export const HeartPulseGlyph: React.FC = () => (
     />
   </>
 );
+
+export const ShieldGlyph: React.FC = () => (
+  <>
+    <path d="M50 10 18 24v26c0 20 13.5 33.5 32 40 18.5-6.5 32-20 32-40V24z" />
+    <path d="M50 32v24" fill="none" stroke="#000" strokeOpacity="0.36" strokeWidth="7" strokeLinecap="round" />
+    <circle cx="50" cy="66" r="4.5" fill="#000" fillOpacity="0.36" />
+  </>
+);
