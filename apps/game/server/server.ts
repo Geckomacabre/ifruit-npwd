@@ -31,6 +31,7 @@ import './voicememos/voicememos.controller';
 import './pages/pages.controller';
 import './crypto/crypto.controller';
 import './instapic/instapic.controller';
+import './trendy/trendy.controller';
 
 // setup exports
 import './bridge/sv_exports';

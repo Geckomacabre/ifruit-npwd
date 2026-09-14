@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import TrendyIcon from '../icons/material/app/TRENDY';
+import { TrendyApp } from '@apps/trendy/TrendyApp';
 import InstaPicIcon from '../icons/material/app/INSTAPIC';
 import { InstaPicApp } from '@apps/instapic/InstaPicApp';
 import CryptoIcon from '../icons/material/app/CRYPTO';
@@ -382,6 +384,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Share photos',
     storeSizeKb: 223000,
     Route: () => <AppRoute id="INSTAPIC" path="/instapic" component={InstaPicApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'TRENDY',
+    nameLocale: 'APPS_TRENDY',
+    icon: <TrendyIcon />,
+    backgroundColor: '#0f172a',
+    color: common.white,
+    path: '/trendy',
+    removable: true,
+    storeDescription: 'Short videos',
+    storeSizeKb: 223000,
+    Route: () => <AppRoute id="TRENDY" path="/trendy" component={TrendyApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

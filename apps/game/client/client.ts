@@ -23,5 +23,6 @@ import './cl_voicememos';
 import './cl_pages';
 import './cl_crypto';
 import './cl_instapic';
+import './cl_trendy';
 
 export const ClUtils = new ClientUtils();

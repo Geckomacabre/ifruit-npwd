@@ -1,0 +1,17 @@
+/* Scroll snapping does the paging for the Trendy feed, so a flick lands on
+   exactly one post instead of drifting between two. */
+
+.trendy-feed {
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.trendy-feed::-webkit-scrollbar {
+  display: none;
+}
+
+.trendy-slide {
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
