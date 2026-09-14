@@ -30,6 +30,7 @@ import './mail/mail.controller';
 import './voicememos/voicememos.controller';
 import './pages/pages.controller';
 import './crypto/crypto.controller';
+import './instapic/instapic.controller';
 
 // setup exports
 import './bridge/sv_exports';

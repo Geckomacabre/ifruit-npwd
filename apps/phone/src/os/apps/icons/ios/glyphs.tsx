@@ -246,3 +246,11 @@ export const CoinGlyph: React.FC = () => (
     />
   </>
 );
+
+export const CameraLensGlyph: React.FC = () => (
+  <>
+    <rect x="14" y="14" width="72" height="72" rx="21" fill="none" stroke="currentColor" strokeWidth="8" />
+    <circle cx="50" cy="50" r="19" fill="none" stroke="currentColor" strokeWidth="8" />
+    <circle cx="70" cy="30" r="5" />
+  </>
+);

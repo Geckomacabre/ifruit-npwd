@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import InstaPicIcon from '../icons/material/app/INSTAPIC';
+import { InstaPicApp } from '@apps/instapic/InstaPicApp';
 import CryptoIcon from '../icons/material/app/CRYPTO';
 import { CryptoApp } from '@apps/crypto/CryptoApp';
 import SnarfIcon from '../icons/material/app/SNARF';
@@ -368,6 +370,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Track and trade coins',
     storeSizeKb: 256700,
     Route: () => <AppRoute id="CRYPTO" path="/crypto" component={CryptoApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'INSTAPIC',
+    nameLocale: 'APPS_INSTAPIC',
+    icon: <InstaPicIcon />,
+    backgroundColor: '#db2777',
+    color: common.white,
+    path: '/instapic',
+    removable: true,
+    storeDescription: 'Share photos',
+    storeSizeKb: 223000,
+    Route: () => <AppRoute id="INSTAPIC" path="/instapic" component={InstaPicApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

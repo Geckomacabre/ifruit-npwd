@@ -22,5 +22,6 @@ import './cl_weather';
 import './cl_voicememos';
 import './cl_pages';
 import './cl_crypto';
+import './cl_instapic';
 
 export const ClUtils = new ClientUtils();
