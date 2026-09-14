@@ -5,7 +5,7 @@ iOS-style ("iFruit") phone that fully replaces **lb-phone** on the EnhancedMafia
 lb-phone is escrowed and its UI is minified, so nothing is copied from it: every app is rebuilt
 natively here, using lb-phone only as a behaviour/content reference.
 
-Status as of 2026-09-13. `server.cfg` still starts `lb-phone`; NPWD has not been switched on in game
+Status as of 2026-09-14. `server.cfg` still starts `lb-phone`; NPWD has not been switched on in game
 yet, so everything below is verified by builds and the browser dev preview, **not in-game**.
 
 > **Nothing here has run in game.** Every app was built against mock data in the browser preview.
@@ -75,6 +75,11 @@ anywhere to unlock.
 | **Voice Memos** (`VOICEMEMOS`) | TS `apps/game/server/voicememos` | Apple-style list/player, record via existing `useRecorder` + `npwd:audio:uploadAudio`; saves only https links on `config.imageSafety.safeImageUrls`. |
 | **Pages** (`PAGES`) | TS `apps/game/server/pages` | Yellow-pages ads: search, detail sheet with Call/Message, compose (title, price, image link, description), delete own, 1 post/minute. |
 | **Snarf** (`SNARF`) / **rydeme** (`RYDEME`) | **Lua** `lua/gigs` | Ported from the `um_gigs` resource, whose Lua backend moved here largely untouched. `rydeme`'s identifier in the Lua is still `goober`. Shared UI in `apps/phone/src/apps/gigs`: `GigShell` (duty switch, incoming fare with a client-side countdown, active job, rating history) with Snarf as a board and rydeme dispatch-only plus a rider panel. **Not ported yet:** the Leaflet destination picker (the rider panel uses the player's map waypoint instead) and the live driving HUD (speed/limit/map), both of which exist in the old `um_gigs/ui`. Two polls: `getState` every 4s (server), `getLive` every 1s (client, drives the countdown). |
+| **Crypto** (`CRYPTO`) | TS `apps/game/server/crypto` | Server-authoritative market: prices tick every 30s and are shared, so everyone sees the same number. Random walk with a weak pull toward the seed; **deliberately not persisted** — a restart reseeds it rather than keeping a table of noise. Holdings and trades are persisted. Money goes through the same framework bridge BuckMe uses. Buying spends dollars, selling sends coins; the price is read once per trade so a tick can't change the deal mid-way, and a partial sell shrinks the cost basis proportionally. |
+| **InstaPic** (`INSTAPIC`) | TS `apps/game/server/instapic` | Feed, my-posts, like/unlike, delete. Posting picks from the phone's own camera roll rather than a URL box. Likes are a `(post_id, identifier)` table so one-like-per-player is enforced by the primary key; deletes check ownership in the DELETE's WHERE clause. |
+| **Trendy** (`TRENDY`) | TS `apps/game/server/trendy` | Full-bleed vertical feed, paged by CSS scroll-snap rather than a gesture handler. One media URL field: `.mp4/.webm/.mov` autoplays muted and looping, anything else renders as an image. Same host allow-list and like/ownership rules as InstaPic. |
+| **Home** (`HOME`) | **Lua** `lua/home` | Properties you own or hold a key to, with a waypoint button and owner-only key revocation. Reads qbx_properties' `properties` table **directly** — that resource registers lib.callbacks for its own client, not exports others can call. Only mutation is revoking a key (server-checked against the owner, refuses the owner's own). |
+| **Music** (`MUSIC`) | **Lua** `lua/music` | Playlist of direct audio links via xsound. Two real mechanisms, not a cosmetic switch: **earbuds** plays on your client only; **speaker** is broadcast server-side as a positioned sound at where you started it, so anyone within 30m hears it. One speaker per player, cleaned up on disconnect and resource stop. Pause is earbuds-only on purpose. |
 | **App Store** (`APPSTORE`) | UI only, client-side setting | Catalog/management screen for the "removable" apps (Marketplace, IRC/DarkChat, Life Invader/Twitter, Hookr/Match, Pages) — search, tap a row for a detail sheet (icon, description, provider, size), Get/Open/Remove. Free installs, no economy hook. Backed by `settings.removedApps: string[]` — **opt-out, deliberately**: an earlier opt-in `installedApps` list meant any app added in a later update never appeared for a player who had already used the store. Mark a new app `removable: true` in `apps.tsx` to list it here. Fixed the naming/icon collision this file used to warn about: **Marketplace** is back to "Marketplace" with a `Store` glyph tile; the real iOS-pack `appstore.png` artwork now belongs to this app. |
 
 ---
@@ -136,18 +141,17 @@ The repeated task, so the whole checklist in one place:
 
 ## Remaining work
 
-1. **Music** — lb-phone's Music was escrowed and had no songs configured. `xsound` is installed
-   (`[Scripts]/xsound`), so a Music app could play URLs with 3D positional audio. Needs a design decision.
-2. **Home** (housing; server has `qbx_properties`), **Crypto**, **InstaPic**, **Trendy**.
-3. **Finish Snarf / rydeme**: the Leaflet destination picker and the live driving HUD from
+1. ~~Music, Home, Crypto, InstaPic, Trendy~~ — all built; see the Apps table. **Every stock app on
+   the original port list now exists.**
+2. **Finish Snarf / rydeme**: the Leaflet destination picker and the live driving HUD from
    `[UM]/um_gigs/ui` are not ported (see the Apps table). Once npwd is live, **stop `um_gigs`** —
    its net events are still named `um_gigs:*` here, so both running at once doubles every handler.
-4. **Rewrite the remaining custom lb-phone apps natively**: `geocaching_phone`, `noted_fitbit`,
+3. **Rewrite the remaining custom lb-phone apps natively**: `geocaching_phone`, `noted_fitbit`,
    `noted_crimeapp`, `lonelymans`, `sk_streetkings` (all under `[Scripts]/`). Also re-point
    `jim_bridge` (`GetEquippedPhoneNumber`/`SendMail`) and `ox_inventory`'s `UsePhoneItem` hook to NPWD.
-5. Optional: iOS icon *appearance variants* (default / dark / clear / tinted), per Apple's HIG
+4. Optional: iOS icon *appearance variants* (default / dark / clear / tinted), per Apple's HIG
    "Appearances" — keep an icon's core shape identical across variants.
-6. **Go live in game**: swap `ensure lb-phone` for `ensure npwd` in server.cfg, stop `um_gigs`, set
+5. **Go live in game**: swap `ensure lb-phone` for `ensure npwd` in server.cfg, stop `um_gigs`, set
    `NPWD_AUDIO_TOKEN`, then test money flows (BuckMe, valet, Services banking), Mail compat events,
    Garage summon/lock, Services notifications, and a full Snarf delivery + rydeme ride with real players.
 
