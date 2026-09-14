@@ -229,9 +229,23 @@
   }
 }
 
+/* The original killed the animation outright here. That leaves the dots as six
+   dead spots, and it fires more often than you would think -- CEF and this
+   project's own preview browser both report `reduce`. A slow opacity breath
+   carries no motion, which is what the preference is actually about, so the
+   brand stays alive for people who would otherwise never see it move. */
 @media (prefers-reduced-motion: reduce) {
   .confetti .dot {
-    animation: none;
+    animation-name: confetti-breathe;
+  }
+}
+
+/* Only the midpoint is declared: with no 0%/100% stops the browser holds each
+   dot's own opacity at the ends, so all six keep the different weights the
+   .d1-.d6 rules give them instead of flattening to one value. */
+@keyframes confetti-breathe {
+  50% {
+    opacity: 0.3;
   }
 }
 
