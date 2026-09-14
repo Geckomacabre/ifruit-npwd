@@ -35,26 +35,28 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ id, onActiva
   return (
     <button
       onClick={handleClick}
-      className="liquid-glass liquid-glass-dark flex items-center gap-3 rounded-2xl hover:brightness-110 transition px-4 py-3 text-left"
+      className="liquid-glass liquid-glass-dark flex items-start gap-2.5 rounded-[18px] px-3 py-3 text-left transition hover:brightness-110"
     >
       {/* The app's real home-screen artwork when the icon set has it, so a
           notification looks like it came from the icon you tapped. */}
       {app.Icon ? (
-        <app.Icon className="h-9 w-9 shrink-0 rounded-[10px]" />
+        <app.Icon className="h-[38px] w-[38px] shrink-0 rounded-[9px]" />
       ) : (
         <div
-          className="flex items-center justify-center rounded-full h-9 w-9 shrink-0"
+          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: app.backgroundColor }}
         >
           {app.NotificationIcon && <app.NotificationIcon fontSize="small" />}
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between">
-          <span className="text-white text-sm font-semibold truncate">{t(app.nameLocale)}</span>
-          {secondaryTitle && <span className="text-white/50 text-xs shrink-0 ml-2">{secondaryTitle}</span>}
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="truncate text-[15px] font-semibold text-white">{t(app.nameLocale)}</span>
+          {secondaryTitle && (
+            <span className="shrink-0 text-[13px] text-white/60">{secondaryTitle}</span>
+          )}
         </div>
-        <p className="text-white/70 text-sm line-clamp-2">{content}</p>
+        <p className="line-clamp-3 text-[15px] leading-snug text-white/85">{content}</p>
       </div>
     </button>
   );
