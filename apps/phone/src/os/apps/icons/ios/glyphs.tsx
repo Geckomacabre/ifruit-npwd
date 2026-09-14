@@ -302,3 +302,11 @@ export const ShieldGlyph: React.FC = () => (
     <circle cx="50" cy="66" r="4.5" fill="#000" fillOpacity="0.36" />
   </>
 );
+
+export const LockHeartGlyph: React.FC = () => (
+  <>
+    <path d="M50 82S20 63 20 42a16 16 0 0 1 30-7 16 16 0 0 1 30 7c0 21-30 40-30 40z" />
+    <rect x="38" y="44" width="24" height="19" rx="4" fill="#000" fillOpacity="0.34" />
+    <path d="M43 44v-5a7 7 0 0 1 14 0v5" fill="none" stroke="#000" strokeOpacity="0.34" strokeWidth="4" />
+  </>
+);

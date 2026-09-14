@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import LonelyIcon from '../icons/material/app/LONELY';
+import { LonelyApp } from '@apps/lonely/LonelyApp';
 import CrimeIcon from '../icons/material/app/CRIME';
 import { CrimeApp } from '@apps/crime/CrimeApp';
 import FitbitIcon from '../icons/material/app/FITBIT';
@@ -466,6 +468,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Community safety reports',
     storeSizeKb: 98500,
     Route: () => <AppRoute id="CRIME" path="/crime" component={CrimeApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'LONELY',
+    nameLocale: 'APPS_LONELY',
+    icon: <LonelyIcon />,
+    backgroundColor: '#0369a1',
+    color: common.white,
+    path: '/lonely',
+    removable: true,
+    storeDescription: 'Subscribe to creators',
+    storeSizeKb: 142000,
+    Route: () => <AppRoute id="LONELY" path="/lonely" component={LonelyApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

@@ -10,6 +10,7 @@ shared_scripts({
 	"lua/services/config.lua",
 	"lua/gigs/config.lua",
 	"lua/crimeapp/config.lua",
+	"lua/lonely/config.lua",
 })
 
 client_scripts({
@@ -24,6 +25,7 @@ client_scripts({
 	"lua/fitbit/client.lua",
 	"lua/crimeapp/client_functions.lua",
 	"lua/crimeapp/client.lua",
+	"lua/lonely/client.lua",
 })
 
 server_script({
@@ -43,6 +45,7 @@ server_script({
 	"lua/crimeapp/server_heat.lua",
 	"lua/crimeapp/server_main.lua",
 	"lua/crimeapp/server_showcase.lua",
+	"lua/lonely/server.lua",
 })
 
 lua54("yes")
