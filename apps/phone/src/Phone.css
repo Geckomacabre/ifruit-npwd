@@ -221,6 +221,22 @@
   padding-bottom: 26px;
 }
 
+/* Home screen pages sideways, so its scrollbar must never show. */
+.home-pages {
+  scrollbar-width: none;
+}
+
+.home-pages::-webkit-scrollbar {
+  display: none;
+}
+
+/* AppIcon carries a 24px top margin of its own for the old scrolling grid.
+   The paged grid controls its own row spacing, and that margin would push six
+   rows past the bottom of the screen. */
+.home-page button {
+  margin-top: 0 !important;
+}
+
 /* Banners drop in just under the dynamic island (its pill spans y:12-41 of the
    screen, see StatusBar.tsx) instead of butting into the top edge, where the
    frame's rounded corners crowd them. */
