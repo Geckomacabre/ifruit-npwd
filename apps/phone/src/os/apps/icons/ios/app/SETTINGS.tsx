@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { GearGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('SETTINGS', ['#aeb3bc', '#5c626b'], GearGlyph);
+export default appIcon('settings');

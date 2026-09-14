@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { CompassGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('BROWSER', ['#5cb9ff', '#0a71e8'], CompassGlyph);
+export default appIcon('safari');

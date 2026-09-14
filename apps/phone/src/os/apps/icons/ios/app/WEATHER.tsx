@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { SunCloudGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('WEATHER', ['#5cbcff', '#1272e0'], SunCloudGlyph);
+export default appIcon('weather');

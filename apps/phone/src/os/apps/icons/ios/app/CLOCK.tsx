@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { ClockGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('CLOCK', ['#565b64', '#15171c'], ClockGlyph);
+export default appIcon('clock');

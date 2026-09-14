@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { AppGridGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('APPSTORE', ['#4fa9ff', '#0a5fe8'], AppGridGlyph);
+export default appIcon('appstore');

@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { WaveformGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('VOICEMEMOS', ['#565b64', '#15171c'], WaveformGlyph, { glyphColor: '#ff4a3d' });
+export default appIcon('voicememos');

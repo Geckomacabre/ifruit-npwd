@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { EnvelopeGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('EMAIL', ['#5bb2ff', '#0a6fe8'], EnvelopeGlyph);
+export default appIcon('mail');

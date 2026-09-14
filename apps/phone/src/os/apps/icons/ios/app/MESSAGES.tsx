@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { MessagesGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('MESSAGES', ['#6fe47f', '#12b03c'], MessagesGlyph);
+export default appIcon('messages');

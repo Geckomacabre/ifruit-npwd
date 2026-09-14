@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { BookGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('PAGES', ['#ffc85a', '#f09000'], BookGlyph);
+export default appIcon('books');

@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { FlameGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('MATCH', ['#ff7794', '#ea1a4c'], FlameGlyph);
+export default appIcon('heart');

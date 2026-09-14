@@ -1,4 +1,3 @@
-import { liquidIcon } from '../liquidGlass';
-import { PhoneGlyph } from '../glyphs';
+import { appIcon } from '../iosIcon';
 
-export default liquidIcon('DIALER', ['#5ee06d', '#0fae2c'], PhoneGlyph);
+export default appIcon('phone');
