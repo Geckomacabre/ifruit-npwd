@@ -29,6 +29,7 @@ import './wallet/wallet.controller';
 import './mail/mail.controller';
 import './voicememos/voicememos.controller';
 import './pages/pages.controller';
+import './crypto/crypto.controller';
 
 // setup exports
 import './bridge/sv_exports';

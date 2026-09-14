@@ -21,5 +21,6 @@ import './cl_mail';
 import './cl_weather';
 import './cl_voicememos';
 import './cl_pages';
+import './cl_crypto';
 
 export const ClUtils = new ClientUtils();

@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import CryptoIcon from '../icons/material/app/CRYPTO';
+import { CryptoApp } from '@apps/crypto/CryptoApp';
 import SnarfIcon from '../icons/material/app/SNARF';
 import RydemeIcon from '../icons/material/app/RYDEME';
 import { SnarfApp } from '@apps/gigs/SnarfApp';
@@ -354,6 +356,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Rides across Los Santos',
     storeSizeKb: 71800,
     Route: () => <AppRoute id="RYDEME" path="/rydeme" component={RydemeApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'CRYPTO',
+    nameLocale: 'APPS_CRYPTO',
+    icon: <CryptoIcon />,
+    backgroundColor: '#e08a00',
+    color: common.white,
+    path: '/crypto',
+    removable: true,
+    storeDescription: 'Track and trade coins',
+    storeSizeKb: 256700,
+    Route: () => <AppRoute id="CRYPTO" path="/crypto" component={CryptoApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

@@ -232,3 +232,17 @@ export const TaxiGlyph: React.FC = () => (
     <rect x="40" y="14" width="20" height="10" rx="3" />
   </>
 );
+
+export const CoinGlyph: React.FC = () => (
+  <>
+    <circle cx="50" cy="50" r="36" />
+    <path
+      d="M50 26v48M62 38H44a8 8 0 0 0 0 16h12a8 8 0 0 1 0 16H38"
+      fill="none"
+      stroke="#000"
+      strokeOpacity="0.34"
+      strokeWidth="7"
+      strokeLinecap="round"
+    />
+  </>
+);
