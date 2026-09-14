@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import HomeIcon from '../icons/material/app/HOME';
+import { HomeApp } from '@apps/home-app/HomeApp';
 import TrendyIcon from '../icons/material/app/TRENDY';
 import { TrendyApp } from '@apps/trendy/TrendyApp';
 import InstaPicIcon from '../icons/material/app/INSTAPIC';
@@ -396,6 +398,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Short videos',
     storeSizeKb: 223000,
     Route: () => <AppRoute id="TRENDY" path="/trendy" component={TrendyApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'HOME',
+    nameLocale: 'APPS_HOME',
+    icon: <HomeIcon />,
+    backgroundColor: '#0284c7',
+    color: common.white,
+    path: '/home-app',
+    removable: true,
+    storeDescription: 'Your properties',
+    storeSizeKb: 19200,
+    Route: () => <AppRoute id="HOME" path="/home-app" component={HomeApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

@@ -17,6 +17,7 @@ client_scripts({
 	"lua/garage/client.lua",
 	"lua/services/client.lua",
 	"lua/gigs/client.lua",
+	"lua/home/client.lua",
 })
 
 server_script({
@@ -27,6 +28,7 @@ server_script({
 	"lua/garage/server.lua",
 	"lua/services/server.lua",
 	"lua/gigs/server.lua",
+	"lua/home/server.lua",
 })
 
 lua54("yes")

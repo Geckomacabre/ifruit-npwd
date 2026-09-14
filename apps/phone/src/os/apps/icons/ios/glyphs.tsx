@@ -260,3 +260,9 @@ export const NoteGlyph: React.FC = () => (
     <path d="M44 20h10c1.5 10.5 8.5 17 19 18.5v11C63 48.5 56 45 54 41v24a20 20 0 1 1-20-20c1.4 0 2.7.1 4 .4v11.4A9 9 0 1 0 44 65z" />
   </>
 );
+
+export const HouseGlyph: React.FC = () => (
+  <>
+    <path d="M50 14 12 46h10v34a6 6 0 0 0 6 6h14V60h16v26h14a6 6 0 0 0 6-6V46h10z" />
+  </>
+);
