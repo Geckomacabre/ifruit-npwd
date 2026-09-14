@@ -46,7 +46,7 @@ all apps are clickable without a server.
 | Home indicator | Floats over apps (`Navigation.tsx`), difference-blended so it shows on light and dark. MUI bottom tab bars get extra bottom padding in `Phone.css`. |
 | Notifications | Banners sit under the dynamic island (`Phone.css` → `.notistack-SnackbarContainer`). |
 | **Liquid Glass** | `os/glass/glassTokens.ts` maps one 0–100 value to CSS variables; `.liquid-glass` (+ `-dark`, `-bar`) in `Phone.css`. Used by dock, banners, Control Center, tab bars. **Settings → Appearance → Liquid Glass** slider (Glossy ↔ Frosted, live preview). Setting key `glassFrost` is optional in the schema on purpose — making it required would invalidate everyone's saved settings. |
-| iOS icon set | `os/apps/icons/ios` (default icon set). PNGs from [SysAdminDoc/iOSIconPack](https://github.com/SysAdminDoc/iOSIconPack) (MIT, license in `public/media/icons/ios18`). Apps without artwork use gradient glyph tiles. **User wants every icon redone except BuckMe once all apps exist.** |
+| iOS icon set | `os/apps/icons/ios` (default icon set), now **generated, not artwork**. `liquidGlass.tsx` builds a real superellipse tile (n = 5) and supplies the glass — colored base, floor shadow, top-left specular bloom, diagonal sheen, Fresnel rim bright at the top edge into dark at the bottom. `glyphs.tsx` holds flat silhouettes drawn from primitives, which carry no lighting of their own. Adding an icon = a 3-line file pairing a gradient with a glyph. **BuckMe keeps its own icon** (still the npwd_icons artwork). Glyphs are deliberately not traced from any icon pack: iOS10-SVG-ICONS is unlicensed and recreates Apple's icons, which the iFruit rule rules out anyway. The old PNG pack under `public/media/icons/ios18` is now unreferenced and can be deleted. |
 | Wallpaper | `ocean.jpg` is the default (only affects phones without saved settings). |
 | Renames | Marketplace shows as **App Store**, Matchmaker as **Hookr** (locale only; ids unchanged). |
 
@@ -105,7 +105,7 @@ all apps are clickable without a server.
 3. **Rewrite custom lb-phone apps natively**: `um_gigs` (Snarf / rydeme), `geocaching_phone`,
    `noted_fitbit`, `noted_crimeapp`, `lonelymans`, `sk_streetkings`. Also re-point `jim_bridge`
    (`GetEquippedPhoneNumber`/`SendMail`) and `ox_inventory`'s `UsePhoneItem` hook to NPWD.
-4. **Redo all app icons except BuckMe** (user request, after the build-out).
+4. ~~Redo all app icons except BuckMe~~ — done; see the iOS icon set row above. Apps built from here on just need a gradient + glyph pair. Still open if wanted: iOS-style icon *appearance variants* (default / dark / clear / tinted), per Apple's HIG "Appearances" guidance of keeping an icon's core shape identical across variants.
 5. **Go live in game**: swap `ensure lb-phone` for `ensure npwd` in server.cfg, set
    `NPWD_AUDIO_TOKEN`, then test money flows (BuckMe, valet, Services banking), Mail compat events,
    Garage summon/lock, and Services notifications with real players.
