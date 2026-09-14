@@ -18,6 +18,7 @@ client_scripts({
 	"lua/services/client.lua",
 	"lua/gigs/client.lua",
 	"lua/home/client.lua",
+	"lua/music/client.lua",
 })
 
 server_script({
@@ -29,6 +30,7 @@ server_script({
 	"lua/services/server.lua",
 	"lua/gigs/server.lua",
 	"lua/home/server.lua",
+	"lua/music/server.lua",
 })
 
 lua54("yes")

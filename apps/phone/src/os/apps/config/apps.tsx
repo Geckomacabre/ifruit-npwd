@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import MusicIcon from '../icons/material/app/MUSIC';
+import { MusicApp } from '@apps/music/MusicApp';
 import HomeIcon from '../icons/material/app/HOME';
 import { HomeApp } from '@apps/home-app/HomeApp';
 import TrendyIcon from '../icons/material/app/TRENDY';
@@ -410,6 +412,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Your properties',
     storeSizeKb: 19200,
     Route: () => <AppRoute id="HOME" path="/home-app" component={HomeApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'MUSIC',
+    nameLocale: 'APPS_MUSIC',
+    icon: <MusicIcon />,
+    backgroundColor: '#e11d48',
+    color: common.white,
+    path: '/music',
+    removable: true,
+    storeDescription: 'Your tracks, out loud or private',
+    storeSizeKb: 17400,
+    Route: () => <AppRoute id="MUSIC" path="/music" component={MusicApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

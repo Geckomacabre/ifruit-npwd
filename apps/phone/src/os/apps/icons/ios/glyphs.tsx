@@ -266,3 +266,9 @@ export const HouseGlyph: React.FC = () => (
     <path d="M50 14 12 46h10v34a6 6 0 0 0 6 6h14V60h16v26h14a6 6 0 0 0 6-6V46h10z" />
   </>
 );
+
+export const MusicNoteGlyph: React.FC = () => (
+  <>
+    <path d="M78 16 40 26v39a15 15 0 1 0 8 13V38l22-6v25a15 15 0 1 0 8 13z" />
+  </>
+);
