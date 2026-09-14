@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import fetchNui from '@utils/fetchNui';
-import {
-  GigActionResult,
-  GigApp,
-  GigEvents,
-  GigProfile,
-  GigState,
-} from '@typings/gigs';
+import { GigActionResult, GigApp, GigEvents, GigProfile, GigState } from '@typings/gigs';
 import { mockProfile, mockState } from './mock';
 
 // Two polls on purpose, at different rates. getState is a server round trip

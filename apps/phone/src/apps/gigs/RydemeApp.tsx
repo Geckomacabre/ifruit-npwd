@@ -5,10 +5,9 @@ import { RiderPanel } from './components/RiderPanel';
 export const RydemeApp: React.FC = () => (
   <GigShell
     app="goober"
-    title="rydeme"
-    accent="bg-[#14b8a6]"
+    tagline="Rides from strangers, priced dynamically."
     dutyLabel="Driving"
-    emptyBoard="Fares are sent to you — stay on duty."
+    emptyBoard="Stay near a busy area. You will get a notification and a few seconds to answer."
     rider={(gigs) => <RiderPanel gigs={gigs} />}
   />
 );

@@ -1,59 +1,49 @@
 import React from 'react';
-import { cn } from '@utils/css';
 import { GigOffer } from '@typings/gigs';
 
 interface IncomingFareProps {
   offer: GigOffer;
   seconds: number;
-  accent: string;
   busy: boolean;
   onAccept: () => void;
   onDecline: () => void;
 }
+
+/** How long a dispatch is offered for, so the bar has something to run down. */
+const OFFER_WINDOW = 20;
 
 // The card for a fare being pushed at you. The countdown comes from the client
 // (see getLive) so it ticks every second without a server round trip.
 export const IncomingFare: React.FC<IncomingFareProps> = ({
   offer,
   seconds,
-  accent,
   busy,
   onAccept,
   onDecline,
 }) => (
-  <div className="border-current/20 mb-3 rounded-2xl border-2 bg-white p-4 shadow-sm dark:bg-neutral-800">
+  <div className="gig-request">
     <div className="flex items-baseline justify-between">
-      <span className="font-semibold">{offer.playerRide ? 'Ride request' : offer.kindLabel}</span>
-      <span className="text-lg font-bold">${offer.pay}</span>
+      <span className="gig-req-kind">{offer.playerRide ? 'Ride request' : offer.kindLabel}</span>
+      <span className="text-[13px] font-bold">{seconds}s</span>
     </div>
 
-    <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+    <div className="gig-clock">
+      <i style={{ width: `${Math.min(100, (seconds / OFFER_WINDOW) * 100)}%` }} />
+    </div>
+
+    <p className="gig-pay mt-2.5">${offer.pay}</p>
+    <p className="mt-1 text-[13px]">
       {offer.playerRide && offer.passengerName
         ? `${offer.passengerName} → ${offer.dropoffLabel}`
         : `${offer.pickupLabel} → ${offer.dropoffLabel}`}
     </p>
-    <p className="mt-0.5 text-xs text-neutral-500">
-      {offer.distance?.toFixed(1)} km · expires in {seconds}s
-    </p>
+    <p className="gig-muted mt-1">{offer.distance?.toFixed(1)} km away</p>
 
-    <div className="mt-3 flex gap-2">
-      <button
-        type="button"
-        disabled={busy}
-        onClick={onDecline}
-        className="flex-1 rounded-full bg-neutral-200 py-2 text-sm font-semibold disabled:opacity-60 dark:bg-neutral-700"
-      >
+    <div className="gig-btn-row">
+      <button type="button" disabled={busy} onClick={onDecline} className="gig-btn ghost">
         Decline
       </button>
-      <button
-        type="button"
-        disabled={busy}
-        onClick={onAccept}
-        className={cn(
-          'flex-1 rounded-full py-2 text-sm font-semibold text-white disabled:opacity-60',
-          accent,
-        )}
-      >
+      <button type="button" disabled={busy} onClick={onAccept} className="gig-btn">
         Accept
       </button>
     </div>

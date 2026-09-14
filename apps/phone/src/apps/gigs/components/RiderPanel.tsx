@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Map as MapIcon, MapPin, X } from 'lucide-react';
+import { Bot, Car, MapPin, X } from 'lucide-react';
 import fetchNui from '@utils/fetchNui';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { GtaMap } from '@os/map/GtaMap';
@@ -24,10 +24,10 @@ const RIDE_STATE_LABEL: Record<string, string> = {
   done: 'Arrived',
 };
 
-// The passenger half of rydeme: pick a destination, get a quote, request it.
-// Two ways in -- tap the in-app map, or reuse a waypoint already dropped on
-// the player's own map. Both land on the same resolved point and the same
-// quote, so they behave identically from there on.
+// The passenger half of rydeme. Picking a tier IS the way into naming a
+// destination -- one tap chooses whether a real player or an AI car comes, and
+// takes you straight to the map, which is the same two taps a real rideshare
+// app asks for.
 export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gigs }) => {
   const { addAlert } = useSnackbar();
   const [dest, setDest] = useState<Destination | null>(null);
@@ -52,47 +52,45 @@ export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gig
 
   if (!state?.riderMode) return null;
 
-  // A driver can't also be a passenger, and vice versa.
-  if (state.onDuty || state.job) return null;
+  // You cannot be both halves of the same ride.
+  if (state.onDuty || state.job) {
+    return (
+      <p className="gig-muted py-12 text-center">
+        You are driving. Go offline on the Rides tab to book one yourself.
+      </p>
+    );
+  }
 
   const ride = state.ride;
 
   /** Prices a resolved point and shows it as the pending destination. */
-  const priceIt = async (point: Destination) => {
+  const priceIt = async (point: Destination, asNpc: boolean) => {
     setDest(point);
     const q = await fetchNui<Quote>(
       GigEvents.QUOTE_RIDE,
-      { custom: point, npc },
-      { ok: true, fare: npc ? 180 : 320, distance: 4.2 },
+      { custom: point, npc: asNpc },
+      { ok: true, fare: asNpc ? 180 : 320, distance: 4.2 },
     );
     setQuote(q?.ok ? q : null);
     if (!q?.ok) addAlert({ message: q?.message ?? 'No quote available.', type: 'error' });
   };
 
-  const useWaypoint = async () => {
-    setWorking(true);
-    try {
-      const point = await fetchNui<Destination>(GigEvents.GET_MY_WAYPOINT, undefined, {
-        ok: true,
-        label: 'Vespucci Beach',
-        x: -1223,
-        y: -1500,
-        z: 4,
-      });
-
-      if (!point?.ok) {
-        addAlert({ message: point?.message ?? 'No waypoint set.', type: 'error' });
-        return;
-      }
-      await priceIt(point);
-    } finally {
-      setWorking(false);
-    }
-  };
-
-  const openPicker = async () => {
+  /**
+   * Opens the picker on a tier. Seeded with a waypoint the player already
+   * dropped on their own map, if they have one — otherwise blank and centred
+   * on them, ready for a tap.
+   */
+  const choose = async (asNpc: boolean) => {
+    setNpc(asNpc);
     setPicking(true);
-    // Centre on the player, so the first thing on screen is where they are.
+
+    const seed = await fetchNui<Destination>(GigEvents.GET_MY_WAYPOINT, undefined, { ok: false });
+    if (seed?.ok) {
+      setPicking(false);
+      await priceIt(seed, asNpc);
+      return;
+    }
+
     const here = await fetchNui<Destination>(GigEvents.GET_MY_COORDS, undefined, {
       ok: true,
       x: -1037,
@@ -120,7 +118,7 @@ export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gig
         addAlert({ message: point?.message ?? 'Could not use that spot.', type: 'error' });
         return;
       }
-      await priceIt(point);
+      await priceIt(point, npc);
       setPicking(false);
     } finally {
       setWorking(false);
@@ -152,39 +150,33 @@ export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gig
 
   if (ride) {
     return (
-      <div className="mb-3 rounded-2xl bg-white p-4 shadow-sm dark:bg-neutral-800">
+      <div className="gig-card">
         <p className="font-semibold">{RIDE_STATE_LABEL[ride.state] ?? ride.state}</p>
-        {ride.destLabel && (
-          <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">To {ride.destLabel}</p>
-        )}
+        {ride.destLabel && <p className="mt-1 text-[13px]">To {ride.destLabel}</p>}
         {ride.driverName && (
-          <p className="mt-0.5 text-xs text-neutral-500">
+          <p className="gig-muted mt-1">
             {ride.driverName}
             {ride.driverRating ? ` · ${ride.driverRating.toFixed(1)}★` : ''}
             {ride.vehicle ? ` · ${ride.vehicle}` : ''}
           </p>
         )}
-        {ride.fare != null && <p className="mt-2 text-lg font-bold">${ride.fare}</p>}
+        {ride.fare != null && <p className="gig-pay mt-2">${ride.fare}</p>}
 
         {ride.state === 'done' ? (
-          <div className="mt-3 flex gap-2">
+          <div className="gig-btn-row">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
                 key={n}
                 type="button"
                 onClick={() => gigs.rateDriver(n)}
-                className="flex-1 rounded-full bg-neutral-200 py-2 text-sm font-semibold dark:bg-neutral-700"
+                className="gig-btn ghost"
               >
                 {n}★
               </button>
             ))}
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => gigs.cancelRide()}
-            className="mt-3 w-full rounded-full bg-neutral-200 py-2 text-sm font-semibold text-red-500 dark:bg-neutral-700"
-          >
+          <button type="button" onClick={() => gigs.cancelRide()} className="gig-btn danger mt-3">
             Cancel ride
           </button>
         )}
@@ -192,103 +184,84 @@ export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gig
     );
   }
 
+  // A destination is chosen and priced — all that is left is to commit.
+  if (dest) {
+    return (
+      <div className="gig-card">
+        <p className="flex items-center gap-1.5 text-[13px]">
+          <MapPin size={14} /> {dest.label}
+        </p>
+        {quote && (
+          <p className="gig-pay mt-1.5">
+            ${quote.fare}
+            {quote.distance != null && (
+              <span className="gig-muted ml-1.5 font-normal">{quote.distance.toFixed(1)} km</span>
+            )}
+          </p>
+        )}
+        <p className="gig-muted mt-1">{npc ? config?.npcBrand ?? 'AI pickup' : 'Player pickup'}</p>
+
+        <div className="gig-btn-row">
+          <button
+            type="button"
+            onClick={() => {
+              setDest(null);
+              setQuote(null);
+            }}
+            className="gig-btn ghost"
+          >
+            Change
+          </button>
+          <button type="button" disabled={gigs.busy} onClick={request} className="gig-btn">
+            Request
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mb-3 rounded-2xl bg-white p-4 shadow-sm dark:bg-neutral-800">
-      <div className="flex items-baseline justify-between">
-        <span className="font-semibold">Get a ride</span>
-        <span className="text-xs text-neutral-500">
-          {state.driversOnline ?? 0} driver{state.driversOnline === 1 ? '' : 's'} online
-        </span>
+    <>
+      <div className="pb-4 text-center">
+        <p className="text-[20px] font-bold">Where to?</p>
+        <p className="gig-muted mt-1">
+          {state.driversOnline ?? 0} driver{state.driversOnline === 1 ? '' : 's'} online right now
+        </p>
       </div>
 
-      {dest ? (
-        <>
-          <p className="mt-2 flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-300">
-            <MapPin size={14} /> {dest.label}
-          </p>
-          {quote && (
-            <p className="mt-1 text-lg font-bold">
-              ${quote.fare}
-              {quote.distance != null && (
-                <span className="ml-1 text-xs font-normal text-neutral-500">
-                  {quote.distance.toFixed(1)} km
-                </span>
-              )}
-            </p>
-          )}
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setDest(null);
-                setQuote(null);
-              }}
-              className="flex-1 rounded-full bg-neutral-200 py-2 text-sm font-semibold dark:bg-neutral-700"
-            >
-              Change
-            </button>
-            <button
-              type="button"
-              disabled={gigs.busy}
-              onClick={request}
-              className="flex-1 rounded-full bg-[#14b8a6] py-2 text-sm font-semibold text-white disabled:opacity-60"
-            >
-              Request
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          {config?.npcEnabled && (
-            // Two tiers: a real player driving, or an AI car. Priced on
-            // separate bands, so the choice has to come before the quote.
-            <div className="mt-2 flex gap-1">
-              {[
-                { npc: false, label: 'Player driver' },
-                { npc: true, label: config.npcBrand ?? 'AI ride' },
-              ].map((tier) => (
-                <button
-                  key={tier.label}
-                  type="button"
-                  onClick={() => setNpc(tier.npc)}
-                  className={cn(
-                    'flex-1 rounded-full py-1 text-[12px] font-semibold transition-colors',
-                    npc === tier.npc
-                      ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
-                      : 'bg-neutral-200/70 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300',
-                  )}
-                >
-                  {tier.label}
-                </button>
-              ))}
-            </div>
-          )}
+      <button type="button" className="gig-pick" onClick={() => choose(false)}>
+        <span className="gig-pick-icon">
+          <Car size={21} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15px] font-bold">Player pickup</span>
+          <span className="gig-muted block">a real driver comes to you</span>
+        </span>
+        <span className="gig-pill">COSTS MORE</span>
+      </button>
 
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              disabled={working}
-              onClick={openPicker}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#14b8a6] py-2 text-sm font-semibold text-white disabled:opacity-60"
-            >
-              <MapIcon size={15} /> Pick on map
-            </button>
-            <button
-              type="button"
-              disabled={working}
-              onClick={useWaypoint}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 py-2 text-sm font-semibold disabled:opacity-60 dark:bg-neutral-700"
-            >
-              <MapPin size={15} /> Waypoint
-            </button>
-          </div>
-        </>
+      {config?.npcEnabled && (
+        <button type="button" className="gig-pick npc" onClick={() => choose(true)}>
+          <span className="gig-pick-icon">
+            <Bot size={21} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-bold">AI pickup</span>
+            <span className="gig-muted block">a car shows up right now</span>
+          </span>
+          <span className="gig-pill accent">INSTANT</span>
+        </button>
       )}
 
+      <p className="gig-muted mt-4 text-center">Fares are estimates. rydeme keeps a service fee.</p>
+
       {picking && (
-        <div className="absolute inset-0 z-30 flex flex-col bg-black">
-          <div className="flex items-center justify-between px-4 pb-2 pt-3 text-white">
-            <span className="text-sm font-semibold">
+        <div
+          className={cn('absolute inset-0 z-30 flex flex-col')}
+          style={{ background: 'var(--bg)' }}
+        >
+          <div className="flex items-center justify-between px-4 pb-2 pt-3">
+            <span className="text-[13px] font-semibold">
               {working ? 'Finding that spot…' : 'Tap where you want to go'}
             </span>
             <button
@@ -309,6 +282,6 @@ export const RiderPanel: React.FC<{ gigs: ReturnType<typeof useGigs> }> = ({ gig
           />
         </div>
       )}
-    </div>
+    </>
   );
 };

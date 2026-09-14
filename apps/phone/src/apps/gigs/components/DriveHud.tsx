@@ -26,7 +26,7 @@ export const DriveHud: React.FC<DriveHudProps> = ({
   speedLimit,
   overLimit,
 }) => (
-  <div className="mb-3 overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-neutral-800">
+  <div className="gig-card overflow-hidden !p-0">
     <GtaMap
       className="h-40"
       follow={pos}
@@ -41,7 +41,7 @@ export const DriveHud: React.FC<DriveHudProps> = ({
         <span className={cn('text-3xl font-bold tabular-nums', overLimit && 'text-red-500')}>
           {speedMph ?? 0}
         </span>
-        <span className="text-xs text-neutral-500">mph</span>
+        <span className="gig-muted">mph</span>
       </span>
 
       {speedLimit != null && (

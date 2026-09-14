@@ -48,8 +48,30 @@ export const mockProfile: GigProfile = {
   rating: 4.6,
   warnThreshold: 4,
   history: [
-    { name: 'Marla K.', stars: 5, comment: 'Fast and the food was still hot.', pay: 240, tip: 40, ts: 1757800000 },
-    { name: 'Dwayne', stars: 4, comment: 'Took the long way but fine.', pay: 180, tip: 0, ts: 1757790000 },
-    { name: 'Rider', stars: 1, comment: 'Never showed up.', pay: 0, tip: 0, ts: 1757780000, aborted: true },
+    {
+      name: 'Marla K.',
+      stars: 5,
+      comment: 'Fast and the food was still hot.',
+      pay: 240,
+      tip: 40,
+      ts: 1757800000,
+    },
+    {
+      name: 'Dwayne',
+      stars: 4,
+      comment: 'Took the long way but fine.',
+      pay: 180,
+      tip: 0,
+      ts: 1757790000,
+    },
+    {
+      name: 'Rider',
+      stars: 1,
+      comment: 'Never showed up.',
+      pay: 0,
+      tip: 0,
+      ts: 1757780000,
+      aborted: true,
+    },
   ],
 };

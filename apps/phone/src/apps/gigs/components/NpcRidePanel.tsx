@@ -39,38 +39,31 @@ export const NpcRidePanel: React.FC<NpcRidePanelProps> = ({ ride, brand, onDone 
   };
 
   return (
-    <div className="mb-3 overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-neutral-800">
+    <div className="gig-card overflow-hidden !p-0">
       {markers.length > 0 && <GtaMap className="h-40" follow={follow} markers={markers} />}
 
       <div className="p-4">
         <div className="flex items-baseline justify-between">
           <span className="font-semibold">{PHASE_LABEL[ride.phase] ?? ride.phase}</span>
-          {ride.knoway && <span className="text-xs text-neutral-500">{brand}</span>}
+          {ride.knoway && <span className="gig-pill accent">{brand}</span>}
         </div>
-        {ride.destLabel && (
-          <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">To {ride.destLabel}</p>
-        )}
+        {ride.destLabel && <p className="mt-1.5 text-[13px]">To {ride.destLabel}</p>}
 
         {ride.phase === 'done' ? (
-          <div className="mt-3 flex gap-2">
+          <div className="gig-btn-row">
             {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => rate(n)}
-                className="flex-1 rounded-full bg-neutral-200 py-2 text-sm font-semibold dark:bg-neutral-700"
-              >
+              <button key={n} type="button" onClick={() => rate(n)} className="gig-btn ghost">
                 {n}★
               </button>
             ))}
           </div>
         ) : (
-          <div className="mt-3 flex gap-2">
+          <div className="gig-btn-row">
             <button
               type="button"
               disabled={ride.speedBoost}
               onClick={() => fetchNui(GigEvents.NPC_SPEED_UP, undefined, { ok: true })}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-neutral-200 py-2 text-sm font-semibold disabled:opacity-50 dark:bg-neutral-700"
+              className="gig-btn ghost flex items-center justify-center gap-1.5"
             >
               <Zap size={14} />
               {ride.speedBoost ? 'Hurrying' : 'Hurry up'}
@@ -80,7 +73,7 @@ export const NpcRidePanel: React.FC<NpcRidePanelProps> = ({ ride, brand, onDone 
               <button
                 type="button"
                 onClick={() => fetchNui(GigEvents.NPC_END_RIDE, undefined, { ok: true })}
-                className="flex-1 rounded-full bg-neutral-200 py-2 text-sm font-semibold text-red-500 dark:bg-neutral-700"
+                className="gig-btn danger"
               >
                 Let me out
               </button>
