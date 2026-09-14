@@ -22,7 +22,7 @@ export const StatusBar: React.FC = () => {
   // icons sit level with it instead of reading as a separate strip below it.
   return (
     <div
-      className="StatusBar absolute left-0 right-0 z-[60] pointer-events-none flex items-center justify-between pl-6 pr-4 text-black dark:text-white"
+      className="StatusBar absolute left-0 right-0 z-[60] pointer-events-none flex items-center justify-between pl-8 pr-4 text-black dark:text-white"
       style={{ top: 12, height: 29 }}
     >
       <span className="text-[16px] font-bold tabular-nums leading-none">{time || '9:41'}</span>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useLockScreen } from '@os/phone/hooks/useLockScreen';
 
 // iFruit-style home indicator: no persistent button row (each app carries
 // its own back affordance in its header). Just a slim pill at the very
@@ -8,9 +9,13 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 export const Navigation: React.FC = () => {
   const history = useHistory();
   const { isExact } = useRouteMatch('/');
+  const { locked } = useLockScreen();
+
+  // Only shows inside an app. The home screen and lock screen are already
+  // "home", so the indicator has nothing to go back to there.
+  if (isExact || locked) return null;
 
   const handleGoHome = () => {
-    if (isExact) return;
     history.push('/');
   };
 

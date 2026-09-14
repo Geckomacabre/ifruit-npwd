@@ -9,6 +9,7 @@ import { LockScreen } from '@os/lockscreen/components/LockScreen';
 import { useLockScreen } from '@os/phone/hooks/useLockScreen';
 import { ControlCenter } from '@os/control-center/components/ControlCenter';
 import { PullDownHandle } from '@os/control-center/components/PullDownHandle';
+import { BrightnessOverlay } from '@os/control-center/components/BrightnessOverlay';
 import { useSimcardService } from '@os/simcard/hooks/useSimcardService';
 import { usePhoneService } from '@os/phone/hooks/usePhoneService';
 import { useApps } from '@os/apps/hooks/useApps';
@@ -122,6 +123,7 @@ const Phone: React.FC<PhoneProps> = ({ notiRefCB }) => {
           <Navigation />
           <ControlCenter />
           {locked && <LockScreen />}
+          <BrightnessOverlay />
         </PhoneWrapper>
       </TopLevelErrorComponent>
     </div>
