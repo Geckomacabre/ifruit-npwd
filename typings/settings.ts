@@ -33,8 +33,10 @@ export interface IPhoneSettings {
   callVolume: number;
   /** Liquid Glass, 0 glossy .. 100 frosted. Optional so older saved settings stay valid. */
   glassFrost?: number;
-  /** Ids of removable apps installed via the App Store. Optional/undefined means "all installed" so existing saves keep every app they already had. */
-  installedApps?: string[];
+  /** Ids of removable apps the player deleted in the App Store. Opt-out rather
+   * than opt-in so an app added in a later update still shows up for players
+   * who have already used the store. */
+  removedApps?: string[];
   notiSound: SettingOption;
   TWITTER_notiFilter: SettingOption<SETTING_MENTIONS | SETTINGS_ALL_TWEETS>;
   TWITTER_notiSound: SettingOption;

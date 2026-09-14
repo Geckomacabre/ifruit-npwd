@@ -345,6 +345,8 @@
     "APPS_CALCULATOR_COPIED": "Result was copied to clipboard!",
     "APPS_DARKCHAT": "IRC",
     "APPS_APPSTORE": "App Store",
+    "APPS_SNARF": "Snarf",
+    "APPS_RYDEME": "rydeme",
     "GENERIC_CLICK_TO_REVEAL": "Click to reveal",
     "GENERIC_LOADING": "Loading...",
     "GENERIC_WAIT": "Please wait...",

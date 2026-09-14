@@ -12,14 +12,14 @@ export const useApps = () => {
   const theme = useTheme();
   const settingsValue = useSettingsValue();
   const curIconSet = settingsValue.iconSet.value as IconSetObject;
-  const installedApps = settingsValue.installedApps;
+  const removedApps = settingsValue.removedApps;
 
   const apps: IApp[] = useMemo(() => {
     return APPS.map((app) => {
-      // Undefined installedApps means the player hasn't touched the App Store
-      // yet, so every removable app they already had stays visible.
-      const isUninstalled =
-        app.removable && Array.isArray(installedApps) && !installedApps.includes(app.id);
+      // Removable apps are present unless the player deleted them, so an app
+      // added in a later update shows up for everyone rather than only for
+      // players who never opened the App Store.
+      const isUninstalled = app.removable && (removedApps ?? []).includes(app.id);
       const isDisabled = app.disable || isUninstalled;
       const SvgIcon = React.lazy<SvgIconComponent>(() =>
         import(`../icons/${curIconSet.name}/svg/${app.id}.tsx`).catch(
@@ -57,7 +57,7 @@ export const useApps = () => {
         isDisabled,
       };
     });
-  }, [icons, curIconSet, theme, installedApps]);
+  }, [icons, curIconSet, theme, removedApps]);
 
   const allApps = useMemo(() => [...apps], [apps]);
   const getApp = useCallback(

@@ -80,6 +80,10 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import SnarfIcon from '../icons/material/app/SNARF';
+import RydemeIcon from '../icons/material/app/RYDEME';
+import { SnarfApp } from '@apps/gigs/SnarfApp';
+import { RydemeApp } from '@apps/gigs/RydemeApp';
 import { AppStoreApp } from '@apps/appstore/AppStoreApp';
 import { APPSTORE_APP_PRIMARY_COLOR } from '@apps/appstore/appstore.theme';
 
@@ -326,6 +330,30 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Find local businesses and services',
     storeSizeKb: 84400,
     Route: () => <AppRoute id="PAGES" path="/pages" component={PagesApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'SNARF',
+    nameLocale: 'APPS_SNARF',
+    icon: <SnarfIcon />,
+    backgroundColor: '#f97316',
+    color: common.white,
+    path: '/snarf',
+    removable: true,
+    storeDescription: 'Deliver food, get paid',
+    storeSizeKb: 64200,
+    Route: () => <AppRoute id="SNARF" path="/snarf" component={SnarfApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'RYDEME',
+    nameLocale: 'APPS_RYDEME',
+    icon: <RydemeIcon />,
+    backgroundColor: '#14b8a6',
+    color: common.white,
+    path: '/rydeme',
+    removable: true,
+    storeDescription: 'Rides across Los Santos',
+    storeSizeKb: 71800,
+    Route: () => <AppRoute id="RYDEME" path="/rydeme" component={RydemeApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

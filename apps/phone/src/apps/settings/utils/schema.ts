@@ -41,7 +41,7 @@ const settingsSchema: Schema = {
   properties: {
     callVolume: { type: 'number', required: true },
     glassFrost: { type: 'number' },
-    installedApps: { type: 'array', items: { type: 'string' } },
+    removedApps: { type: 'array', items: { type: 'string' } },
     iconSet: { $ref: '/SettingOptionIconSet', required: true },
     language: { $ref: '/SettingOption', required: true },
     wallpaper: { $ref: '/SettingOption', required: true },

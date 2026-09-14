@@ -209,3 +209,26 @@ export const CubeGlyph: React.FC = () => (
     <path d="M50 50v36L16 68V32z" fill="#000" fillOpacity="0.22" />
   </>
 );
+
+export const BagGlyph: React.FC = () => (
+  <>
+    <path d="M32 30h36a8 8 0 0 1 7.9 6.7l6.5 39A10 10 0 0 1 72.5 87h-45a10 10 0 0 1-9.9-11.3l6.5-39A8 8 0 0 1 32 30z" />
+    <path
+      d="M38 34V25a12 12 0 0 1 24 0v9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="7"
+      strokeLinecap="round"
+    />
+  </>
+);
+
+export const TaxiGlyph: React.FC = () => (
+  <>
+    <path d="M28 36c1.3-4 5-6.6 9.2-6.6h25.6c4.2 0 7.9 2.6 9.2 6.6l4.6 13.8c3.7 1.1 6.4 4.5 6.4 8.6v13a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5v-2H31v2a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5v-13c0-4.1 2.7-7.5 6.4-8.6z" />
+    <path d="M34 49l3.4-11.4h25.2L66 49z" fill="#000" fillOpacity="0.32" />
+    <circle cx="32" cy="61" r="4.4" fill="#000" fillOpacity="0.32" />
+    <circle cx="68" cy="61" r="4.4" fill="#000" fillOpacity="0.32" />
+    <rect x="40" y="14" width="20" height="10" rx="3" />
+  </>
+);

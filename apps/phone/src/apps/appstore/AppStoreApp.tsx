@@ -19,12 +19,9 @@ export const AppStoreApp: React.FC = () => {
 
   const removableApps = useMemo(() => apps.filter((app) => app.removable), [apps]);
 
-  // Undefined installedApps means the player hasn't touched the store yet,
-  // so every removable app they already had counts as installed.
-  const installedIds = useMemo(
-    () => new Set(settings.installedApps ?? removableApps.map((app) => app.id)),
-    [settings.installedApps, removableApps],
-  );
+  // Opt-out: everything is installed unless the player deleted it, so an app
+  // shipped in a later update is there for people who already used the store.
+  const removedIds = useMemo(() => new Set(settings.removedApps ?? []), [settings.removedApps]);
 
   const visible = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -37,13 +34,13 @@ export const AppStoreApp: React.FC = () => {
   }, [removableApps, search, t]);
 
   const toggleInstall = (app: IApp) => {
-    const next = new Set(installedIds);
+    const next = new Set(removedIds);
     if (next.has(app.id)) {
       next.delete(app.id);
     } else {
       next.add(app.id);
     }
-    setSettings({ ...settings, installedApps: Array.from(next) });
+    setSettings({ ...settings, removedApps: Array.from(next) });
   };
 
   const openApp = (app: IApp) => {
@@ -73,7 +70,7 @@ export const AppStoreApp: React.FC = () => {
 
           <div className="flex flex-col gap-3">
             {visible.map((app) => {
-              const installed = installedIds.has(app.id);
+              const installed = !removedIds.has(app.id);
               return (
                 <div
                   key={app.id}
@@ -122,7 +119,7 @@ export const AppStoreApp: React.FC = () => {
         {selected && (
           <AppStoreDetail
             app={selected}
-            installed={installedIds.has(selected.id)}
+            installed={!removedIds.has(selected.id)}
             onClose={() => setSelected(null)}
             onToggleInstall={toggleInstall}
             onOpen={openApp}

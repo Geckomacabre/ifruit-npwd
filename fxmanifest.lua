@@ -8,6 +8,7 @@ shared_scripts({
 	"@ox_lib/init.lua",
 	"@qbx_core/modules/lib.lua",
 	"lua/services/config.lua",
+	"lua/gigs/config.lua",
 })
 
 client_scripts({
@@ -15,6 +16,7 @@ client_scripts({
 	"dist/game/client/*.lua",
 	"lua/garage/client.lua",
 	"lua/services/client.lua",
+	"lua/gigs/client.lua",
 })
 
 server_script({
@@ -24,6 +26,7 @@ server_script({
 	"@oxmysql/lib/MySQL.lua",
 	"lua/garage/server.lua",
 	"lua/services/server.lua",
+	"lua/gigs/server.lua",
 })
 
 lua54("yes")
