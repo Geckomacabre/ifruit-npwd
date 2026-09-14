@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useDragOpen } from '@os/control-center/useDragOpen';
 import { useControlCenterOpen, useControlCenterMode } from '@os/control-center/state';
 import { cn } from '@utils/css';
+import { usePageSwipe } from '../usePageSwipe';
 
 // iFruit-style dock: a handful of pinned apps in a frosted bar at the
 // bottom of the home screen, same spot every time regardless of which page
@@ -23,6 +24,7 @@ export const HomeApp: React.FC = () => {
   const { apps, getApp } = useApps();
   const externalApps = useExternalApps();
   const [page, setPage] = useState(0);
+  const swipe = usePageSwipe();
 
   const dockApps = DOCK_APP_IDS.map((id) => getApp(id)).filter(Boolean);
 
@@ -64,7 +66,13 @@ export const HomeApp: React.FC = () => {
 
   return (
     <AppWrapper fullBleed {...dragNotifications}>
-      <div className="home-pages flex flex-1 snap-x snap-mandatory overflow-x-auto" onScroll={onScroll}>
+      <div
+        ref={swipe.ref}
+        className="home-pages flex flex-1 snap-x snap-mandatory overflow-x-auto"
+        onScroll={onScroll}
+        onMouseDown={swipe.onMouseDown}
+        onClickCapture={swipe.onClickCapture}
+      >
         {pages.map((pageApps, index) => (
           <div
             key={index}
@@ -83,8 +91,11 @@ export const HomeApp: React.FC = () => {
       {pages.length > 1 && (
         <div className="absolute inset-x-0 bottom-[104px] flex justify-center gap-1.5">
           {pages.map((_, index) => (
-            <span
+            <button
               key={index}
+              type="button"
+              aria-label={`Page ${index + 1}`}
+              onClick={() => swipe.goToPage(index)}
               className={cn(
                 'h-1.5 w-1.5 rounded-full transition-colors',
                 index === page ? 'bg-white' : 'bg-white/40',
