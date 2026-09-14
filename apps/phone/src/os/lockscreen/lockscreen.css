@@ -1,0 +1,33 @@
+/* The tinted lock-screen clock. iOS 18 renders it as translucent colored glass
+   with a brighter edge, so the wallpaper reads through the strokes -- a flat
+   solid fill is the main thing that makes a copy of this screen look wrong. */
+
+.lock-clock {
+  font-size: 118px;
+  font-weight: 600;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(176, 230, 247, 0.6);
+  -webkit-text-stroke: 1.5px rgba(228, 249, 255, 0.6);
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.22);
+}
+
+.lock-date {
+  font-size: 17px;
+  font-weight: 600;
+  color: rgba(150, 226, 248, 0.95);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.lock-widget {
+  color: rgba(150, 226, 248, 0.95);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.lock-control {
+  background: rgba(120, 128, 138, 0.42);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}

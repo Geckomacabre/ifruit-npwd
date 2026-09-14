@@ -3,6 +3,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useApps } from '../apps/hooks/useApps';
 import uuid from 'react-uuid';
 import { controlCenterState } from '@os/control-center/state';
+import { phoneState } from '@os/phone/hooks/state';
 
 import {
   notifications,
@@ -75,8 +76,12 @@ export const useNotification = (): NotificationProps => {
 
         // Do Not Disturb (Control Center) still delivers the notification to
         // the notification list, it just skips the popup banner -- same
-        // behavior as a real phone.
-        if (!doNotDisturb) {
+        // behavior as a real phone. A locked phone skips it too: the lock
+        // screen already lists the notification, so a banner on top of that
+        // is the same thing twice, over the clock.
+        const locked = await snapshot.getPromise(phoneState.lockState);
+
+        if (!doNotDisturb && !locked) {
           enqueueSnackbar(content, {
             variant: 'npwdNotification',
             anchorOrigin: {

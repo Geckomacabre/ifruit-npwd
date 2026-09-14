@@ -9,7 +9,13 @@ import { useControlCenterOpen } from '../state';
 
 // A single notification, rendered as a rounded pill card in the Notification
 // Center list (as opposed to the toast banner shown when it first arrives).
-export const NotificationCard: React.FC<{ id: string }> = ({ id }) => {
+interface NotificationCardProps {
+  id: string;
+  /** Runs before navigating -- the lock screen uses it to unlock first. */
+  onActivate?: () => void;
+}
+
+export const NotificationCard: React.FC<NotificationCardProps> = ({ id, onActivate }) => {
   const { appId, content, secondaryTitle, path } = useRecoilValue(notifications(id));
   const app = useApp(appId);
   const { markAsRead } = useNotification();
@@ -20,6 +26,7 @@ export const NotificationCard: React.FC<{ id: string }> = ({ id }) => {
   const handleClick = () => {
     markAsRead(id);
     setOpen(false);
+    onActivate?.();
     if (path) history.push(path);
   };
 
@@ -30,12 +37,18 @@ export const NotificationCard: React.FC<{ id: string }> = ({ id }) => {
       onClick={handleClick}
       className="liquid-glass liquid-glass-dark flex items-center gap-3 rounded-2xl hover:brightness-110 transition px-4 py-3 text-left"
     >
-      <div
-        className="flex items-center justify-center rounded-full h-9 w-9 shrink-0"
-        style={{ backgroundColor: app.backgroundColor }}
-      >
-        {app.NotificationIcon && <app.NotificationIcon fontSize="small" />}
-      </div>
+      {/* The app's real home-screen artwork when the icon set has it, so a
+          notification looks like it came from the icon you tapped. */}
+      {app.Icon ? (
+        <app.Icon className="h-9 w-9 shrink-0 rounded-[10px]" />
+      ) : (
+        <div
+          className="flex items-center justify-center rounded-full h-9 w-9 shrink-0"
+          style={{ backgroundColor: app.backgroundColor }}
+        >
+          {app.NotificationIcon && <app.NotificationIcon fontSize="small" />}
+        </div>
+      )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between">
           <span className="text-white text-sm font-semibold truncate">{t(app.nameLocale)}</span>

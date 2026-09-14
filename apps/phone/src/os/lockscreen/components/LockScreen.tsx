@@ -1,33 +1,24 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { ChevronUp } from 'lucide-react';
-import usePhoneTime from '@os/phone/hooks/usePhoneTime';
+import React, { useRef, useState } from 'react';
 import { useWallpaper } from '../../../apps/settings/hooks/useWallpaper';
 import { useLockScreen } from '@os/phone/hooks/useLockScreen';
+import { useUnreadNotificationIds } from '@os/new-notifications/state';
+import { NotificationCard } from '@os/control-center/components/NotificationCard';
+import { LockClock, LockControls, LockWidgets } from './LockFace';
 
-// iFruit-style lock screen: big clock + date over the wallpaper, swipe (or
-// tap/drag, for simplicity) the arrow up to unlock. Sits above everything
-// else in the phone shell while locked, and is torn down entirely once
-// unlocked so it doesn't intercept input for the rest of the session.
+// iFruit lock screen: tinted clock over the wallpaper, unread notifications
+// stacked beneath it, widgets and the flashlight/camera controls pinned to the
+// bottom. Drag anywhere upward to unlock.
 export const LockScreen: React.FC = () => {
-  const time = usePhoneTime();
   const wallpaper = useWallpaper();
   const { unlock } = useLockScreen();
+  const unreadIds = useUnreadNotificationIds();
+
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   const startYRef = useRef(0);
   // Mirrors dragY so endDrag sees the latest distance: a quick flick fires
   // mouseup before React re-renders, and the dragY in that closure is still 0.
   const dragYRef = useRef(0);
-
-  const date = useMemo(
-    () =>
-      new Date().toLocaleDateString(undefined, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-      }),
-    [],
-  );
 
   const startDrag = (clientY: number) => {
     setDragging(true);
@@ -53,7 +44,7 @@ export const LockScreen: React.FC = () => {
 
   return (
     <div
-      className="LockScreen absolute inset-0 z-50 flex flex-col items-center text-white"
+      className="LockScreen absolute inset-0 z-50 flex flex-col text-white"
       style={{
         backgroundImage: wallpaper,
         backgroundSize: 'cover',
@@ -67,21 +58,29 @@ export const LockScreen: React.FC = () => {
       onTouchMove={(e) => moveDrag(e.touches[0].clientY)}
       onTouchEnd={endDrag}
     >
-      <div className="mt-16 flex flex-col items-center drop-shadow-lg">
-        <span className="text-7xl tracking-tight" style={{ fontFamily: 'GTAArtDeco, sans-serif' }}>
-          {time || '--:--'}
-        </span>
-        <span className="text-lg mt-1 opacity-90">{date}</span>
+      <div
+        className="flex min-h-0 flex-1 flex-col"
+        style={{
+          transform: `translateY(-${dragY}px)`,
+          transition: dragging ? 'none' : 'transform 200ms',
+        }}
+      >
+        <div className="mt-12">
+          <LockClock />
+        </div>
+
+        <div className="mt-5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4">
+          {unreadIds.map((id) => (
+            <NotificationCard key={id} id={id} onActivate={unlock} />
+          ))}
+        </div>
       </div>
 
-      <div className="flex-1" />
-
-      <div
-        className="mb-6 flex flex-col items-center gap-1"
-        style={{ transform: `translateY(-${dragY}px)`, transition: dragging ? 'none' : 'transform 200ms' }}
-      >
-        <ChevronUp className="h-6 w-6 animate-bounce opacity-90" />
-        <span className="text-sm opacity-90">Swipe up to unlock</span>
+      <div className="pb-6">
+        <LockWidgets />
+        <div className="mt-4">
+          <LockControls />
+        </div>
       </div>
     </div>
   );

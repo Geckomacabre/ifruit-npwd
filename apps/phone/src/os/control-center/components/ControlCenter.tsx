@@ -24,6 +24,7 @@ import {
   Timer,
   Volume2,
   BatteryLow,
+  X,
 } from 'lucide-react';
 import {
   useControlCenterOpen,
@@ -48,6 +49,7 @@ import { NotificationCard } from './NotificationCard';
 import { CircleToggle } from './CircleToggle';
 import { GlassSlider } from './GlassSlider';
 import { WifiGlyph } from '@os/status-bar/components/StatusBarIcons';
+import { LockClock, LockControls, LockWidgets } from '@os/lockscreen/components/LockFace';
 import { useSettings } from '../../../apps/settings/hooks/useSettings';
 import '../controlCenter.css';
 
@@ -145,27 +147,49 @@ export const ControlCenter: React.FC = () => {
   if (mode === 'notifications') {
     return (
       <>
-        <div className="absolute inset-0 z-[70] bg-black/40" onClick={() => setIsOpen(false)} />
         <div
-          className="liquid-glass liquid-glass-dark absolute left-0 right-0 top-0 z-[71] max-h-full overflow-y-auto rounded-b-[32px] border-t-0 px-4 pb-6 pt-12"
-          {...dragProps}
-        >
-          <div className="mx-auto mb-4 h-1.5 w-20 rounded-full bg-white/40" />
-          <div className="mb-2 flex items-center justify-between px-1">
-            <span className="text-sm font-semibold text-white/80">Notifications</span>
-            {unreadIds.length > 0 && (
-              <button className="text-sm font-medium text-blue-400" onClick={() => markAllAsRead()}>
-                Clear All
-              </button>
-            )}
+          className="absolute inset-0 z-[70] bg-black/35 backdrop-blur-xl"
+          onClick={() => setIsOpen(false)}
+        />
+        {/* Same surface as the lock screen, which is what it is on iOS -- the
+            clock stays put and the notification list expands underneath it. */}
+        <div className="absolute inset-0 z-[71] flex flex-col pb-6 pt-12 text-white" {...dragProps}>
+          <LockClock />
+
+          <div className="mb-2 mt-4 flex items-center justify-between px-4">
+            <h2 className="text-[27px] font-normal drop-shadow">Notification Center</h2>
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => setIsOpen(false)}
+              className="lock-control flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+            >
+              <X size={19} />
+            </button>
           </div>
-          <div className="flex flex-col gap-2">
+
+          <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4">
             {unreadIds.length === 0 && (
-              <div className="py-8 text-center text-sm text-white/50">No Notifications</div>
+              <div className="py-10 text-center text-sm text-white/60">No Notifications</div>
             )}
             {unreadIds.map((id) => (
               <NotificationCard key={id} id={id} />
             ))}
+            {unreadIds.length > 0 && (
+              <button
+                className="lock-control mt-1 self-center rounded-full px-4 py-1.5 text-[13px] font-semibold"
+                onClick={() => markAllAsRead()}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <LockWidgets />
+            <div className="mt-4">
+              <LockControls onCamera={() => go('/camera')} />
+            </div>
           </div>
         </div>
       </>
