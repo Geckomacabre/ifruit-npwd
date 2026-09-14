@@ -95,8 +95,10 @@ export const formatChange = (minutes: number | null): string => {
 export const BrowserWeather: WeatherData = {
   city: 'Vespucci Beach',
   weatherType: 'EXTRASUNNY',
-  condition: 'clear',
+  condition: 'partly-cloudy',
   isNight: false,
+  hour: 14,
+  minute: 20,
   temperature: 104,
   feelsLike: 104,
   high: 110,

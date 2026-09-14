@@ -12,6 +12,8 @@ import {
   lookFor,
   summaryText,
 } from './utils/conditions';
+import { SkyScene } from './components/SkyScene';
+import './weather.css';
 
 const REFRESH_MS = 30000;
 
@@ -49,14 +51,11 @@ export const WeatherApp: React.FC = () => {
   }
 
   const look = lookFor(weather.condition);
-  const [from, to] = weather.isNight ? look.nightGradient : look.dayGradient;
 
   return (
     <AppWrapper id="weather-app" fullBleed>
-      <div
-        className="flex flex-1 flex-col overflow-y-auto px-4 pb-10 pt-16 text-white"
-        style={{ background: `linear-gradient(180deg, ${from} 0%, ${to} 100%)` }}
-      >
+      <SkyScene condition={weather.condition} hour={weather.hour} minute={weather.minute} />
+      <div className="relative flex flex-1 flex-col overflow-y-auto px-4 pb-10 pt-16 text-white">
         <div className="flex flex-col items-center text-center drop-shadow">
           <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-white/80">
             My Location
