@@ -279,3 +279,18 @@ export const PinGlyph: React.FC = () => (
     <circle cx="50" cy="38" r="10" fill="#000" fillOpacity="0.34" />
   </>
 );
+
+export const HeartPulseGlyph: React.FC = () => (
+  <>
+    <path d="M50 84S16 62 16 39a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 23-34 45-34 45z" />
+    <path
+      d="M18 46h14l6-11 9 22 7-13h28"
+      fill="none"
+      stroke="#000"
+      strokeOpacity="0.38"
+      strokeWidth="6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </>
+);

@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import FitbitIcon from '../icons/material/app/FITBIT';
+import { FitbitApp } from '@apps/fitbit/FitbitApp';
 import GeoCacheIcon from '../icons/material/app/GEOCACHE';
 import { GeoCacheApp } from '@apps/geocache/GeoCacheApp';
 import MusicIcon from '../icons/material/app/MUSIC';
@@ -438,6 +440,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Find and hide caches',
     storeSizeKb: 51200,
     Route: () => <AppRoute id="GEOCACHE" path="/geocache" component={GeoCacheApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'FITBIT',
+    nameLocale: 'APPS_FITBIT',
+    icon: <FitbitIcon />,
+    backgroundColor: '#0d9488',
+    color: common.white,
+    path: '/fitbit',
+    removable: true,
+    storeDescription: 'Nutrition and hydration alerts',
+    storeSizeKb: 18000,
+    Route: () => <AppRoute id="FITBIT" path="/fitbit" component={FitbitApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

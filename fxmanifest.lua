@@ -20,6 +20,7 @@ client_scripts({
 	"lua/home/client.lua",
 	"lua/music/client.lua",
 	"lua/geocache/client.lua",
+	"lua/fitbit/client.lua",
 })
 
 server_script({
@@ -32,6 +33,7 @@ server_script({
 	"lua/gigs/server.lua",
 	"lua/home/server.lua",
 	"lua/music/server.lua",
+	"lua/fitbit/server.lua",
 })
 
 lua54("yes")
