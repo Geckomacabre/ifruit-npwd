@@ -4,7 +4,14 @@ import fetchNui from '@utils/fetchNui';
 import { WeatherData, WeatherEvents } from '@typings/weather';
 import { AppWrapper } from '@ui/components';
 import { LoadingSpinner } from '@ui/components/LoadingSpinner';
-import { BrowserWeather, feelsLikeText, formatChange, formatHour, lookFor } from './utils/conditions';
+import {
+  BrowserWeather,
+  feelsLikeText,
+  formatChange,
+  formatHour,
+  lookFor,
+  summaryText,
+} from './utils/conditions';
 
 const REFRESH_MS = 30000;
 
@@ -51,11 +58,17 @@ export const WeatherApp: React.FC = () => {
         style={{ background: `linear-gradient(180deg, ${from} 0%, ${to} 100%)` }}
       >
         <div className="flex flex-col items-center text-center drop-shadow">
-          <p className="text-3xl">{weather.city}</p>
-          <p className="text-8xl font-thin leading-none">{weather.temperature}°</p>
-          <p className="text-lg">{look.label}</p>
-          <p className="text-lg">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-white/80">
+            My Location
+          </p>
+          <p className="text-[32px] font-normal leading-tight">{weather.city}</p>
+          <p className="-ml-3 text-[86px] font-extralight leading-[1.05]">{weather.temperature}°</p>
+          <p className="text-[19px] font-medium text-white/90">{look.label}</p>
+          <p className="text-[19px] font-medium">
             H:{weather.high}° L:{weather.low}°
+          </p>
+          <p className="mt-4 max-w-[17rem] text-[15px] leading-snug text-white/70">
+            {summaryText(weather)}
           </p>
         </div>
 

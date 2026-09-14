@@ -69,6 +69,20 @@ export const feelsLikeText = (weather: WeatherData): string => {
   return 'Similar to the actual temperature.';
 };
 
+// The line under H/L. Built only from what the server actually reports --
+// no invented forecast.
+export const summaryText = (weather: WeatherData): string => {
+  const label = lookFor(weather.condition).label;
+  const minutes = weather.nextChangeMinutes;
+
+  if (minutes === null) return `${label} conditions, holding steady for now.`;
+  if (minutes < 1) return `${label} conditions, changing any minute now.`;
+  if (minutes < 60) return `${label} conditions for the next ${minutes} min.`;
+
+  const hours = Math.floor(minutes / 60);
+  return `${label} conditions, changing in about ${hours} hr${hours === 1 ? '' : 's'}.`;
+};
+
 export const formatChange = (minutes: number | null): string => {
   if (minutes === null) return 'Holding steady for now.';
   if (minutes < 1) return 'Changing any minute.';
@@ -79,7 +93,7 @@ export const formatChange = (minutes: number | null): string => {
 
 // Browser-only stand-in data; fetchNui returns it only outside the game.
 export const BrowserWeather: WeatherData = {
-  city: 'Los Santos',
+  city: 'Vespucci Beach',
   weatherType: 'EXTRASUNNY',
   condition: 'clear',
   isNight: false,

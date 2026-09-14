@@ -1,8 +1,53 @@
 import { WeatherCondition, WeatherData, WeatherEvents, WeatherHour } from '@typings/weather';
 import { RegisterNuiCB } from './cl_utils';
 
-const CITY = 'Los Santos';
 const HOURLY_COUNT = 6;
+
+// GetNameOfZone returns a zone code; these are its documented display names.
+// Kept here rather than relying on GetLabelText alone because a handful of
+// codes have no label entry and would come back as "NULL".
+const ZONE_NAMES: Record<string, string> = {
+  AIRP: 'LS International Airport', ALAMO: 'Alamo Sea', ALTA: 'Alta',
+  ARMYB: 'Fort Zancudo', BANHAMC: 'Banham Canyon Dr', BANNING: 'Banning',
+  BEACH: 'Vespucci Beach', BHAMCA: 'Banham Canyon', BRADP: 'Braddock Pass',
+  BRADT: 'Braddock Tunnel', BURTON: 'Burton', CALAFB: 'Calafia Bridge',
+  CANNY: 'Raton Canyon', CCREAK: 'Cassidy Creek', CHAMH: 'Chamberlain Hills',
+  CHIL: 'Vinewood Hills', CHU: 'Chumash', CMSW: 'Chiliad Mountain',
+  CYPRE: 'Cypress Flats', DAVIS: 'Davis', DELBE: 'Del Perro Beach',
+  DELPE: 'Del Perro', DELSOL: 'La Puerta', DESRT: 'Grand Senora Desert',
+  DOWNT: 'Downtown', DTVINE: 'Downtown Vinewood', EAST_V: 'East Vinewood',
+  EBURO: 'El Burro Heights', ELGORL: 'El Gordo Lighthouse', ELYSIAN: 'Elysian Island',
+  GALFISH: 'Galilee', GOLF: 'GWC and Golfing Society', GRAPES: 'Grapeseed',
+  GREATC: 'Great Chaparral', HARMO: 'Harmony', HAWICK: 'Hawick',
+  HORS: 'Vinewood Racetrack', HUMLAB: 'Humane Labs', JAIL: 'Bolingbroke Penitentiary',
+  KOREAT: 'Little Seoul', LACT: 'Land Act Reservoir', LAGO: 'Lago Zancudo',
+  LDAM: 'Land Act Dam', LEGSQU: 'Legion Square', LMESA: 'La Mesa',
+  LOSPUER: 'La Puerta', MIRR: 'Mirror Park', MORN: 'Morningwood',
+  MOVIE: 'Richards Majestic', MTCHIL: 'Mount Chiliad', MTGORDO: 'Mount Gordo',
+  MTJOSE: 'Mount Josiah', MURRI: 'Murrieta Heights', NCHU: 'North Chumash',
+  NOOSE: 'N.O.O.S.E', OCEANA: 'Pacific Ocean', PALCOV: 'Paleto Cove',
+  PALETO: 'Paleto Bay', PALFOR: 'Paleto Forest', PALHIGH: 'Palomino Highlands',
+  PALMPOW: 'Palmer-Taylor Power Station', PBLUFF: 'Pacific Bluffs', PBOX: 'Pillbox Hill',
+  PROCOB: 'Procopio Beach', PROL: 'North Yankton', RANCHO: 'Rancho',
+  RGLEN: 'Richman Glen', RICHM: 'Richman', ROCKF: 'Rockford Hills',
+  RTRAK: 'Redwood Lights Track', SANAND: 'San Andreas', SANCHIA: 'San Chianski Range',
+  SANDY: 'Sandy Shores', SKID: 'Mission Row', SLAB: 'Stab City',
+  STAD: 'Maze Bank Arena', STRAW: 'Strawberry', TATAMO: 'Tataviam Mountains',
+  TERMINA: 'Terminal', TEXTI: 'Textile City', TONGVAH: 'Tongva Hills',
+  TONGVAV: 'Tongva Valley', VCANA: 'Vespucci Canals', VESP: 'Vespucci',
+  VINE: 'Vinewood', WINDF: 'Ron Alternates Wind Farm', WVINE: 'West Vinewood',
+  ZANCUDO: 'Zancudo River', ZP_ORT: 'Port of South LS', ZQ_UAR: 'Davis Quartz',
+  ISHeist: 'Cayo Perico',
+};
+
+const currentCity = (): string => {
+  const [x, y, z] = GetEntityCoords(PlayerPedId(), false) as unknown as number[];
+  const zone = GetNameOfZone(x, y, z);
+  if (ZONE_NAMES[zone]) return ZONE_NAMES[zone];
+
+  const label = GetLabelText(zone);
+  return label && label !== 'NULL' ? label : 'Los Santos';
+};
 
 // GTA weather type -> what the app shows, with the °F range a day in that
 // weather sits in (lb-phone's Weather table, so nothing changes for players).
@@ -81,7 +126,7 @@ const buildWeather = (): WeatherData => {
   const nextChangeMinutes = typeof synced?.time === 'number' && synced.time < 100000 ? synced.time : null;
 
   return {
-    city: CITY,
+    city: currentCity(),
     weatherType,
     condition,
     isNight: isNightHour(hour),
