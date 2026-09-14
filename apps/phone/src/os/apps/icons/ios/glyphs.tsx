@@ -272,3 +272,10 @@ export const MusicNoteGlyph: React.FC = () => (
     <path d="M78 16 40 26v39a15 15 0 1 0 8 13V38l22-6v25a15 15 0 1 0 8 13z" />
   </>
 );
+
+export const PinGlyph: React.FC = () => (
+  <>
+    <path d="M50 12c-14.4 0-26 11.6-26 26 0 19.5 26 50 26 50s26-30.5 26-50c0-14.4-11.6-26-26-26z" />
+    <circle cx="50" cy="38" r="10" fill="#000" fillOpacity="0.34" />
+  </>
+);

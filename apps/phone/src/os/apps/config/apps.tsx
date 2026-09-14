@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import GeoCacheIcon from '../icons/material/app/GEOCACHE';
+import { GeoCacheApp } from '@apps/geocache/GeoCacheApp';
 import MusicIcon from '../icons/material/app/MUSIC';
 import { MusicApp } from '@apps/music/MusicApp';
 import HomeIcon from '../icons/material/app/HOME';
@@ -424,6 +426,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Your tracks, out loud or private',
     storeSizeKb: 17400,
     Route: () => <AppRoute id="MUSIC" path="/music" component={MusicApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'GEOCACHE',
+    nameLocale: 'APPS_GEOCACHE',
+    icon: <GeoCacheIcon />,
+    backgroundColor: '#059669',
+    color: common.white,
+    path: '/geocache',
+    removable: true,
+    storeDescription: 'Find and hide caches',
+    storeSizeKb: 51200,
+    Route: () => <AppRoute id="GEOCACHE" path="/geocache" component={GeoCacheApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

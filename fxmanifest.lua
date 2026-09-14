@@ -19,6 +19,7 @@ client_scripts({
 	"lua/gigs/client.lua",
 	"lua/home/client.lua",
 	"lua/music/client.lua",
+	"lua/geocache/client.lua",
 })
 
 server_script({
