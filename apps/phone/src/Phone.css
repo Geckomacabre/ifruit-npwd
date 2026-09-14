@@ -230,6 +230,15 @@
   display: none;
 }
 
+/* For the sideways chip rows inside apps, where iOS never shows a bar. */
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* AppIcon carries a 24px top margin of its own for the old scrolling grid.
    The paged grid controls its own row spacing, and that margin would push six
    rows past the bottom of the screen. */

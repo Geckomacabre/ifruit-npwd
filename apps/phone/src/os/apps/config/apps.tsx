@@ -80,6 +80,8 @@ import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
 import AppStoreIcon from '../icons/material/app/APPSTORE';
+import StreetKingsIcon from '../icons/material/app/STREETKINGS';
+import { StreetKingsApp } from '@apps/streetkings/StreetKingsApp';
 import LonelyIcon from '../icons/material/app/LONELY';
 import { LonelyApp } from '@apps/lonely/LonelyApp';
 import CrimeIcon from '../icons/material/app/CRIME';
@@ -480,6 +482,18 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Subscribe to creators',
     storeSizeKb: 142000,
     Route: () => <AppRoute id="LONELY" path="/lonely" component={LonelyApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'STREETKINGS',
+    nameLocale: 'APPS_STREETKINGS',
+    icon: <StreetKingsIcon />,
+    backgroundColor: '#1c1c1e',
+    color: common.white,
+    path: '/streetkings',
+    removable: true,
+    storeDescription: 'Track your racing career, chase route records and answer challenges from rival drivers.',
+    storeSizeKb: 9800,
+    Route: () => <AppRoute id="STREETKINGS" path="/streetkings" component={StreetKingsApp} emitOnOpen={false} />,
   },
   {
     id: 'APPSTORE',

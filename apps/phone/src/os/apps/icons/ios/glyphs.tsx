@@ -310,3 +310,21 @@ export const LockHeartGlyph: React.FC = () => (
     <path d="M43 44v-5a7 7 0 0 1 14 0v5" fill="none" stroke="#000" strokeOpacity="0.34" strokeWidth="4" />
   </>
 );
+
+export const CheckerFlagGlyph: React.FC = () => (
+  <>
+    <rect x="20" y="16" width="6" height="70" rx="3" />
+    {[0, 1, 2].map((row) =>
+      [0, 1, 2, 3, 4].map((col) => (
+        <rect
+          key={`${row}-${col}`}
+          x={30 + col * 10}
+          y={20 + row * 14}
+          width="10"
+          height="14"
+          fillOpacity={(row + col) % 2 === 0 ? 1 : 0.28}
+        />
+      )),
+    )}
+  </>
+);
