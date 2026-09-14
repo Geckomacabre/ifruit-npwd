@@ -59,6 +59,7 @@ all apps are clickable without a server.
 | **Services** (`SERVICES`) | **Lua** `lua/services` | Companies (police/ambulance/mechanic/taxi, open = on-duty count), customer↔company threads with shared locations and notifications, duty toggle, boss tools (Renewed-Banking deposit/withdraw, staff ranks, fire, hire by server ID within 10m). |
 | **Voice Memos** (`VOICEMEMOS`) | TS `apps/game/server/voicememos` | Apple-style list/player, record via existing `useRecorder` + `npwd:audio:uploadAudio`; saves only https links on `config.imageSafety.safeImageUrls`. |
 | **Pages** (`PAGES`) | TS `apps/game/server/pages` | Yellow-pages ads: search, detail sheet with Call/Message, compose (title, price, image link, description), delete own, 1 post/minute. |
+| **App Store** (`APPSTORE`) | UI only, client-side setting | Catalog/management screen for the "removable" apps (Marketplace, IRC/DarkChat, Life Invader/Twitter, Hookr/Match, Pages) — search, tap a row for a detail sheet (icon, description, provider, size), Get/Open/Remove. Free installs, no economy hook. Backed by `settings.installedApps: string[]` (optional — undefined means "everyone already has every removable app", so existing saves don't lose apps). Fixed the naming/icon collision this file used to warn about: **Marketplace** is back to "Marketplace" with a `Store` glyph tile; the real iOS-pack `appstore.png` artwork now belongs to this app. |
 
 ---
 
@@ -96,8 +97,8 @@ all apps are clickable without a server.
 
 1. **Music** — lb-phone's Music was escrowed and had no songs configured. `xsound` is installed
    (`[Scripts]/xsound`), so a Music app could play URLs with 3D positional audio. Needs a design decision.
-2. **Home** (housing; server has `qbx_properties`), **Crypto**, **InstaPic**, **Trendy**, lb-phone's
-   **App Store** (name clashes with the renamed Marketplace — pick a new name).
+2. **Home** (housing; server has `qbx_properties`), **Crypto**, **InstaPic**, **Trendy**.
+   (App Store is done — see the Apps table above.)
 3. **Rewrite custom lb-phone apps natively**: `um_gigs` (Snarf / rydeme), `geocaching_phone`,
    `noted_fitbit`, `noted_crimeapp`, `lonelymans`, `sk_streetkings`. Also re-point `jim_bridge`
    (`GetEquippedPhoneNumber`/`SendMail`) and `ox_inventory`'s `UsePhoneItem` hook to NPWD.

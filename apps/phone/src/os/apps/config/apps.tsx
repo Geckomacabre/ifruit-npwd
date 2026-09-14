@@ -79,6 +79,9 @@ import { VOICE_MEMOS_APP_PRIMARY_COLOR } from '@apps/voicememos/voicememos.theme
 import PagesIcon from '../icons/material/app/PAGES';
 import { PagesApp } from '@apps/pages/PagesApp';
 import { PAGES_APP_PRIMARY_COLOR } from '@apps/pages/pages.theme';
+import AppStoreIcon from '../icons/material/app/APPSTORE';
+import { AppStoreApp } from '@apps/appstore/AppStoreApp';
+import { APPSTORE_APP_PRIMARY_COLOR } from '@apps/appstore/appstore.theme';
 
 export interface IAppConfig {
   id: string;
@@ -87,6 +90,10 @@ export interface IAppConfig {
   color: string;
   path: string;
   disable?: boolean;
+  /** Can be installed/removed from the App Store. Undefined settings.installedApps means "everyone already has it". */
+  removable?: boolean;
+  storeDescription?: string;
+  storeSizeKb?: number;
   Route: React.FC<{ settings?: IPhoneSettings; i18n?: i18n; theme?: Theme }>;
   icon: JSX.Element;
 }
@@ -140,6 +147,9 @@ export const APPS: IAppConfig[] = [
     backgroundColor: DARKCHAT_APP_PRIMARY_COLOR,
     color: DARKCHAT_APP_TEXT_COLOR,
     path: '/darkchat',
+    removable: true,
+    storeDescription: 'Anonymous chat rooms',
+    storeSizeKb: 98500,
     Route: () => (
       <AppRoute id="DARKCHAT" path="/darkchat" component={DarkChatApp} emitOnOpen={false} />
     ),
@@ -184,6 +194,9 @@ export const APPS: IAppConfig[] = [
     backgroundColor: MATCH_APP_PRIMARY_COLOR,
     color: MATCH_APP_TEXT_COLOR,
     path: '/match',
+    removable: true,
+    storeDescription: 'Meet new people',
+    storeSizeKb: 187500,
     Route: () => <AppRoute id="MATCH" path="/match" component={MatchApp} emitOnOpen={false} />,
   },
   {
@@ -193,6 +206,9 @@ export const APPS: IAppConfig[] = [
     backgroundColor: TWITTER_APP_PRIMARY_COLOR,
     color: TWITTER_APP_TEXT_COLOR,
     path: '/twitter',
+    removable: true,
+    storeDescription: 'Live news, sports and chat',
+    storeSizeKb: 256700,
     Route: () => (
       <AppRoute id="TWITTER" path="/twitter" component={LifeInvaderContainer} emitOnOpen={false} />
     ),
@@ -204,6 +220,9 @@ export const APPS: IAppConfig[] = [
     backgroundColor: MARKETPLACE_APP_PRIMARY_COLOR,
     color: MARKETPLACE_APP_ICON_COLOR,
     path: '/marketplace',
+    removable: true,
+    storeDescription: 'Buy and sell items',
+    storeSizeKb: 84400,
     Route: () => (
       <AppRoute
         id="MARKETPLACE"
@@ -303,7 +322,21 @@ export const APPS: IAppConfig[] = [
     backgroundColor: PAGES_APP_PRIMARY_COLOR,
     color: common.white,
     path: '/pages',
+    removable: true,
+    storeDescription: 'Find local businesses and services',
+    storeSizeKb: 84400,
     Route: () => <AppRoute id="PAGES" path="/pages" component={PagesApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'APPSTORE',
+    nameLocale: 'APPS_APPSTORE',
+    icon: <AppStoreIcon />,
+    backgroundColor: APPSTORE_APP_PRIMARY_COLOR,
+    color: common.white,
+    path: '/appstore',
+    Route: () => (
+      <AppRoute id="APPSTORE" path="/appstore" component={AppStoreApp} emitOnOpen={false} />
+    ),
   },
 ];
 

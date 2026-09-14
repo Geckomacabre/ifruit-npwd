@@ -10,10 +10,17 @@ import { IconSetObject } from '@typings/settings';
 export const useApps = () => {
   const { icons } = useNotifications();
   const theme = useTheme();
-  const curIconSet = useSettingsValue().iconSet.value as IconSetObject;
+  const settingsValue = useSettingsValue();
+  const curIconSet = settingsValue.iconSet.value as IconSetObject;
+  const installedApps = settingsValue.installedApps;
 
   const apps: IApp[] = useMemo(() => {
     return APPS.map((app) => {
+      // Undefined installedApps means the player hasn't touched the App Store
+      // yet, so every removable app they already had stays visible.
+      const isUninstalled =
+        app.removable && Array.isArray(installedApps) && !installedApps.includes(app.id);
+      const isDisabled = app.disable || isUninstalled;
       const SvgIcon = React.lazy<SvgIconComponent>(() =>
         import(`../icons/${curIconSet.name}/svg/${app.id}.tsx`).catch(
           () => 'Was not able to find a dynamic import for icon from this icon set',
@@ -38,7 +45,7 @@ export const useApps = () => {
             <NotificationIcon htmlColor={theme.palette.text.primary} fontSize="small" />
           ),
           icon: <Icon />,
-          isDisabled: app.disable,
+          isDisabled,
         };
       }
 
@@ -47,10 +54,10 @@ export const useApps = () => {
         notification: icons.find((i) => i.key === app.id),
         NotificationIcon,
         notificationIcon: <NotificationIcon htmlColor={app.color} fontSize="small" />,
-        isDisabled: app.disable,
+        isDisabled,
       };
     });
-  }, [icons, curIconSet, theme]);
+  }, [icons, curIconSet, theme, installedApps]);
 
   const allApps = useMemo(() => [...apps], [apps]);
   const getApp = useCallback(
