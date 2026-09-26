@@ -38,6 +38,12 @@ local function soundName(source)
     return ('npwd_music_%s'):format(source)
 end
 
+---NUI input is untrusted: a non-number here used to throw inside math.max and
+---kill the callback.
+local function clampVolume(volume)
+    return math.min(math.max(tonumber(volume) or 0.5, 0.0), 1.0)
+end
+
 lib.callback.register('npwd:music:getTracks', function(source)
     local cid = citizenId(source)
     if not cid then return {} end
@@ -94,7 +100,7 @@ lib.callback.register('npwd:music:playSpeaker', function(source, url, volume)
 
     speakers[source] = name
     -- -1 so it plays for every client; xsound handles the falloff from there.
-    exports.xsound:PlayUrlPos(-1, name, url, math.min(math.max(volume or 0.5, 0.0), 1.0), coords, false)
+    exports.xsound:PlayUrlPos(-1, name, url, clampVolume(volume), coords, false)
     exports.xsound:Distance(-1, name, SPEAKER_DISTANCE)
 
     return true
@@ -117,7 +123,7 @@ lib.callback.register('npwd:music:setSpeakerVolume', function(source, volume)
     local name = speakers[source]
     if not name then return false end
 
-    exports.xsound:setVolumeMax(-1, name, math.min(math.max(volume or 0.5, 0.0), 1.0))
+    exports.xsound:setVolumeMax(-1, name, clampVolume(volume))
     return true
 end)
 
