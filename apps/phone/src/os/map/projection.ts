@@ -5,10 +5,13 @@
  * against real in-game landmarks and verified with live blips. Two things about
  * them look wrong and are not:
  *
- *  - PIXEL_W/PIXEL_H are NOT the file's dimensions (that is 6144x9216). They
- *    are the extent the world bounds project onto, which is slightly smaller
- *    because the drawn map does not quite reach the canvas edges. Re-deriving
- *    them from the file size puts every pin off its mark.
+ *  - PIXEL_W/PIXEL_H are NOT the file's dimensions. They are the extent the
+ *    world bounds project onto in gk_pausemenu's original 6144x9216 render,
+ *    which is slightly smaller because the drawn map does not quite reach the
+ *    canvas edges. Re-deriving them from the file size puts every pin off its
+ *    mark. The file itself ships at half that (3072x4608): GtaMap stretches it
+ *    to this box, and MAX_ZOOM never shows more than ~1 image pixel per screen
+ *    pixel, so the full-size render only cost ~170MB of decoded memory in CEF.
  *  - The world bounds are not symmetric, because Los Santos is not centred in
  *    the render.
  *
