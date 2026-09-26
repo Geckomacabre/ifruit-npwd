@@ -6,7 +6,9 @@ import { LikeorDislikeDraggableElement } from '../utils/drag';
 const useStyles = makeStyles({
   root: {
     position: 'absolute',
-    height: '100%',
+    top: 0,
+    // Leave the bottom strip to ActiveProfile's like/nope buttons.
+    height: 'calc(100% - 76px)',
     width: '100%',
   },
   like: {

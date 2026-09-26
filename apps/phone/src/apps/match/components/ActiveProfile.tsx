@@ -14,11 +14,12 @@ import { Tooltip } from '@ui/components/Tooltip';
 const useStyles = makeStyles({
   root: {
     position: 'relative',
-    margin: '15px 15px 25px 15px',
-    height: 'calc(95% - 90px)',
+    margin: '12px 15px 0 15px',
+    height: 'calc(100% - 12px)',
     width: 'calc(100% - 30px)',
     overflow: 'hidden',
     cursor: 'pointer',
+    borderRadius: 20,
   },
   media: {
     height: '60%',
@@ -57,9 +58,9 @@ const useStyles = makeStyles({
   },
   buttons: {
     position: 'absolute',
-    bottom: 70,
+    bottom: 10,
     width: '100%',
-    height: '55px',
+    height: '56px',
   },
   button: {
     margin: '0px 15px',

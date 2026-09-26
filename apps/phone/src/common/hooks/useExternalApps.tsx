@@ -115,7 +115,9 @@ export const useExternalApps = () => {
   const config = useRecoilValue(phoneState.resourceConfig);
 
   useEffect(() => {
-    getConfigs(config?.apps, apps).then(setApps);
+    // The resource config arrives asynchronously; until it does there is nothing to load.
+    if (!config) return;
+    getConfigs(config.apps ?? [], apps).then(setApps);
   }, [config, setApps, getConfigs]);
 
   return apps.filter((app) => app);

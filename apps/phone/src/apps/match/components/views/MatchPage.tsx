@@ -11,6 +11,10 @@ import { useMatchActions } from '../../hooks/useMatchActions';
 
 const useStyles = makeStyles({
   root: {
+    // The card and the like/nope row are absolutely placed against this box,
+    // so it has to be their positioned ancestor -- otherwise they measure off
+    // the whole app and the card slides under the bottom navigation.
+    position: 'relative',
     height: '100%',
     width: '100%',
     overflow: 'hidden',

@@ -89,28 +89,28 @@ const MessageGroupItem = ({
           <div>
             {messageConversation.isGroupChat ? (
               <MuiAvatar alt={messageConversation.label} />
-            ) : getContact()?.avatar && getContact()?.avatar.length > 0 ? (
-              <img
-                src={getContact()?.avatar}
-                className="inline-block h-10 w-10 rounded-full"
-                alt={'avatar'}
-              />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full">
-                <span className="text-gray-600 dark:text-gray-300">
-                  {initials(getContact()?.display)}
-                </span>
-              </div>
+              // MuiAvatar falls back to its children when the image link is
+              // dead, instead of showing the browser's broken-image glyph.
+              <MuiAvatar
+                src={getContact()?.avatar || undefined}
+                alt={getContact()?.display}
+                sx={{ width: 40, height: 40, fontSize: 15 }}
+              >
+                {getContact()?.display ? initials(getContact().display) : undefined}
+              </MuiAvatar>
             )}
           </div>
         </div>
       }
       endElement={
-        <div>
-          <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-            {messageConversation.unreadCount <= 99 ? messageConversation.unreadCount : '99+'}
-          </span>
-        </div>
+        messageConversation.unreadCount > 0 ? (
+          <div>
+            <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+              {messageConversation.unreadCount <= 99 ? messageConversation.unreadCount : '99+'}
+            </span>
+          </div>
+        ) : null
       }
     >
       {/* isEditing && (

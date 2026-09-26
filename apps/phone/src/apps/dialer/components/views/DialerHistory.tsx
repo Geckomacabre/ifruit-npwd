@@ -8,7 +8,7 @@ import { useMyPhoneNumber } from '@os/simcard/hooks/useMyPhoneNumber';
 import { useDialHistory } from '../../hooks/useDialHistory';
 import { useCall } from '@os/call/hooks/useCall';
 import { useContacts } from '../../../contacts/hooks/state';
-import { Phone, PhoneForwarded, PhoneIncoming, UserRoundPlus } from 'lucide-react';
+import { Phone, PhoneIncoming, PhoneMissed, PhoneOutgoing, UserRoundPlus } from 'lucide-react';
 import { cn } from '@utils/css';
 
 // Real iOS Recents: a plain black flat list (no card grouping), a bold
@@ -51,6 +51,9 @@ export const DialerHistory: React.FC = () => {
             const number = outgoing ? call.receiver : call.transmitter;
             const label = call.isAnonymous ? 'Anonymous' : getDisplay(number);
             const isUnknown = !call.isAnonymous && label === number;
+            // Like iOS, only an unanswered incoming call is red; answered ones
+            // and anything you dialled stay neutral.
+            const missed = !outgoing && !call.is_accepted;
 
             return (
               <div
@@ -58,13 +61,17 @@ export const DialerHistory: React.FC = () => {
                 className="flex items-center gap-3 border-b border-neutral-800 px-4 py-3"
               >
                 {outgoing ? (
-                  <PhoneForwarded size={18} className="shrink-0 text-green-500" />
+                  <PhoneOutgoing size={18} className="shrink-0 text-neutral-500" />
+                ) : missed ? (
+                  <PhoneMissed size={18} className="shrink-0 text-red-500" />
                 ) : (
-                  <PhoneIncoming size={18} className="shrink-0 text-red-500" />
+                  <PhoneIncoming size={18} className="shrink-0 text-neutral-500" />
                 )}
 
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[17px]">{label}</div>
+                  <div className={cn('truncate text-[17px]', missed && 'text-red-500')}>
+                    {label}
+                  </div>
                   <div className="text-[13px] text-neutral-500">
                     {dayjs().to(dayjs.unix(parseInt(call.start)))}
                   </div>

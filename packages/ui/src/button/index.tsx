@@ -27,16 +27,14 @@ const classes = cva(
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof classes>;
 
-export const NPWDButton: React.FC<ButtonProps> = ({
-  children,
-  size,
-  variant,
-  className,
-  ...props
-}) => {
-  return (
-    <button {...props} className={cn(classes({ size, variant, className }))}>
-      {children}
-    </button>
-  );
-};
+// forwardRef so a Tooltip (or anything else that needs the DOM node) can wrap it.
+export const NPWDButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, size, variant, className, ...props }, ref) => {
+    return (
+      <button ref={ref} {...props} className={cn(classes({ size, variant, className }))}>
+        {children}
+      </button>
+    );
+  },
+);
+NPWDButton.displayName = 'NPWDButton';
