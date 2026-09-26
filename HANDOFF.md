@@ -5,7 +5,7 @@ iOS-style ("iFruit") phone that fully replaces **lb-phone** on the EnhancedMafia
 lb-phone is escrowed and its UI is minified, so nothing is copied from it: every app is rebuilt
 natively here, using lb-phone only as a behaviour/content reference.
 
-Status as of 2026-09-14. `server.cfg` still starts `lb-phone`; NPWD has not been switched on in game
+Status as of 2026-09-26 (see "Fix pass, 2026-09-26" below). `server.cfg` still starts `lb-phone`; NPWD has not been switched on in game
 yet, so everything below is verified by builds and the browser dev preview, **not in-game**.
 
 > **Nothing here has run in game.** Every app was built against mock data in the browser preview.
@@ -55,7 +55,7 @@ anywhere to unlock.
 | Home indicator | Floats over apps (`Navigation.tsx`), difference-blended so it shows on light and dark. MUI bottom tab bars get extra bottom padding in `Phone.css`. |
 | Notifications | Banners sit under the dynamic island (`Phone.css` → `.notistack-SnackbarContainer`). |
 | **Liquid Glass** | `os/glass/glassTokens.ts` maps one 0–100 value to CSS variables; `.liquid-glass` (+ `-dark`, `-bar`) in `Phone.css`. Used by dock, banners, Control Center, tab bars. **Settings → Appearance → Liquid Glass** slider (Glossy ↔ Frosted, live preview). Setting key `glassFrost` is optional in the schema on purpose — making it required would invalidate everyone's saved settings. |
-| iOS icon set | `os/apps/icons/ios` (default icon set). **Two sources.** Apps with a real counterpart use the iOS 18 artwork the user supplied, in `public/media/icons/appicons` via `appIcon('<file>')` — phone, messages, contacts, safari, camera, calculator, settings, clock, weather, notes, mail, voicememos, appstore, books (Pages), heart (Hookr). Those PNGs are 60×60 with their own squircle and transparent corners, so the renderer only adds a floor shadow. The pack is Apple stock apps only, so the game-specific apps (IRC, Life Invader, Marketplace, Garage, Services, Example) use the **generated** tiles below. BuckMe keeps its own artwork. The older pack at `public/media/icons/ios18` is unreferenced and can be deleted. |
+| iOS icon set | `os/apps/icons/ios` (default icon set). **Two sources.** Apps with a real counterpart use the iOS 18 artwork the user supplied, in `public/media/icons/appicons` via `appIcon('<file>')` — phone, messages, contacts, safari, camera, calculator, settings, clock, weather, notes, mail, voicememos, appstore, books (Pages), heart (Hookr). Those PNGs carry their own squircle and transparent corners, so the renderer only adds a floor shadow. They ship at **256×256** (the supplied 1024×1024 masters were ~8MB for a ~60px tile); `camera`/`heart` are the older 60×60 exports. The pack is Apple stock apps only, so the game-specific apps (IRC, Life Invader, Marketplace, Garage, Services, Example) use the **generated** tiles below. BuckMe keeps its own artwork. |
 | Generated tiles | For any app with no artwork — `liquidGlass.tsx` builds a real superellipse tile (n = 5) and supplies the glass — colored base, floor shadow, top-left specular bloom, diagonal sheen, Fresnel rim bright at the top edge into dark at the bottom. `glyphs.tsx` holds flat silhouettes drawn from primitives, which carry no lighting of their own. Adding an icon = a 3-line file pairing a gradient with a glyph. **BuckMe keeps its own icon** (still the npwd_icons artwork). Glyphs are drawn from primitives, not traced from an icon pack: iOS10-SVG-ICONS is unlicensed and recreates Apple's icons. |
 | Typography | **SF Pro**, in `public/fonts` as Latin-subset woff2 (the source OTFs are ~6MB each; subsetting takes the whole set to ~530KB — regenerate with `fontTools.subset --flavor=woff2` if more weights are needed). Apple's split: `SF Pro Text` for body (the default on `.PhoneScreen`, the MUI theme and both theme presets), `SF Pro Display` for headings via `h1`/`h2` and the `.sf-display` class, `SF Pro Rounded` for the lock screen clock. |
 | Lock screen | `LockFace.tsx` holds the clock, widget row and flashlight/camera controls; the lock screen and Notification Center both compose them, because on iOS they are the same surface. The clock is translucent tinted glass with a brighter edge (`lockscreen.css`), not a flat fill. Battery in the widget row is **decorative** — there is no battery model yet; the weather beside it is real. |
@@ -103,6 +103,14 @@ anywhere to unlock.
 
 ## Gotchas
 
+- **Every Lua file in this resource shares one Lua runtime** (per side). A bare global in one
+  app's file is visible to, and overwritable by, every other app's. Each ported app's
+  `config.lua` used to open with `Config = {}`, so the last one loaded (LonelyMans) replaced
+  Snarf/rydeme's and Citizen's configs and both would have crashed on their first lookup.
+  Each app now owns a distinct global (`GigsConfig`, `CrimeConfig`, `LonelyConfig`,
+  `ServicesConfig`) and every file that reads it starts with `local Config = <that name>`.
+  **A new Lua app must do the same** — never assign a bare `Config`.
+
 - **`lucide-react` is 0.294.0.** Newer icon names (e.g. `LockOpen`) don't exist, and one bad import
   blanks the whole phone. Check names with
   `node -e "const l=require('lucide-react');console.log(['Name'].filter(n=>!(n in l)))"` from `apps/phone`.
@@ -125,6 +133,52 @@ anywhere to unlock.
 
 ---
 
+## Fix pass, 2026-09-26
+
+Found by driving every app in the browser preview and reading the Lua/TS backends against the
+qbx resources they call (`qbx_vehiclekeys`, `qbx_properties` cloned from upstream). Still **not
+run in game**.
+
+**Would have broken in game**
+- Shared `Config` global collision across `lua/gigs`, `lua/crimeapp`, `lua/lonely` (see Gotchas).
+- **Home** read `properties.keyholders` as an object keyed by citizenid; upstream qbx_properties
+  stores a JSON **array** of citizenids. Key holders never saw shared homes, names showed as
+  "1", "2"…, and Revoke always failed. Both shapes are accepted now.
+- **Garage valet** gave keys via `vehiclekeys:client:SetOwner`, which current qbx_vehiclekeys
+  routes through a proximity-checked bridge — and the valet car spawns 75m+ away, so no keys.
+  Now `exports.qbx_vehiclekeys:GiveKeys(source, entity, true)`. Valet/summon also clear their
+  "busy" state server-side after 150s if the client never reports the driver arrived.
+
+**Exploits closed**
+- `um_gigs:server:npcRideFailed` refunded any client-sent amount with no purchase on record
+  (free money in a loop). It now refunds only the fare the server charged, once, inside the
+  ride's timeout window.
+- `um_gigs:server:complete` paid on the client's word. It now needs the driver (and, for a
+  player ride, the rider) within `GigsConfig.Complete.maxDropoffDistance` of the drop-off,
+  and rejects a hand-in faster than straight-line distance / `maxSpeed` since accept.
+- Services `setGrade` called `AddPlayerToJob` on any citizenid — a remote hire that skipped
+  `hire`'s 10m check — and let a boss promote above themselves; `fire` could remove a
+  higher-ranked boss. Both now follow qbx_management's rules: roster members only, never
+  above your own grade.
+- Crypto trades had no in-flight guard, so two simultaneous sells paid out twice for the same
+  coins. Per-player lock, same pattern as BuckMe.
+
+**UI**
+- Contacts list text was near-black on the dark theme; dead avatar links now fall back to
+  initials (Contacts and Messages).
+- Hookr's card ran under the bottom nav with Like/Nope over the bio; last-active is relative
+  ("3 hours ago"); play/pause icon was invisible on the dark card.
+- Settings got its large title; Recents marks only *missed* calls red (was every incoming).
+- Messages hides the unread badge at 0. Boot no longer throws in `useExternalApps` or logs a
+  bogus "Settings Schema was invalid" on a first run. React key/ref/SVG-attr warnings fixed
+  (`NPWDButton` forwards refs now).
+
+**Performance**
+- App icons 1024² → 256² (8MB → 0.6MB). `media/map/map.jpg` 6144×9216 → 3072×4608
+  (~226MB → ~56MB decoded in CEF; `MAX_ZOOM` never showed more than ~1 image px per screen px).
+  `projection.ts` constants are unchanged on purpose — see its header.
+- `GigsConfig.Debug` off: `getState` alone printed every 4s per player with the app open.
+
 ## Adding an app
 
 The repeated task, so the whole checklist in one place:
@@ -133,6 +187,8 @@ The repeated task, so the whole checklist in one place:
 2. Backend — **TS** (`apps/game/server/<app>/`, `apps/game/client/cl_<app>.ts`, imported in
    `server.ts` / `client.ts`) or **Lua** (`lua/<app>/`, listed in `fxmanifest.lua`). Lua when the
    feature leans on qbx helpers or oxmysql. Either way the NUI callback is `npwd:<app>:<action>`.
+   A Lua app's config goes in a uniquely named global (`<App>Config`), aliased with
+   `local Config = <App>Config` in each of its files — never a bare `Config` (see Gotchas).
 3. UI in `apps/phone/src/apps/<app>/`, with browser mock data passed as `fetchNui`'s third argument.
 4. Icons: `icons/{ios,material,npwd_icons}/{app,svg}/<ID>.tsx`. For a game-specific app that means a
    glyph in `icons/ios/glyphs.tsx` plus a 3-line `liquidIcon(...)` tile; for one with real artwork,
