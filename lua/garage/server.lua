@@ -13,6 +13,10 @@ local DRIVER_MODEL = `S_M_Y_XMech_01`
 local VALET_MAX_SPAWN_DISTANCE = 250.0
 local SUMMON_MAX_DISTANCE = 400.0
 local DRIVER_CLEANUP_MS = 30000
+-- The client gives up driving after 120s and then reports back. If that report
+-- never comes (client crash, resource restart), stop treating the player as busy
+-- anyway, or valet and summon stay locked until they relog.
+local DRIVER_FALLBACK_MS = 150000
 
 local VehicleState = { OUT = 0, GARAGED = 1, IMPOUNDED = 2 }
 
@@ -76,6 +80,13 @@ local function spawnDriver(source, vehicle)
     if not DoesEntityExist(driver) then return end
 
     activeDrivers[source] = driver
+
+    SetTimeout(DRIVER_FALLBACK_MS, function()
+        if activeDrivers[source] ~= driver then return end
+        activeDrivers[source] = nil
+        if DoesEntityExist(driver) then DeleteEntity(driver) end
+    end)
+
     return NetworkGetNetworkIdFromEntity(driver)
 end
 
@@ -224,7 +235,10 @@ lib.callback.register('npwd:garage:valet', function(source, vehicleId, spawn)
 
     Entity(entity).state:set('vehicleid', vehicle.id, false)
     exports.qbx_vehicles:SaveVehicle(entity, { state = VehicleState.OUT })
-    TriggerClientEvent('vehiclekeys:client:SetOwner', source, vehicle.props.plate)
+    -- Straight to the export: the old vehiclekeys:client:SetOwner event now goes
+    -- through a bridge that only grants keys to a player standing next to the car,
+    -- and a valet car spawns 75m+ away.
+    exports.qbx_vehiclekeys:GiveKeys(source, entity, true)
 
     local driverNetId = spawnDriver(source, entity)
 
