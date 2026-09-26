@@ -16,6 +16,7 @@ const TRADE_ERROR: Record<string, string> = {
   INVALID_AMOUNT: 'Enter a valid amount.',
   INSUFFICIENT_FUNDS: 'Not enough in the bank.',
   INSUFFICIENT_COINS: "You don't hold that many.",
+  BUSY: 'Your last trade is still going through.',
 };
 
 export const CryptoApp: React.FC = () => {
