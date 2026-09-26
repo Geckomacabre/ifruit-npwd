@@ -45,6 +45,11 @@ local nextRideId = 0
 -- driverSrc -> { rideId, driverName } waiting on the RIDER to leave a rating.
 local awaitingRating = {}
 
+-- src -> { fare, at } for the NPC ride this player last paid for. The refund
+-- event is client-triggered, so it can only ever hand back a fare the server
+-- actually took, once, while that ride could still plausibly have failed.
+local npcRides = {}
+
 local function dbg(fmt, ...)
     if Config.Debug then print(('^5[um_gigs]^7 ' .. fmt):format(...)) end
 end
@@ -937,6 +942,7 @@ lib.callback.register('um_gigs:server:accept', function(src, app, id)
         TriggerClientEvent('um_gigs:client:rideUpdate', req.rider, 'assigned')
     end
 
+    chosen.acceptedAt = os.time()
     active[src] = chosen
     rollGap(src, app)
 
@@ -1003,6 +1009,36 @@ RegisterNetEvent('um_gigs:server:complete', function(data)
     if not player then return end
 
     takeActive(src)
+
+    -- The client decides it has arrived; the server only checks that the claim
+    -- is possible. Without this, accepting a gig and firing this event from
+    -- anywhere paid out without driving an inch. Both limits are generous so a
+    -- real finish never trips them.
+    local at = playerCoords(src)
+    local tooFar = not at or dist(at, gig.dropoff) > Config.Complete.maxDropoffDistance
+
+    -- A player ride is paid from the rider's pocket, so the rider has to have
+    -- actually made the trip too.
+    if not tooFar and gig.playerRide then
+        local req = rideRequests[gig.id]
+        local riderAt = req and playerCoords(req.rider)
+        tooFar = not riderAt or dist(riderAt, gig.dropoff) > Config.Complete.maxDropoffDistance
+    end
+
+    local tooFast = os.time() - (gig.acceptedAt or 0) < (gig.distance or 0) / Config.Complete.maxSpeed
+    if tooFar or tooFast then
+        dbg('%s: rejected completion of %s (%s)', src, gig.id, tooFar and 'not at drop-off' or 'too fast')
+
+        if gig.playerRide then
+            local req = rideRequests[gig.id]
+            if req and req.state ~= 'done' then
+                closeRide(req, 'cancelled', 'The ride could not be completed.', true)
+            end
+        end
+
+        exports.qbx_core:Notify(src, 'Could not confirm the drop-off. No payment.', 'error')
+        return
+    end
 
     local pay = gig.pay
     local ratingDelta = Config.Rating.step
@@ -1308,6 +1344,8 @@ lib.callback.register('um_gigs:server:requestRide', function(src, opts)
             return { ok = false, message = ('You need $%d for that ride.'):format(fare) }
         end
 
+        npcRides[src] = { fare = fare, at = os.time() }
+
         TriggerClientEvent('um_gigs:client:npcRideStart', src,
             { x = destCoords.x, y = destCoords.y, z = destCoords.z }, destLabel, fare)
 
@@ -1373,11 +1411,18 @@ end)
 --- car (a bad model, streaming failure, whatever). That is the app's fault,
 --- not the player declining to get in once one showed up, which is why this
 --- is the one NPC failure that pays the fare back.
-RegisterNetEvent('um_gigs:server:npcRideFailed', function(fare)
+RegisterNetEvent('um_gigs:server:npcRideFailed', function()
     local src = source
-    local amount = math.max(0, math.min(Config.RiderMode.npc.maxFare, tonumber(fare) or 0))
-    if amount <= 0 then return end
 
+    -- The client used to say how much to refund, and nothing checked it had
+    -- bought a ride at all -- firing this event in a loop printed money. Only
+    -- the fare on record is refunded, once, and only inside the window where
+    -- the client can genuinely give up (spawn failure or the no-show timeout).
+    local ride = npcRides[src]
+    npcRides[src] = nil
+    if not ride or os.time() - ride.at > Config.RiderMode.npc.timeoutSeconds + 60 then return end
+
+    local amount = ride.fare
     local player = exports.qbx_core:GetPlayer(src)
     if not player then return end
 
@@ -1509,6 +1554,7 @@ end)
 
 AddEventHandler('playerDropped', function()
     local src = source
+    npcRides[src] = nil
 
     -- A driver who drops mid-player-ride leaves somebody standing there.
     local gig = active[src]

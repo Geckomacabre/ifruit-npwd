@@ -1146,7 +1146,7 @@ local function runNpcRide(dest, destLabel, fare)
 
     if not lib.requestModel(model, 8000) then
         lib.notify({ title = 'rydeme', description = 'Could not find you a driver. Refunding.', type = 'error' })
-        TriggerServerEvent('um_gigs:server:npcRideFailed', fare)
+        TriggerServerEvent('um_gigs:server:npcRideFailed')
         return
     end
 
@@ -1243,7 +1243,7 @@ local function runNpcRide(dest, destLabel, fare)
         -- than admitting the driver could not reach them -- refunded the same
         -- way a failed spawn is, since neither is the player's fault.
         aiSay('noShow', 'Your driver could not reach you. Refunding your fare.', 'error')
-        TriggerServerEvent('um_gigs:server:npcRideFailed', fare)
+        TriggerServerEvent('um_gigs:server:npcRideFailed')
         npcRide = nil
         DeleteEntity(veh)
         DeleteEntity(driver)
