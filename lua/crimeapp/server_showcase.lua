@@ -3,6 +3,8 @@
 -- SQL heat table and accounts are never touched. Loads after server/main.lua
 -- so Reports/NextReportId/Heat exist.
 
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
+
 if not Config.Showcase then return end
 
 local now = os.time()

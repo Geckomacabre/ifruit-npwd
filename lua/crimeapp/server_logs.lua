@@ -3,6 +3,8 @@
 --
 -- The URL lives HERE (server-only) and not in config.lua, which is a
 -- shared_script and therefore readable by every client.
+
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
 local WEBHOOK_URL = '' -- paste your Discord webhook URL here
 
 Logs = {}

@@ -8,6 +8,8 @@
 -- accounts keep their points/settings, stay logged in via a session row, and
 -- have NO password yet — their first login (or Reset password) claims one.
 
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
+
 Accounts = {}
 local cache = {} -- citizenid -> resolved account row | false (known logged-out)
 

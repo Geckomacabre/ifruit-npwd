@@ -1,6 +1,8 @@
 -- qbx, not qb-core: this server is Qbox and has no qb-core resource, so the
 -- original's exports['qb-core']:GetCoreObject() could never have resolved.
 
+local Config = LonelyConfig -- see lua/lonely/config.lua
+
 ---Adapts QBCore's callback style, cb(value), to ox_lib's, which returns.
 ---Safe because every handler below answers synchronously -- all of its queries
 ---are MySQL .await -- so the value is always set before this returns.

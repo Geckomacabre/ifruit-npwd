@@ -1,3 +1,4 @@
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
 print('^2[noted_crimeapp]^0 server starting')
 -- Report store, callbacks, notifications, SOS added in later tasks.
 

@@ -1,4 +1,9 @@
-Config = {}
+-- Every Lua app in this resource shares one Lua runtime, so a bare global
+-- `Config` from each app's config.lua overwrote the others: whichever loaded
+-- last won, and the rest indexed its table and crashed. Each app now owns a
+-- distinct global and aliases it locally as `Config` in its own files.
+LonelyConfig = {}
+local Config = LonelyConfig
 
 -- 'qbcore' or 'esx'
 Config.Framework = 'qbcore'

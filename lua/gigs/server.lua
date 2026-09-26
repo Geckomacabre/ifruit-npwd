@@ -15,6 +15,8 @@
 -- real player asked for, with real money held against them.
 -- -----------------------------------------------------------------------------
 
+local Config = GigsConfig -- see lua/gigs/config.lua
+
 -- app -> list of live offers. Only ever populated for BOARD apps; a dispatch
 -- app's requests are built on demand and never pooled.
 local boards = { snarf = {} }

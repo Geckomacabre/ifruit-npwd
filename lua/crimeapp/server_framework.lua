@@ -7,6 +7,8 @@
 --   FW.CitizenId(src) → stable character id (citizenid / ESX identifier)
 --   FW.JobInfo(src)   → jobName|nil, gradeLevel (number)
 --   FW.CharName(src)  → "First Last" or '?'
+
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
 FW = { name = nil }
 
 local impl

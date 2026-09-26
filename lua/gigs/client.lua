@@ -11,6 +11,8 @@
 -- to export and nothing to draw.
 -- -----------------------------------------------------------------------------
 
+local Config = GigsConfig -- see lua/gigs/config.lua
+
 local job = nil         -- the active gig
 local jobBlip = nil
 local jobRadius = nil
