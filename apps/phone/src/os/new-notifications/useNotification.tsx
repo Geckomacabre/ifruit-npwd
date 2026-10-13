@@ -49,20 +49,39 @@ export const useNotification = (): NotificationProps => {
           return;
         }
 
+        // Do Not Disturb (Control Center) still delivers the notification to
+        // the notification list, it just skips the popup banner -- same
+        // behavior as a real phone. A locked phone the player is looking at
+        // skips it too: the lock screen already lists the notification, so a
+        // banner on top of that is the same thing twice, over the clock.
+        //
+        // The phone re-locks every time it is put away, so "locked" alone is
+        // true for every closed phone -- it has to be combined with actually
+        // being open, or a closed phone never gets a banner at all.
+        const locked = await snapshot.getPromise(phoneState.lockState);
+        const open = await snapshot.getPromise(phoneState.visibility);
+        const showBanner = !doNotDisturb && !(locked && open);
+
         set(notifications(uniqID), {
           appId: app.id,
           content,
           path,
           onClick,
           isRead: false,
-          isActive: true,
+          isActive: showBanner,
           keepOpen,
           duration,
           id: uniqID,
         });
 
         set(allNotificationIds, (curIds: string[]) => [...curIds, uniqID]);
-        set(activeNotificationIds, (curIds: string[]) => [...curIds, uniqID]);
+        // Only a notification with a banner may be active: the banner's
+        // onExited is the only thing that clears it, and any active id makes
+        // usePhoneVisibility slide a closed phone up -- a bannerless active id
+        // left the phone stuck on screen for good.
+        if (showBanner) {
+          set(activeNotificationIds, (curIds: string[]) => [...curIds, uniqID]);
+        }
         set(unreadNotificationIds, (curIds: string[]) => [...curIds, uniqID]);
 
         set(unreadNotifications, (curVal) => [
@@ -74,14 +93,7 @@ export const useNotification = (): NotificationProps => {
           },
         ]);
 
-        // Do Not Disturb (Control Center) still delivers the notification to
-        // the notification list, it just skips the popup banner -- same
-        // behavior as a real phone. A locked phone skips it too: the lock
-        // screen already lists the notification, so a banner on top of that
-        // is the same thing twice, over the clock.
-        const locked = await snapshot.getPromise(phoneState.lockState);
-
-        if (!doNotDisturb && !locked) {
+        if (showBanner) {
           enqueueSnackbar(content, {
             variant: 'npwdNotification',
             anchorOrigin: {

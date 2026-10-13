@@ -34,15 +34,21 @@ export const useMessageActions = (): MessageActionProps => {
 
   const updateLocalConversations = useCallback(
     (conversation: MessageConversation) => {
-      setMessageConversation((curVal) => [conversation, ...curVal]);
+      // messageCoversations' default is an async selector (fetchNui to the
+      // server) -- if a broadcast/new-conversation event arrives before
+      // that fetch resolves, curVal is still undefined here. Confirmed
+      // live: a message sent moments after a brand-new character spawned
+      // hit this exact race and crashed the whole Messages app.
+      setMessageConversation((curVal) => [conversation, ...(curVal || [])]);
     },
     [setMessageConversation],
   );
 
   const setMessageReadState = useCallback(
     (conversationId: number, unreadCount: number) => {
+      // Same undefined-during-initial-fetch race as updateLocalConversations above.
       setMessageConversation((curVal) =>
-        curVal.map((message: MessageConversation) => {
+        (curVal || []).map((message: MessageConversation) => {
           if (message.id === conversationId) {
             return {
               ...message,

@@ -39,11 +39,15 @@ export class QBXFramework implements Strategy {
 
   onStart(): void {
     on('onServerResourceStart', async (resource: string) => {
-      const QBCore = global.exports['qb-core'].GetCoreObject();
-
       if (resource === GetCurrentResourceName()) {
-        const onlinePlayers = QBCore.Functions.GetQBPlayers();
-        for (const player of onlinePlayers) {
+        // This server runs qbx_core, not qb-core -- exports['qb-core'] does
+        // not exist here and threw every time npwd restarted, which is why a
+        // player who did not relog kept getting a null Player (and the
+        // FETCH_CREDENTIALS crash) until they fully reconnected. qbx_core
+        // kept the same GetQBPlayers() name, just flat on the export table
+        // instead of behind .GetCoreObject().Functions.
+        const onlinePlayers = global.exports['qbx_core'].GetQBPlayers();
+        for (const player of Object.values(onlinePlayers)) {
           await PlayerService.handleNewPlayerEvent({
             source: player.PlayerData.source,
             identifier: player.PlayerData.citizenid,

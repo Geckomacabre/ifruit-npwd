@@ -115,7 +115,11 @@ export const useExternalApps = () => {
   const config = useRecoilValue(phoneState.resourceConfig);
 
   useEffect(() => {
-    getConfigs(config?.apps, apps).then(setApps);
+    // resourceConfig is still undefined on the first render(s) -- mapping
+    // over config.apps then threw an uncaught "reading 'map'" in the NUI
+    // console. The effect re-runs once the config arrives.
+    if (!config?.apps) return;
+    getConfigs(config.apps, apps).then(setApps);
   }, [config, setApps, getConfigs]);
 
   return apps.filter((app) => app);
