@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useFilteredContacts } from '../../hooks/state';
 import { Contact } from '@typings/contact';
@@ -49,7 +49,7 @@ export const ContactList: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-1 flex-col overflow-hidden">
+    <div className="relative flex flex-1 flex-col overflow-hidden text-neutral-900 dark:text-white">
       <h1 className="px-4 pb-2 pt-1 text-3xl font-bold">Contacts</h1>
 
       <div ref={listRef} className="flex-1 overflow-y-auto pb-24 pr-6">
@@ -107,9 +107,19 @@ export const ContactList: React.FC = () => {
 
 const AVATAR_FALLBACK_CLASS = 'bg-neutral-400 text-white dark:bg-neutral-600';
 
-const Avatar: React.FC<{ avatar?: string; label: string }> = ({ avatar, label }) =>
-  avatar ? (
-    <img src={avatar} className="h-11 w-11 shrink-0 rounded-full object-cover" alt="" />
+// Avatars are arbitrary player-supplied links, so a dead one falls back to
+// initials instead of showing the browser's broken-image glyph.
+const Avatar: React.FC<{ avatar?: string; label: string }> = ({ avatar, label }) => {
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [avatar]);
+
+  return avatar && !broken ? (
+    <img
+      src={avatar}
+      className="h-11 w-11 shrink-0 rounded-full object-cover"
+      alt=""
+      onError={() => setBroken(true)}
+    />
   ) : (
     <div
       className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base font-medium ${AVATAR_FALLBACK_CLASS}`}
@@ -117,6 +127,7 @@ const Avatar: React.FC<{ avatar?: string; label: string }> = ({ avatar, label })
       {label}
     </div>
   );
+};
 
 const SelfContact: React.FC<{ number: string; avatar: string }> = ({ number, avatar }) => {
   const [t] = useTranslation();

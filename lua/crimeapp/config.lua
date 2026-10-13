@@ -1,4 +1,9 @@
-Config = {}
+-- Every Lua app in this resource shares one Lua runtime, so a bare global
+-- `Config` from each app's config.lua overwrote the others: whichever loaded
+-- last won, and the rest indexed its table and crashed. Each app now owns a
+-- distinct global and aliases it locally as `Config` in its own files.
+CrimeConfig = {}
+local Config = CrimeConfig
 
 -- Framework bridge: 'qbox' | 'qbcore' | 'esx', or 'auto' to detect in that
 -- order (qbx_core → qb-core → es_extended).

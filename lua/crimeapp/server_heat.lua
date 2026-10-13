@@ -3,6 +3,8 @@
 -- when Config.Heatmap.enabled so hotspots survive restarts. Showcase mode
 -- runs memory-only via Heat.Inject (never touches SQL).
 
+local Config = CrimeConfig -- see lua/crimeapp/config.lua
+
 Heat = {}
 
 -- cells[key] = { cx, cy, zone, counts = { [severity] = n } }

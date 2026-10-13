@@ -353,11 +353,36 @@ lib.callback.register('npwd:services:moveMoney', function(source, direction, amo
     return true, bank:getAccountMoney(job) or 0
 end)
 
+---The grade `citizenid` currently holds in `job`, or nil if they aren't on its roster.
+---@param job string
 ---@param citizenid string
-lib.callback.register('npwd:services:fire', function(source, citizenid)
+local function rosterGrade(job, citizenid)
+    for _, member in ipairs(exports.qbx_core:GetGroupMembers(job, 'job') or {}) do
+        if member.citizenid == citizenid then return member.grade end
+    end
+end
+
+---Boss actions only reach people already on the company's roster who don't
+---outrank the boss -- the same rules qbx_management applies. Without the roster
+---check, setGrade's AddPlayerToJob would hire any citizenid remotely and skip
+---the proximity check `hire` enforces.
+---@return string? job, number? targetGrade, number? ownGrade
+local function managedTarget(source, citizenid)
     local info = playerInfo(source)
     local job = bossCompanyOf(info)
-    if not job or type(citizenid) ~= 'string' or citizenid == info.citizenid then return false end
+    if not job or type(citizenid) ~= 'string' or citizenid == info.citizenid then return end
+
+    local targetGrade = rosterGrade(job, citizenid)
+    local ownGrade = info.job.grade and info.job.grade.level or 0
+    if not targetGrade or targetGrade > ownGrade then return end
+
+    return job, targetGrade, ownGrade
+end
+
+---@param citizenid string
+lib.callback.register('npwd:services:fire', function(source, citizenid)
+    local job = managedTarget(source, citizenid)
+    if not job then return false end
 
     return exports.qbx_core:RemovePlayerFromJob(citizenid, job) == true
 end)
@@ -365,10 +390,9 @@ end)
 ---@param citizenid string
 ---@param grade number
 lib.callback.register('npwd:services:setGrade', function(source, citizenid, grade)
-    local info = playerInfo(source)
-    local job = bossCompanyOf(info)
+    local job, _, ownGrade = managedTarget(source, citizenid)
     grade = tonumber(grade)
-    if not job or type(citizenid) ~= 'string' or citizenid == info.citizenid or not grade then return false end
+    if not job or not grade or grade > ownGrade then return false end
 
     local jobDef = exports.qbx_core:GetJob(job)
     if not jobDef or not jobDef.grades[grade] then return false end

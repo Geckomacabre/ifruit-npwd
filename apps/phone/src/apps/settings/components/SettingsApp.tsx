@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppWrapper } from '@ui/components';
 import { AppTitle } from '@ui/components/AppTitle';
+import { useApp } from '@os/apps/hooks/useApps';
 import { AppContent } from '@ui/components/AppContent';
 import { useContextMenu, MapSettingItem, SettingOption } from '@ui/hooks/useContextMenu';
 import { usePhoneConfig } from '../../../config/hooks/usePhoneConfig';
@@ -60,6 +61,7 @@ const useStyles = makeStyles({
 });
 
 export const SettingsApp: React.FC = () => {
+  const settingsApp = useApp('SETTINGS');
   const [config] = usePhoneConfig();
   const myNumber = useMyPhoneNumber();
   const [settings, setSettings] = useSettings();
@@ -169,6 +171,7 @@ export const SettingsApp: React.FC = () => {
       {/* Used for picking and viewing a custom wallpaper */}
       <WallpaperModal />
       <div className={customWallpaperState ? classes.backgroundModal : undefined} />
+      <AppTitle app={settingsApp} />
       {/*
         Sometimes depending on the height of the app, we sometimes want it to fill its parent
         and other times we want it to grow with the content. AppContent implementation currently
@@ -186,7 +189,7 @@ export const SettingsApp: React.FC = () => {
           height: 'auto',
         }}
       >
-        <div className="py-4">
+        <div className="pb-4">
           <SettingsCategory title={t('SETTINGS.CATEGORY.PHONE')}>
             <SettingItemIconAction
               label={t('SETTINGS.PHONE_NUMBER')}

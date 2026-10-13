@@ -1,4 +1,9 @@
-Config = {}
+-- Every Lua app in this resource shares one Lua runtime, so a bare global
+-- `Config` from each app's config.lua overwrote the others: whichever loaded
+-- last won, and the rest indexed its table and crashed. Each app now owns a
+-- distinct global and aliases it locally as `Config` in its own files.
+GigsConfig = {}
+local Config = GigsConfig
 
 -- -----------------------------------------------------------------------------
 -- um_gigs -- phone gig work
@@ -836,4 +841,19 @@ Config.Dispatch = {
     playerRideIgnoresGap = true,
 }
 
-Config.Debug = true
+-- Server-side sanity check on a finished gig (see um_gigs:server:complete).
+-- The client decides when it has arrived; these only reject claims that could
+-- not be true, so keep them loose.
+Config.Complete = {
+    -- Metres from the drop-off the driver may be when the gig is handed in.
+    -- The markers are 9-22m; this allows for position sync lag on top.
+    maxDropoffDistance = 75.0,
+    -- m/s. A gig handed in sooner than straight-line distance / this since it
+    -- was accepted is rejected. 70 m/s is ~155 mph, in a straight line, with
+    -- no pickup leg -- nobody legitimately beats it.
+    maxSpeed = 70.0,
+}
+
+-- Prints dispatch/state traces to the server console. getState alone logs every
+-- 4 seconds per player with the app open, so leave this off outside testing.
+Config.Debug = false

@@ -53,6 +53,7 @@ export type CryptoError =
   | 'INVALID_AMOUNT'
   | 'INSUFFICIENT_FUNDS'
   | 'INSUFFICIENT_COINS'
+  | 'BUSY'
   | 'UNKNOWN_ERROR';
 
 export enum CryptoEvents {

@@ -11,6 +11,7 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import { useTranslation } from 'react-i18next';
 import { FormattedProfile, FormattedMatch } from '@typings/match';
+import dayjs from 'dayjs';
 import { useAudioPlayer } from '@os/audio/hooks/useAudioPlayer';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -62,11 +63,17 @@ const Profile = ({ profile }: IProps) => {
 
   const bioSecondary = parseSecondaryBio();
 
+  // "3 hours ago" reads better than the server's full date string; fall back
+  // to that string if the raw timestamp is missing.
+  const lastActive = profile.lastActive
+    ? dayjs.unix(profile.lastActive).fromNow()
+    : profile.lastActiveFormatted;
+
   return (
     <>
       <CardContent className={c.tags}>
         {profile.tagList.map((tag) => (
-          <Chip className={c.tag} label={tag} color="primary" />
+          <Chip key={tag} className={c.tag} label={tag} color="primary" />
         ))}
       </CardContent>
       <CardMedia className={c.media} image={profile.image || DEFAULT_IMAGE} title={profile.name} />
@@ -75,7 +82,7 @@ const Profile = ({ profile }: IProps) => {
           {profile.name}
         </Typography>
         <Typography gutterBottom color="textSecondary" component="p">
-          {t('MATCH.MESSAGES.PROFILE_LAST_ACTIVE', { lastActive: profile.lastActiveFormatted })}
+          {t('MATCH.MESSAGES.PROFILE_LAST_ACTIVE', { lastActive })}
         </Typography>
         {bioSecondary && (
           <Typography gutterBottom variant="body1" color="textSecondary" component="p">
@@ -91,9 +98,9 @@ const Profile = ({ profile }: IProps) => {
             <Box display="flex" alignItems="center">
               <IconButton onClick={playing ? pause : play}>
                 {playing ? (
-                  <PauseIcon sx={{ color: '#232323' }} />
+                  <PauseIcon sx={{ color: 'text.primary' }} />
                 ) : (
-                  <PlayArrowIcon sx={{ color: '#232323' }} />
+                  <PlayArrowIcon sx={{ color: 'text.primary' }} />
                 )}
               </IconButton>
               <Box sx={{ width: '60%' }}>

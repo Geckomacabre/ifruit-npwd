@@ -17,6 +17,10 @@ const DUST = 1e-8;
 
 class _CryptoService {
   private readonly cryptoDB: _CryptoDB;
+  // Players with a trade in flight. A trade reads the holding, awaits, then
+  // writes it back, so two requests at once would both see the same balance:
+  // two sells paid out for the same coins, and two buys kept only one.
+  private readonly trading = new Set<string>();
 
   constructor() {
     this.cryptoDB = CryptoDB;
@@ -71,6 +75,25 @@ class _CryptoService {
   ): Promise<void> {
     const src = reqObj.source;
     const identifier = PlayerService.getIdentifier(src);
+
+    if (this.trading.has(identifier)) {
+      return resp({ status: 'error', errorMsg: 'BUSY' });
+    }
+    this.trading.add(identifier);
+
+    try {
+      await this.trade(reqObj, resp, src, identifier);
+    } finally {
+      this.trading.delete(identifier);
+    }
+  }
+
+  private async trade(
+    reqObj: PromiseRequest<CryptoTradeDTO>,
+    resp: PromiseEventResp<CryptoPortfolio>,
+    src: number,
+    identifier: string,
+  ): Promise<void> {
     const { symbol, side } = reqObj.data ?? ({} as CryptoTradeDTO);
 
     const fail = (errorMsg: CryptoError) => resp({ status: 'error', errorMsg });

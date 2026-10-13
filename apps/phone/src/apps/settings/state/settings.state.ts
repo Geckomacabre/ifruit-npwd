@@ -20,10 +20,11 @@ const localStorageEffect: AtomEffect<IPhoneSettings> = ({ setSelf, onSet }) => {
     const defaultConfig = await getDefaultPhoneSettings();
 
     try {
-      const validString = isSchemaValid(savedVal);
+      const validString = !!savedVal && isSchemaValid(savedVal);
       const settings: IPhoneSettings = validString ? JSON.parse(savedVal) : defaultConfig;
 
-      if (!validString) {
+      // A first boot has nothing saved yet, which is not an error.
+      if (savedVal && !validString) {
         console.error('Settings Schema was invalid, applying default settings');
       }
 

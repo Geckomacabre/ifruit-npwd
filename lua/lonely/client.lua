@@ -10,6 +10,8 @@
 
 -- ─── NUI Callbacks ───────────────────────────────────────────────────────────
 
+local Config = LonelyConfig -- see lua/lonely/config.lua
+
 -- Called on app boot instead of a login screen.
 -- Returns the player's GTA character identity so the UI knows who they are.
 RegisterNUICallback('npwd:lonely:getPlayerData', function(_, cb)
