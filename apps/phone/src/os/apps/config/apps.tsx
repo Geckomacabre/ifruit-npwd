@@ -94,6 +94,8 @@ import MusicIcon from '../icons/material/app/MUSIC';
 import { MusicApp } from '@apps/music/MusicApp';
 import HomeIcon from '../icons/material/app/HOME';
 import { HomeApp } from '@apps/home-app/HomeApp';
+import ForeclosuresIcon from '../icons/material/app/FORECLOSURES';
+import { ForeclosuresApp } from '@apps/foreclosures/ForeclosuresApp';
 import TrendyIcon from '../icons/material/app/TRENDY';
 import { TrendyApp } from '@apps/trendy/TrendyApp';
 import InstaPicIcon from '../icons/material/app/INSTAPIC';
@@ -422,6 +424,20 @@ export const APPS: IAppConfig[] = [
     storeDescription: 'Your properties',
     storeSizeKb: 19200,
     Route: () => <AppRoute id="HOME" path="/home-app" component={HomeApp} emitOnOpen={false} />,
+  },
+  {
+    id: 'FORECLOSURES',
+    nameLocale: 'APPS_FORECLOSURES',
+    icon: <ForeclosuresIcon />,
+    backgroundColor: '#e4002b',
+    color: common.white,
+    path: '/foreclosures',
+    removable: true,
+    storeDescription: 'Maze Bank Foreclosures: nightclubs, houses and apartments',
+    storeSizeKb: 31800,
+    Route: () => (
+      <AppRoute id="FORECLOSURES" path="/foreclosures" component={ForeclosuresApp} emitOnOpen={false} />
+    ),
   },
   {
     id: 'MUSIC',

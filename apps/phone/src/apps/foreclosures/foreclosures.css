@@ -1,0 +1,491 @@
+/* Maze Bank Foreclosures. Dark page, Maze red, tracked-out capitals for headings; the artwork is drawn here, not lifted from the game. */
+
+.mbf {
+  --mbf-red: #e4002b;
+  --mbf-red-deep: #8e0019;
+  --mbf-ink: #0c0c0e;
+  --mbf-panel: #16161a;
+  --mbf-panel-2: #1f1f26;
+  --mbf-line: #2c2c34;
+  --mbf-text: #f5f5f7;
+  --mbf-dim: #9b9ba6;
+  --mbf-ok: #3ddc84;
+  --mbf-warn: #ffb020;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 44px; /* under the status bar */
+  background: var(--mbf-ink);
+  color: var(--mbf-text);
+  position: relative;
+}
+
+.mbf button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+/* the banner --------------------------------------------------------------- */
+
+.mbf-banner {
+  flex: none;
+  padding: 12px 16px 12px;
+  background: linear-gradient(180deg, var(--mbf-red) 0%, var(--mbf-red-deep) 100%);
+  box-shadow: 0 6px 18px rgba(228, 0, 43, 0.28);
+}
+
+.mbf-wordmark {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.mbf-sub {
+  margin-top: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  opacity: 0.88;
+}
+
+.mbf-account {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.mbf-account b {
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* filter chips ---------------------------------------------------------------- */
+
+.mbf-chips {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 16px 10px;
+  scrollbar-width: none;
+}
+
+.mbf-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.mbf-chip {
+  flex: none;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--mbf-line) !important;
+  background: var(--mbf-panel) !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mbf-dim) !important;
+}
+
+.mbf-chip[aria-pressed='true'] {
+  background: var(--mbf-red) !important;
+  border-color: var(--mbf-red) !important;
+  color: #fff !important;
+}
+
+/* the list -------------------------------------------------------------------- */
+
+.mbf-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 16px 96px;
+}
+
+.mbf-note {
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-left: 3px solid var(--mbf-warn);
+  background: var(--mbf-panel);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--mbf-dim);
+}
+
+.mbf-note b {
+  color: var(--mbf-text);
+}
+
+.mbf-empty {
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mbf-dim);
+}
+
+.mbf-card {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--mbf-panel) !important;
+  border: 1px solid var(--mbf-line) !important;
+}
+
+.mbf-card:active {
+  background: var(--mbf-panel-2) !important;
+}
+
+.mbf-tile {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.mbf-tile[data-cat='nightclub'] {
+  background: linear-gradient(160deg, #c2185b 0%, #4a0e6b 100%);
+}
+
+.mbf-tile[data-cat='house'] {
+  background: linear-gradient(160deg, #e4002b 0%, #6d0013 100%);
+}
+
+.mbf-tile[data-cat='apartment'] {
+  background: linear-gradient(160deg, #2b6cb0 0%, #14284b 100%);
+}
+
+.mbf-body {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 12px 11px;
+}
+
+.mbf-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.mbf-where {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--mbf-dim);
+}
+
+.mbf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.mbf-price {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.mbf-price small {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mbf-dim);
+}
+
+.mbf-pill {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--mbf-panel-2);
+  color: var(--mbf-dim);
+}
+
+.mbf-pill[data-tone='ok'] {
+  background: rgba(61, 220, 132, 0.15);
+  color: var(--mbf-ok);
+}
+
+.mbf-pill[data-tone='yours'] {
+  background: var(--mbf-red);
+  color: #fff;
+}
+
+/* the detail sheet --------------------------------------------------------------- */
+
+.mbf-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  padding-top: 44px;
+  background: var(--mbf-ink);
+  animation: mbf-in 0.22s ease-out;
+}
+
+@keyframes mbf-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.mbf-sheet-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 10px 8px;
+  border-bottom: 1px solid var(--mbf-line);
+}
+
+.mbf-back {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 10px;
+  color: var(--mbf-red) !important;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mbf-hero {
+  padding: 16px 16px 14px;
+  background: linear-gradient(180deg, var(--mbf-panel-2), var(--mbf-ink));
+}
+
+.mbf-hero h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.mbf-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mbf-fact {
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: var(--mbf-panel);
+  border: 1px solid var(--mbf-line);
+}
+
+.mbf-fact span {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mbf-dim);
+}
+
+.mbf-fact b {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mbf-group {
+  padding: 4px 16px 6px;
+}
+
+.mbf-group h3 {
+  margin: 14px 0 2px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mbf-red);
+}
+
+.mbf-group p {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  color: var(--mbf-dim);
+}
+
+.mbf-opt {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--mbf-line) !important;
+  background: var(--mbf-panel) !important;
+  font-size: 13.5px;
+}
+
+.mbf-opt[aria-pressed='true'] {
+  border-color: var(--mbf-red) !important;
+  background: rgba(228, 0, 43, 0.12) !important;
+}
+
+.mbf-opt i {
+  font-style: normal;
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--mbf-dim);
+}
+
+.mbf-opt[aria-pressed='true'] i {
+  color: #fff;
+}
+
+.mbf-bar {
+  flex: none;
+  padding: 10px 16px 22px;
+  border-top: 1px solid var(--mbf-line);
+  background: var(--mbf-panel);
+}
+
+.mbf-lines {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--mbf-dim);
+}
+
+.mbf-lines div {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 0;
+}
+
+.mbf-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mbf-dim);
+}
+
+.mbf-total b {
+  font-size: 19px;
+  letter-spacing: 0;
+  color: var(--mbf-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.mbf-buy {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  background: var(--mbf-red) !important;
+  color: #fff !important;
+  text-align: center !important;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mbf-buy:disabled {
+  background: var(--mbf-panel-2) !important;
+  color: var(--mbf-dim) !important;
+  cursor: not-allowed;
+}
+
+.mbf-ghost {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px;
+  border-radius: 14px;
+  border: 1px solid var(--mbf-line) !important;
+  text-align: center !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mbf-why {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--mbf-warn);
+}
+
+/* confirmation and result ---------------------------------------------------------- */
+
+.mbf-centre {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 28px;
+  text-align: center;
+}
+
+.mbf-centre h2 {
+  margin: 14px 0 6px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.mbf-centre p {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--mbf-dim);
+}
+
+.mbf-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--mbf-red);
+  box-shadow: 0 0 0 8px rgba(228, 0, 43, 0.18);
+}
+
+.mbf-badge[data-tone='ok'] {
+  background: var(--mbf-ok);
+  color: #06301a;
+  box-shadow: 0 0 0 8px rgba(61, 220, 132, 0.18);
+}

@@ -11,6 +11,7 @@ shared_scripts({
 	"lua/gigs/config.lua",
 	"lua/crimeapp/config.lua",
 	"lua/lonely/config.lua",
+	"lua/foreclosures/config.lua",
 })
 
 client_scripts({
@@ -26,6 +27,7 @@ client_scripts({
 	"lua/crimeapp/client_functions.lua",
 	"lua/crimeapp/client.lua",
 	"lua/lonely/client.lua",
+	"lua/foreclosures/client.lua",
 })
 
 server_script({
@@ -46,6 +48,7 @@ server_script({
 	"lua/crimeapp/server_main.lua",
 	"lua/crimeapp/server_showcase.lua",
 	"lua/lonely/server.lua",
+	"lua/foreclosures/server.lua",
 })
 
 lua54("yes")

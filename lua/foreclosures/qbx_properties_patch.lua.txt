@@ -1,0 +1,93 @@
+-- REFERENCE COPY, not loaded by anything (the .txt extension is deliberate).
+--
+-- The Maze Bank Foreclosures phone app sells homes and apartments through three exports that were ADDED LOCALLY to
+--   resources/[property]/qbx_properties/server/property.lua
+-- (upstream qbx_properties has no exports for this, and that folder is not tracked in git, so a qbx_properties update would drop them silently).
+-- Paste this block into property.lua just BEFORE the
+--     Citizen.CreateThreadNow(function()
+--         local sql1 = LoadResourceFile(cache.resource, 'property.sql')
+-- block near the end of the file, so registerGarage / startRentThread / logger / locale / config are all in scope. Then restart qbx_properties.
+-- Without it the app still sells nightclubs; houses and apartments simply do not appear.
+--
+-- Copied from the live file on 2026-09-21. Only parse-checked: it has not run in a game.
+
+-- Remote sale, for the phone's Maze Bank Foreclosures app (resource npwd). Same rules as the two events above (an unowned property; the
+-- price out of the player's account; the garage registered; the owner set) minus "stand at the door": the app sells from anywhere, like
+-- the game's foreclosure site does. Local server-side patch: not in upstream qbx_properties. Returns true and the property's name, or false and
+-- the reason. The money comes out of the bank only.
+
+--- Homes and apartments that nobody owns yet, for sale (`rent_interval` NULL) or for rent.
+exports('ListAvailableProperties', function()
+    return MySQL.query.await('SELECT id, property_name, coords, price, interior, rent_interval FROM properties WHERE owner IS NULL ORDER BY price ASC, property_name ASC') or {}
+end)
+
+exports('BuyPropertyRemote', function(playerSource, propertyId)
+    local player = exports.qbx_core:GetPlayer(playerSource)
+    if not player then return false, 'Player not loaded.' end
+
+    propertyId = tonumber(propertyId)
+    local property = propertyId and MySQL.single.await('SELECT owner, price, property_name, keyholders, garage, rent_interval FROM properties WHERE id = ?', {propertyId})
+    if not property then return false, 'That property does not exist.' end
+    if property.owner then return false, 'That property has already been sold.' end
+    if property.rent_interval then return false, 'That property is only for rent.' end
+
+    -- Claim the row first (only one buyer can change it from unowned), then charge; give it back if the money is not there. Checking and
+    -- charging first would let two simultaneous buyers both pay for one property.
+    local cid = player.PlayerData.citizenid
+    if MySQL.update.await('UPDATE properties SET owner = ? WHERE id = ? AND owner IS NULL', {cid, propertyId}) ~= 1 then
+        return false, 'That property has already been sold.'
+    end
+
+    if not player.Functions.RemoveMoney('bank', property.price, string.format('Purchased %s', property.property_name)) then
+        MySQL.update.await('UPDATE properties SET owner = NULL WHERE id = ? AND owner = ?', {propertyId, cid})
+        return false, 'Not enough money in your bank account.'
+    end
+
+    if property.garage then
+        registerGarage(property.property_name, cid, json.decode(property.keyholders), json.decode(property.garage))
+    end
+
+    logger.log({
+        source = playerSource,
+        event = 'qbx_properties:server:buyProperty',
+        message = locale('logs.buy_property', player.PlayerData.citizenid, propertyId),
+        webhook = config.discordWebhook
+    })
+
+    return true, property.property_name
+end)
+
+exports('RentPropertyRemote', function(playerSource, propertyId)
+    local player = exports.qbx_core:GetPlayer(playerSource)
+    if not player then return false, 'Player not loaded.' end
+
+    propertyId = tonumber(propertyId)
+    local property = propertyId and MySQL.single.await('SELECT owner, price, property_name, keyholders, garage, rent_interval FROM properties WHERE id = ?', {propertyId})
+    if not property then return false, 'That property does not exist.' end
+    if property.owner then return false, 'That property has already been taken.' end
+    if not property.rent_interval then return false, 'That property is not for rent.' end
+
+    if player.PlayerData.money.bank < property.price then
+        return false, 'Not enough money in your bank account to rent this property.'
+    end
+
+    local cid = player.PlayerData.citizenid
+    if MySQL.update.await('UPDATE properties SET owner = ? WHERE id = ? AND owner IS NULL', {cid, propertyId}) ~= 1 then
+        return false, 'That property has already been taken.'
+    end
+
+    if property.garage then
+        registerGarage(property.property_name, cid, json.decode(property.keyholders), json.decode(property.garage))
+    end
+
+    startRentThread(propertyId)
+
+    logger.log({
+        source = playerSource,
+        event = 'qbx_properties:server:rentProperty',
+        message = locale('logs.rent_property', player.PlayerData.citizenid, propertyId),
+        webhook = config.discordWebhook
+    })
+
+    return true, property.property_name
+end)
