@@ -2,3 +2,9 @@ packages:
   - 'apps/**'
   - 'packages/**'
   - 'core/**'
+allowBuilds:
+  '@sentry/cli': false
+  '@swc/core': true
+  core-js: true
+  core-js-pure: true
+  esbuild: true
