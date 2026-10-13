@@ -51,6 +51,14 @@ local fuelArmed = false     -- we saw a healthy tank, so a dry one means somethi
 local riderBlip = nil
 local rideState = nil
 
+--- The player-facing name of an app. The identifier stayed 'goober' when the
+--- rideshare was rebranded, so the two are never the same string.
+---@param app string
+---@return string
+local function appLabel(app)
+    return app == 'snarf' and 'Snarf' or 'rydeme'
+end
+
 --- Phone notification for one of the two apps. NPWD renders the app's own name
 --- as the title, so `tag` is the short right-aligned label and `text` is the
 --- body. Falls back to an ox_lib toast if the phone is not answering.
@@ -71,14 +79,6 @@ local function notifyApp(app, text, tag)
     if not ok then
         lib.notify({ title = appLabel(app), description = text, type = 'inform' })
     end
-end
-
---- The player-facing name of an app. The identifier stayed 'goober' when the
---- rideshare was rebranded, so the two are never the same string.
----@param app string
----@return string
-local function appLabel(app)
-    return app == 'snarf' and 'Snarf' or 'rydeme'
 end
 
 local function clearBlip()
@@ -1119,15 +1119,66 @@ end
 
 --- Says something as the car. Only a KnoWay talks -- if this ride fell back
 --- to an ordinary car with a visible driver, the robot jokes make no sense,
---- so it says `plain` instead (or nothing).
-local function aiSay(key, plain, kind)
+--- so it says `plain` instead (or nothing). Goes out through notifyApp as a
+--- real rydeme notification rather than an ox_lib toast, so the line is
+--- still sitting there to read even if you were not looking at the screen
+--- when it fired -- ox_lib is only notifyApp's own fallback if the phone
+--- itself is not answering.
+local function aiSay(key, plain)
     local cfg = Config.RiderMode.npc
     if npcRide and npcRide.knoway then
-        lib.notify({ title = cfg.brand, description = pickLine(cfg.lines[key]), type = kind or 'inform', icon = 'robot' })
+        notifyApp('goober', pickLine(cfg.lines[key]), cfg.brand)
     elseif plain then
-        lib.notify({ title = 'rydeme', description = plain, type = kind or 'inform' })
+        notifyApp('goober', plain)
     end
 end
+
+--- Marks/unmarks a stopped NPC ride's vehicle as boardable by anyone nearby,
+--- not just whoever called it. A replicated state bag rather than a direct
+--- ox_target call because the vehicle only exists on other clients at all
+--- once it is networked (see runNpcRide) -- every client (including this
+--- one) picks the change up through the handler below and adds or removes
+--- its own local target option, since a Lua closure cannot itself cross the
+--- network the way a state bag value can.
+---@param veh number
+---@param open boolean
+local function setRideBoardable(veh, open)
+    Entity(veh).state:set('gigsRideOpen', open, true)
+end
+
+--- Runs on every client, once, for the lifetime of the resource -- not one
+--- handler per ride. Only ever fires for a vehicle carrying the state bag
+--- above, so this never touches the ambient (non-hail-able) KnoWays the
+--- `knoway` resource drives around on its own.
+AddStateBagChangeHandler('gigsRideOpen', nil, function(bagName, _, open)
+    local veh = GetEntityFromStateBagName(bagName)
+    if veh == 0 then return end
+
+    local netId = NetworkGetNetworkIdFromEntity(veh)
+
+    if open then
+        exports.ox_target:addEntity(netId, {
+            label = 'Get in (Back Seat)',
+            icon = 'fa-solid fa-car-side',
+            distance = 3.0,
+            onSelect = function()
+                if not DoesEntityExist(veh) then return end
+
+                local seat = IsVehicleSeatFree(veh, 1, false) and 1
+                    or IsVehicleSeatFree(veh, 2, false) and 2
+
+                if not seat then
+                    lib.notify({ title = 'rydeme', description = 'No free seats.', type = 'error' })
+                    return
+                end
+
+                TaskEnterVehicle(cache.ped, veh, 15000, seat, 1.0, 1, 0)
+            end,
+        })
+    else
+        exports.ox_target:removeEntity(netId)
+    end
+end)
 
 local function runNpcRide(dest, destLabel, fare)
     local cfg = Config.RiderMode.npc
@@ -1148,10 +1199,15 @@ local function runNpcRide(dest, destLabel, fare)
         return
     end
 
-    -- isNetwork = false on both: this car and its driver are local-only, per
-    -- Config.RiderMode.npc's whole design -- nobody else's client needs to
-    -- know they exist.
-    local veh = CreateVehicle(model, spawnPos.x, spawnPos.y, spawnPos.z, spawnHeading, false, true)
+    -- isNetwork = true on both: other players need to actually see this car
+    -- and its driver to ride along in back, unlike the rest of
+    -- Config.RiderMode.npc's local-only design. Migration is turned off
+    -- for both straight after so that ownership can never drift to another
+    -- player's client -- everything below (the whole drive loop, the
+    -- chatter thread) only runs HERE, so if control ever migrated away the
+    -- car would just go idle mid-route for everyone in it.
+    local veh = CreateVehicle(model, spawnPos.x, spawnPos.y, spawnPos.z, spawnHeading, true, true)
+    SetNetworkIdCanMigrate(NetworkGetNetworkIdFromEntity(veh), false)
     SetModelAsNoLongerNeeded(model)
     SetVehicleDoorsLocked(veh, 1)
     SetVehicleOnGroundProperly(veh)
@@ -1168,25 +1224,33 @@ local function runNpcRide(dest, destLabel, fare)
 
     local driverModel = Config.Passengers.peds[math.random(#Config.Passengers.peds)]
     lib.requestModel(driverModel, 8000)
-    local driver = CreatePedInsideVehicle(veh, 4, driverModel, -1, false, true)
+    local driver = CreatePedInsideVehicle(veh, 4, driverModel, -1, true, true)
+    SetNetworkIdCanMigrate(NetworkGetNetworkIdFromEntity(driver), false)
     SetModelAsNoLongerNeeded(driverModel)
 
     SetEntityInvincible(veh, true)
     SetEntityInvincible(driver, true)
     SetBlockingOfNonTemporaryEvents(driver, true)
     SetDriverAbility(driver, 1.0)
-    SetDriverAggressiveness(driver, 0.0)
+    -- 0.0 paired with max ability is what made this swerve and clip things --
+    -- GTA's driving AI reads near-zero aggressiveness as "sharply avoid
+    -- everything" rather than "drive calmly," which looks twitchy at speed.
+    -- A mid value drives confidently without turning reckless.
+    SetDriverAggressiveness(driver, 0.5)
     -- Stops the game's ambient AI from ever overriding what this script tasks
     -- the ped with -- taxiservice.c sets this the moment the ped is put in
     -- the car, not partway through, and that timing turned out to matter.
     SetPedKeepTask(driver, true)
 
     -- The whole joke: there is a ped doing the driving, but you never see
-    -- them. Collision off as well, so the rider climbing into the front never
-    -- bumps into someone who is not there.
+    -- them. Collision stays ON, though -- turning it off is what made GTA's
+    -- vehicle-entry task fail to resolve the driver's seat as genuinely
+    -- occupied, which is what made a normal passenger boarding play out as a
+    -- carjack-style drag-the-occupant-out animation and hard-froze the game
+    -- the one time this was tested live. An invisible-but-solid ped boards
+    -- around exactly like a visible one.
     if isKnoWay and cfg.invisibleDriver then
         SetEntityVisible(driver, false, false)
-        SetEntityCollision(driver, false, false)
     end
 
     npcRide = { phase = 'approach', driverVeh = veh, dest = dest, destLabel = destLabel, speedBoost = false, knoway = isKnoWay }
@@ -1240,7 +1304,7 @@ local function runNpcRide(dest, destLabel, fare)
         -- teleporting the player to wherever it got stuck, which is worse
         -- than admitting the driver could not reach them -- refunded the same
         -- way a failed spawn is, since neither is the player's fault.
-        aiSay('noShow', 'Your driver could not reach you. Refunding your fare.', 'error')
+        aiSay('noShow', 'Your driver could not reach you. Refunding your fare.')
         TriggerServerEvent('um_gigs:server:npcRideFailed', fare)
         npcRide = nil
         DeleteEntity(veh)
@@ -1266,6 +1330,11 @@ local function runNpcRide(dest, destLabel, fare)
     end
     aiSay('arrived')
 
+    -- Open for back-seat riders from the moment it is actually sitting there
+    -- waiting, same as the front seat below -- a friend does not need to
+    -- wait for the owner to board first.
+    setRideBoardable(veh, true)
+
     -- ---- get in -------------------------------------------------------------
     -- Auto-walk-and-board, the same idea um_beg uses for a car that pulls up
     -- to give: TaskEnterVehicle handles both the approach and the climb-in as
@@ -1275,7 +1344,9 @@ local function runNpcRide(dest, destLabel, fare)
     -- the ped can otherwise block the new one from taking over. Only reached
     -- once `arrived` is true, so the car is always genuinely within
     -- pickupRadius here -- a short, natural walk-up rather than a long-range
-    -- warp.
+    -- warp. Safe for the invisible KnoWay driver too now that it keeps its
+    -- collision (see where it is spawned) -- collision, not visibility, is
+    -- what the vehicle-entry task needs to recognise the seat as occupied.
     lib.showTextUI('Getting in...')
     ClearPedTasks(cache.ped)
     TaskEnterVehicle(cache.ped, veh, 20000, 0, 1.0, 1, 0)
@@ -1292,7 +1363,10 @@ local function runNpcRide(dest, destLabel, fare)
         -- refund here -- only a failed SPAWN (above) counts as the app's
         -- fault rather than the player's.
         npcRide = nil
-        if DoesEntityExist(veh) then DeleteEntity(veh) end
+        if DoesEntityExist(veh) then
+            setRideBoardable(veh, false)
+            DeleteEntity(veh)
+        end
         if DoesEntityExist(driver) then DeleteEntity(driver) end
         return
     end
@@ -1352,7 +1426,7 @@ local function runNpcRide(dest, destLabel, fare)
                 style = cfg.rushedDriveStyle
                 SetDriverAggressiveness(driver, 1.0)
                 driveAndPark(driver, veh, dest, speed, style)
-                aiSay('speedUp', 'Your driver puts their foot down.', 'warning')
+                aiSay('speedUp', 'Your driver puts their foot down.')
             end
             Wait(250)
         end
@@ -1366,13 +1440,25 @@ local function runNpcRide(dest, destLabel, fare)
         if npcRide.endRequested then
             aiSay('endEarly', 'Fare ended early.')
         elseif reachedDest then
-            aiSay('done', 'You have arrived.', 'success')
+            aiSay('done', 'You have arrived.')
         else
             aiSay('stuck', 'Your driver got stuck short of the address -- this is as close as they could get.')
         end
 
         TaskLeaveVehicle(cache.ped, veh, 0)
+    elseif DoesEntityExist(veh) and not reachedDest then
+        -- Thrown clear of the seat (a hard enough hit can still eject a ped
+        -- even out of an invincible vehicle) or bailed out mid-route. Either
+        -- way the loop above already stopped driving toward anything, so say
+        -- so instead of the car just silently vanishing on them in 2.5s with
+        -- no explanation at all.
+        aiSay('stuck', 'You are out of the car short of the address -- this is as close as you got.')
     end
+
+    -- The ride is over either way -- take the back-seat option down before
+    -- the 2.5s grace period below, rather than leaving it targetable on a
+    -- car that is already done driving anywhere.
+    if DoesEntityExist(veh) then setRideBoardable(veh, false) end
 
     -- The rating screen is the last thing the app shows for this ride --
     -- npcRateDriver clears npcRide once submitted, or a timeout does if the
