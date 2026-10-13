@@ -93,7 +93,9 @@ import { GeoCacheApp } from '@apps/geocache/GeoCacheApp';
 import MusicIcon from '../icons/material/app/MUSIC';
 import { MusicApp } from '@apps/music/MusicApp';
 import HomeIcon from '../icons/material/app/HOME';
+import HustleIcon from '../icons/material/app/HUSTLE';
 import { HomeApp } from '@apps/home-app/HomeApp';
+import { HustleApp } from '@apps/hustle/HustleApp';
 import ForeclosuresIcon from '../icons/material/app/FORECLOSURES';
 import { ForeclosuresApp } from '@apps/foreclosures/ForeclosuresApp';
 import TrendyIcon from '../icons/material/app/TRENDY';
@@ -212,6 +214,17 @@ export const APPS: IAppConfig[] = [
     Route: () => (
       <AppRoute id="SETTINGS" path="/settings" component={SettingsApp} emitOnOpen={false} />
     ),
+  },
+  // Every way to make money, from um_guide. Early in the list so it lands on
+  // the first home page, and not removable: it is how new players find work.
+  {
+    id: 'HUSTLE',
+    nameLocale: 'APPS_HUSTLE',
+    icon: <HustleIcon />,
+    backgroundColor: '#15803d',
+    color: common.white,
+    path: '/hustle',
+    Route: () => <AppRoute id="HUSTLE" path="/hustle" component={HustleApp} emitOnOpen={false} />,
   },
   {
     id: 'MATCH',
@@ -458,6 +471,9 @@ export const APPS: IAppConfig[] = [
     backgroundColor: '#059669',
     color: common.white,
     path: '/geocache',
+    // Hidden 2026-10-13: its backend, qbx_geocaching, is not installed, so the
+    // app could only sit on a spinner. Remove this line if that comes back.
+    disable: true,
     removable: true,
     storeDescription: 'Find and hide caches',
     storeSizeKb: 51200,

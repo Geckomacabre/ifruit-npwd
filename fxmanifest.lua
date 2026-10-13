@@ -28,6 +28,7 @@ client_scripts({
 	"lua/crimeapp/client.lua",
 	"lua/lonely/client.lua",
 	"lua/foreclosures/client.lua",
+	"lua/hustle/client.lua",
 })
 
 server_script({

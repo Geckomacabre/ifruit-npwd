@@ -267,6 +267,15 @@ export const HouseGlyph: React.FC = () => (
   </>
 );
 
+// A bank: pediment, three columns, steps. Drawn from primitives (no brand artwork).
+export const BankGlyph: React.FC = () => (
+  <>
+    <path d="M50 12 13 31v9h74v-9z" />
+    <path d="M21 46h12v27H21zm23 0h12v27H44zm23 0h12v27H67z" />
+    <path d="M13 79h74v9H13z" />
+  </>
+);
+
 export const MusicNoteGlyph: React.FC = () => (
   <>
     <path d="M78 16 40 26v39a15 15 0 1 0 8 13V38l22-6v25a15 15 0 1 0 8 13z" />
@@ -326,5 +335,22 @@ export const CheckerFlagGlyph: React.FC = () => (
         />
       )),
     )}
+  </>
+);
+
+// Hustle: a banknote with a dollar sign over a second note behind it.
+export const CashGlyph: React.FC = () => (
+  <>
+    <rect x="20" y="22" width="66" height="40" rx="7" fillOpacity="0.45" />
+    <rect x="12" y="36" width="70" height="42" rx="8" />
+    <circle cx="47" cy="57" r="12" fill="#000" fillOpacity="0.3" />
+    <path
+      d="M47 48v18M52 51.5h-6.5a3.25 3.25 0 0 0 0 6.5h3a3.25 3.25 0 0 1 0 6.5H42"
+      fill="none"
+      stroke="#000"
+      strokeOpacity="0.45"
+      strokeWidth="3"
+      strokeLinecap="round"
+    />
   </>
 );
